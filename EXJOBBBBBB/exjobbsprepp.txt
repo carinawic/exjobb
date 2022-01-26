@@ -1,0 +1,26 @@
+
+hur mycket bättre är en ml modell med samma data
+feature importance, lägg till eller ta bort ett värde i taget och se hur det påverkar 
+eller: stoppa in medianvärdet hela tiden
+hur mycket bättre är en ml modell med tillagda värden
+
+analysera relativa förändringar i % pga faktor, kodning av data 
+
+ANN arkitektur, antal lager, 
+hyperparametrar mot grunddata,
+covarierar med väder 
+
+ARIMA?
+
+RNN contextvariabler :(
+time-lagged = dålig = strunta
+LST-AND = bra! transformernätverk? transformers = sekvenser av symbolder, diskret nej jag har konkret, specialtransformer.
+Vilka klarar kombo mellan diskret och kontornueliga attribut?
+störst =! bäst
+
+ARIMA!
+
+Evaluation
+metrix, vad är bra om hur utärderar vi det
+
+TIDSPLAN!

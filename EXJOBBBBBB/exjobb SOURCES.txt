@@ -1,0 +1,80 @@
+
+In analysing trends as affecting fligth demand:
+
+Automatic trend detection: Time-biased document clustering, Algorithm for detecting temporary clusters as are trends
+https://www.sciencedirect.com/science/article/pii/S0950705121001702
+
+Trend analysis and change point techniques: a survey, Math behind detecting trends
+https://link.springer.com/article/10.1007/s40974-016-0011-1
+
+Comparison of Trend Detection Algorithms in the Analysis of Physiological Time-Series Data
+https://www.researchgate.net/publication/7910871_Comparison_of_Trend_Detection_Algorithms_in_the_Analysis_of_Physiological_Time-Series_Data
+
+
+Irrelevant links that I for some reason keep around:
+
+booking.com travel predictions
+https://travelpredictions2020.com/#13
+
+hotell/andra flygbolags marknadsföring
+
+Travel predictions:
+
+[4]
+VISA travel predictions using Machine Learning of purchases
+https://developer.visa.com/capabilities/visa-travel-predict
+
+[5]
+FAA Aerospace Forecasts
+https://www.faa.gov/data_research/aviation/aerospace_forecasts/
+
+google flight data statistics
+https://travelinsights.withgoogle.com/intl/en/
+
+FLIGHT DATA SETS
+THE WORLD’S MOST ACCURATE AND INFORMATION-RICH FLIGHT DATA
+https://www.oag.com/flight-data-sets
+
+Sentimaent analysis of tweets depicting flight passanger's satisfaction
+https://www.kaggle.com/crowdflower/twitter-airline-sentiment
+
+
+[1]
+Methods for Travel Pattern Analysis Using Large-Scale Passive Data, LIU
+https://www.diva-portal.org/smash/get/diva2:1547806/FULLTEXT01.pdf
+
+[2]
+Appraisal of Different Artificial Intelligence Techniques for Travel Demand Analysis 
+http://urbanmobilityindia.in/Upload/Conference/ed85be40-5e4d-44dc-a4a9-ce2d30b78ea7.pdf
+
+[3]
+Forecasting airline passengers using designer machine learning - Alexander Backus, Jan van der Vegt
+https://www.youtube.com/watch?v=A-azJ8qmwug
+
+
+[6]
+Economic factors affecting aviation demand: Practice of EU countries
+https://www.researchgate.net/publication/304807370_Economic_factors_affecting_aviation_demand_Practice_of_EU_countries
+
+[7]
+The external factors impacting airline profits
+(Oil prices, economics)
+https://outsideinsight.com/insights/the-external-factors-impacting-airline-profits/
+
+[8]
+Impact of AI and robotics in the tourism sector: a critical insight
+https://www.emerald.com/insight/content/doi/10.1108/JTF-07-2019-0065/full/html
+
+[9]
+Factors That Affect The Demand For Air Transportation Tourism Essay
+https://www.ukessays.com/essays/tourism/factors-that-affect-the-demand-for-air-transportation-tourism-essay.php?__cf_chl_captcha_tk__=pmd_DffD7dthhcyu_2GwzMo9yYBxj_CQ95LChyK61.mIH5E-1635355068-0-gqNtZGzNA5CjcnBszQi9
+
+[10]
+Changes in air passenger demand as a result of the COVID-19 crisis: using Big Data to inform tourism policy
+https://www.tandfonline.com/doi/full/10.1080/09669582.2020.1773476?casa_token=hruKCcUVikQAAAAA%3AfhhqdpgjER0GPPLX9beumB9uJWnEZfd8kho_9w3FVctmDYzCONp40wQxI5aS-mtr6rk0zsCvcC8o-As
+
+
+
+Flying High: The Real Factors That Affect the Cost of Your Flight
+https://www.airhelp.com/en-gb/blog/factors-affect-cost-of-flight/
+
