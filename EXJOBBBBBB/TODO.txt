@@ -1,0 +1,33 @@
+TODO:
+    individual plan! Project plan/specification with Erik’s support
+    Registrering till examensarbetet så fort vettigen kommer in - maila då också till Pawel
+
+    (tävling) challenges - tidsserier model sentiment
+        Vilka modeller har presterat bra? Använd det som bas för att välja modell.
+
+    Research points
+        NASDAQ, väder SMHI, nyhetsaggregator sentimentalanalys - hitta dataset
+        Om man vet (från sentimentalanalys eller motsvarande) att restriktionerna kommer lyfta ett datum, förutspå effekten av det
+        Kolla historiskt data av nyhetsaggregator - sök efter "restriktioner lyfts" eller "nya restriktioner", 
+        se vad detta har haft för effekt historiskt.
+
+Programming notes
+
+    install conda
+    follow Pierre's instructions
+    python3 Train...
+    nltk.corpus package, natural languaging toolkit in python 
+
+Research questions
+    hur mycket bättre är en ml modell med samma data
+    feature importance, lägg till eller ta bort ett värde i taget och se hur det påverkar 
+    eller: stoppa in medianvärdet hela tiden
+    hur mycket bättre är en ml modell med tillagda värden
+
+    analysera relativa förändringar i % pga faktor, kodning av data 
+
+    ANN arkitektur, antal lager, 
+    hyperparametrar mot grunddata,
+    covarierar med väder 
+
+

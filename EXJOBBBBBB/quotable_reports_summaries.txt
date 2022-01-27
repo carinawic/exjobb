@@ -1,0 +1,16 @@
+Time series Forecast of Call volume in Call Centre using Statistical and Machine Learning Methods 
+by Nicolò Baldon
+(thesis 2019)
+
+Basis for choice of model for Sentiment Analysis:
+    Detecting hate speech on Twitter, A comparative study on the naive Bayes classifier (bachelor thesis)
+        by Sam Hamra and Boran Sahindal
+        June 6, 2017
+        In naive bayes, it compares two methods of character level n-grams and word-level n-grams, and analyzes their comparable effectiveness. They finally conclude that character level n-grams gave the best results for the purpose of detecting hate speech on twitter. 
+        "We learned that n-character with combinations of 1-3 characters was most efficient in detecting hate speech on twitter. "
+
+    Other publications
+        Since that Sam Hamra (bachelor thesis) publication (June 6, 2017), more work has been done in this field.
+        One study done by Vedant Kshirsagar in 2019 under the name “Detecting Hate tweets — Twitter Sentiment Analysis” found another algorithm to outperform the Naive Bayes used by Sam Hamra and Boran Sahindal. [5]
+        Kshirsagar writes “logistic regression gives us the best AUC. [...] Compare this to Naive Bayes which shows a poor false positive performance”
+        The same year, another report was published on the same topic: “Automated Hate Speech Detection on Twitter” by Garima Koushik et. al, using the very same machine learning model as Kshirsagar, receiving exceptionally high accuracy of  hate speech classifications. [6]

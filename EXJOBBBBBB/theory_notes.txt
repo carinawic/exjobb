@@ -1,0 +1,77 @@
+
+Sentiment analysis
+    Using RNN (Recurrent neural network)
+    Sequence - vector model: input is a sequence (of words) and output is a vector (positive or negative)
+
+Encoder - Decoder architecture (sequence - sequence model)
+    because in translation, 10 word input might not be 10 word output 
+    english sentence (sequence) -> meaning vector -> german sentence (sequence)
+    problem: gradients will explode or vanish :(
+        (don't this happen in DNN too? Yes, but it's much worse in RNN than DNN)
+            this DNN exploding gradient problem for long sequences was investigated already in 1991 by Hochreiter (et al) can be found in the description of this video https://www.youtube.com/watch?v=QciIcRxJvsM
+        solution: we skip or replace connections
+            better solution: we add an alpha for each timestep on each weight to show how much the weight should impact, these act as gates, and are new parameters for the network to figure out.         
+                one of the most common gated recurrent neural network applications, is LSTM. Long-Short term memory.
+                we have LSTM cells
+                this fixes the vanishing/exploding gradient problem 
+
+Neural network general intro
+    Big fancy squiggle-fitting machine (statquest)
+
+    weights = paramaters that we multiply
+    biases = parameters that we add 
+
+    Activation functions
+        Soft+ (toilet paper activation function) (common in practice)
+        Relu Rectified Linear Unit _/ (common in practice)
+        Sigmoid (used when teaching neural networks)
+        Any other bent or curved line   
+        often we put an activation function before the final ouutput, in addition to each node
+
+    residual: used to optimize (calibrate) the bias parameter
+        A residual is the difference between the observed y-value (from scatter plot) and the predicted y-value (from regression equation line). 
+        We square all residuals and sum them together, SSR: y-axis, bias:x-axis.
+        as we increase bias, we see that SSR decreases, se want the bias 'x-value where SSR = min.
+            we use gradient decend to find min SSR, calculate dSSR/db3äöQ
+
+Continue at: Statquest, Neural Networks Pt. 4
+
+ARIMA
+    Autoregressive integrated moving average
+    (Arimaa = is a two-player strategy board game that was designed to be playable with a standard chess set and difficult for computers while still being easy to learn and fun to play for humans. )
+    predict future points in the series (forecasting)
+    parts
+        AR
+            The AR part of ARIMA indicates that the evolving variable of interest is regressed on its own lagged (i.e., prior) values.
+        MA 
+            The MA part indicates that the regression error is actually a linear combination of error terms whose values occurred contemporaneously and at various times in the past.
+        I
+            The I (for "integrated") indicates that the data values have been replaced with the difference between their values and the previous values (and this differencing process may have been performed more than once). 
+        ARIMA(1,1,0) is AR(1), ARIMA(0,1,0) is I(1), ARIMA(0,0,1) is MA(1)
+    Seasonal ARIMA models are usually denoted ARIMA(p,d,q)(P,D,Q)m, where m refers to the number of periods in each season, and the uppercase P,D,Q refer to the autoregressive, differencing, and moving average terms for the seasonal part of the ARIMA model
+    ARIMA models can be estimated following the Box–Jenkins approach. 
+
+
+LSTM
+    one of the most common gated recurrent neural network (RNN) applications, is LSTM. Long-Short term memory.
+    RNN = copy paste feed forward 
+        RNN contextvariabler :(
+    RNNs learn through Truncated BPTT (back propagation)
+    longer sequences in traditional RNN cause exploding/vanishing gradients
+    LSTM/GRU deal with such longer sequences 
+        (can be used for stock prediction, translation, speech recognition, etc.)
+Transformers
+
+
+Further research
+    
+    time-lagged = dålig = strunta
+    LST-AND = bra! transformernätverk? transformers = sekvenser av symbolder, diskret nej jag har konkret, specialtransformer.
+    Vilka klarar kombo mellan diskret och kontornueliga attribut?
+    Evaluation
+        metrix, vad är bra om hur utärderar vi det
+
+
+https://www.youtube.com/watch?v=TQQlZhbC5ps
+https://www.youtube.com/watch?v=xI0HHN5XKDo
+https://www.youtube.com/c/joshstarmer
