@@ -1,7 +1,112 @@
-Time series Forecast of Call volume in Call Centre using Statistical and Machine Learning Methods 
-by Nicolò Baldon
-(thesis 2019)
+Motivation for ARIMA and other model 
+    ARIMA used by the Call Centre master thesis performed well with limited data points. "pure time series approaches" as ARIMA also performed more accurately according to the competition.
 
+
+The tourism forecasting competition George Athanasopoulos (2010)
+    forecasting tourism data
+    "We find that pure time series approaches provide more accurate forecasts for tourism data than models with explanatory variables."
+    "For seasonal data we implement three fully automated pure
+    time series algorithms that generate accurate point forecasts, and two of these also produce
+    forecast coverage probabilities which are satisfactorily close to the nominal rates. For annual
+    data we find that Na ̈ıve forecasts are hard to beat."
+
+    ARIMA vs ETS models 
+        Exponential smoothing methods may be considered as peers and an alternative to the popular Box-Jenkins ARIMA class of methods for time series forecasting.
+        Collectively, the methods are sometimes referred to as ETS models, referring to the explicit modeling of Error, Trend and Seasonality.
+        https://machinelearningmastery.com/exponential-smoothing-for-time-series-forecasting-in-python/
+
+    What they compared 
+
+        - The forecast methods we consider are three fully automated time series algorithms (Forecast Pro, ARIMA and exponential smoothing based algorithms), two method-specific approaches (the Theta method and the damped trend), and five general frameworks that incorporate explanatory variables (static and dynamic regression, autoregressive distributed lag models, time varying parameter models and vector autoregressions).
+
+        Pure time series approaches
+            ARIMA (and SARIMA) 
+            Innovations state space models for exponential smoothing
+            Forecast Pro 
+            Theta model 
+            Damped trend 
+            Naive approaches 
+        Models with explanatory variables 
+            autoregressive distributed lag model ADLM 
+            time varying parameter (TVP) model 
+            Vector autoregressive (VAR) model 
+    
+    How to measure errors
+        MAPE (mean absolute percentage error measure)
+            "The MAPE is clearly the most commonly used forecast accuracy measure in the forecasting literature. Hyndman and Koehler (2006) provide some warnings regarding this measure and highlight the conditions under which it is unsuitable and should not be used"
+            Problem
+                Only defined for non-zero values, and percentage errors assumes a "meaningful zero" - but none of these issues were relevant in the current report.
+                Both of these conditions hold with the tourism data we use here, and thus there is no reason for us to think that the MAPE is unsuitable
+                    However, for the pure time series method in the yearly data, it contained 
+                    Consequently, even though the MAPE can formally be applied here, we caution against its use due to the numerical instability that results whenever some series contain small values 
+                        "This is due to nine series that contain low values and are amongst the cases with explanatory variables. These cases produced very large percentage errors, which caused the distribution of the MAPEs to be highly positively skewed."
+            Conclusion of the MAPE problem:
+                "Consequently, even though the MAPE can formally be applied here, we caution against its use due to the numerical instability that results whenever some series contain small values."
+        MASE (mean absolute scaled error)
+        MdASE (median absolute scaled error)
+    
+    Results
+        notes:
+            They use naive as a base model and calculate he PB shows the percentage of times that each method produces more accurate forecasts than SNa ̈ıve for monthly and quarterly data, and than Na ̈ıve for yearly data.
+
+        Results for montly data: 
+            (1) Forecast Pro, ARIMA and ETS were more accurate than SNaive
+            "When considering the MAPE, Forecast Pro produces the most accurate forecasts, but when considering the MASE, the ARIMA methodology is more accurate."
+            The Theta method and the Damped trend method seem to be inferior to the other methods for forecasting monthly data.
+            (2) The Theta method and the Damped trend method seem to be inferior to the other methods for forecasting monthly data.  However, the Damped trend method is much more accurate than the Theta method and SNa ̈ıve for one-step-ahead forecasting.
+            SNaıve wasnt very good.
+        Results for quaterly data 
+            (1') Forecast Pro and ARIMA consistently forecast better than SNa ̈ıve
+            (2') The Damped trend method forecasts quarterly data extremely well. It is consistently in the top two methods, regardless of the forecast error measure considered.
+            SNaıve wasnt very good at quaterly data 
+            SNaıve seems to produce forecasts which are more accurate than those of any of the other methods for the seasonal horizons (i.e., h = 4 and h = 8). Even when considering the MdASE, SNa ̈ıve forecasts more accurately than ETS and ARIMA (though only marginally).
+                It's very good at seasonal horizons.
+        Yearly data 
+            (3) When considering the PB measure over all forecast horizons, all time series approaches forecast more accurately more times than Na ̈ıve.
+            (3') When considering average error measures, the Theta method is the only method that is competitive to Na ̈ıve. 
+            (3'') The Theta method forecasts more accurately than Na ̈ıve when considering the MASE
+    
+    Conclusion from results 
+        (1) and (1') gives us reason to use ARIMA 
+        (2) and (2') shows that Damped trend is very good at certain prediction but bad at others
+        (3),(3'),(3''), naive is good at yearly data
+        conclusion from the report:
+            The analysis so far has shown that Forecast Pro, ETS and ARIMA produce the most accurate forecasts for seasonal data. On average these methods produce more accurate forecasts than Na ̈ıve. However, for yearly data none of the three methods forecast more accurately than Na ̈ıve in our evaluation.
+
+    
+    Aggregated data 
+        then they go on to preproces the data using temporal aggregation and compares the models more (section 5.2)
+        Results from that 
+            No method can forecast more accurately than Na ̈ıve when considering the MAPE.
+            Among the top performers were usually always Naive, ForePro, Theta, and ARIMA was in the middle average 
+
+    Overall conclusion from the conclusion chapter
+        We conclude that pure time series approaches forecast tourism demand data more accurately than methods that use explanatory variables. This is a similar result to Witt and Witt (1995) and Kulendran and King (1997), but is in contrast to Allen and Fildes (2001) and Song et al. (2003a).
+        "In this study (which is much broader than any of the aforementioned studies) we not only find no improvement from using models with exogenous variables for forecasting tourism data, but also find significant improvements from using sophisticated, fully automated time series approaches."
+        "Of the pure time series forecasting approaches, we find that Forecast Pro, ARIMA and ETS consistently forecast more accurately than the seasonal Na ̈ıve approach for seasonal data (both monthly and quarterly), while the damped trend method performed extremely well for quarterly data"
+    
+
+Time series Forecast of Call volume in Call Centre using Statistical and Machine Learning Methods 
+    by Nicolò Baldon
+    (master thesis 2019)
+
+    "recently, time series forecasting problems have gained a high-interest thanks to the new recurrent network, named Long-short Term Memory."
+    "compare Seasonal Artificial Neural Network (ANN) 
+    and a Long-Short Term Memory (LSTM) models with 
+    Seasonal Autoregressive Integrated Moving Av- erage (SARIMA) model,
+    which is one of the most common statistical method utilized by call centers."
+    Evaluate the results using Normalized Mean Squared Error (NMSE)
+    and Symmetric Mean Absolute Percentage Error (SMAPE) -> calculate accuracy 
+    results
+        SARIMA to be more accurate in forecasting at daily scale across the three datasets.
+        At hourly scale, Seasonal ANN and LSTM outperform SARIMA,
+        (1) SARIMA has shown no correlation between the quality of the model and the number of data points, while both SANN and LSTM improves together with the number of samples
+    my conclusion from results 
+        (1) gives us reason to try SANN or LSTM because we expect the amount of data to grow over time.
+            SANN vs LSTM vs Transformers 
+                "STATISTICA Automated Neural Networks (SANN) is one of the most advanced and best performing neural network applications on the market. " - google
+                "Long Short Term Memory networks – usually just called “LSTMs” – are a special kind of RNN, capable of learning long-term dependencies" - google
+                "The Transformer Neural Network is a novel architecture that aims to solve sequence-to-sequence tasks while handling long-range dependencies with ease" - google
 Basis for choice of model for Sentiment Analysis:
     Detecting hate speech on Twitter, A comparative study on the naive Bayes classifier (bachelor thesis)
         by Sam Hamra and Boran Sahindal

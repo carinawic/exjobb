@@ -71,6 +71,9 @@ Further research
     Evaluation
         metrix, vad är bra om hur utärderar vi det
 
+Keywords: ARIMA, exponential smoothing, state space model, time varying parameter model,
+dynamic regression, autoregressive distributed lag model, vector autoregression.
+
 
 https://www.youtube.com/watch?v=TQQlZhbC5ps
 https://www.youtube.com/watch?v=xI0HHN5XKDo
