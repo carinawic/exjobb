@@ -106,7 +106,13 @@ Time series Forecast of Call volume in Call Centre using Statistical and Machine
             SANN vs LSTM vs Transformers 
                 "STATISTICA Automated Neural Networks (SANN) is one of the most advanced and best performing neural network applications on the market. " - google
                 "Long Short Term Memory networks – usually just called “LSTMs” – are a special kind of RNN, capable of learning long-term dependencies" - google
+                    cons: RNNs are slow, LSTMs are even slower! Because it has sequensial flow, not using todays computers that do parallization well
                 "The Transformer Neural Network is a novel architecture that aims to solve sequence-to-sequence tasks while handling long-range dependencies with ease" - google
+                    "LSTM is dead. Long Live Transformers!"
+                        https://www.youtube.com/watch?v=S27pHKBEp30
+                    Transformers were introduced 2017 (super recently!)
+                    They work much like RNN but input can be sent in parallel. 
+
 Basis for choice of model for Sentiment Analysis:
     Detecting hate speech on Twitter, A comparative study on the naive Bayes classifier (bachelor thesis)
         by Sam Hamra and Boran Sahindal
