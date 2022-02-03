@@ -1,0 +1,54 @@
+
+
+conda activate new_csm
+python Train_baseline_snippet.py
+
+
+challenges - tidsserier model sentiment
+LSTM
+Transformers
+time series prediction, tidsserieprediktion 
+
+https://www.youtube.com/watch?v=TQQlZhbC5ps
+https://www.youtube.com/watch?v=xI0HHN5XKDo
+https://www.youtube.com/c/joshstarmer
+
+How to run the code
+
+Keep in mind that some of the code will not work because you need access to the database to make it work. 
+However, the Baseline part of the code can be used without database so you don't need to have access to it.
+
+In the root of the archive, I included the file Train_baseline_snippet.py . 
+When everything is installed, you can run, after making sure that you are in the right conda environment, 
+
+$python Train_baseline_snippet.py. 
+
+This code should create the pandas dataframe containing all the data needed for the training of the baseline, 
+train the baseline and plot some graphs to show the results of the training. I hope that it will help you to get started.
+
+The code that will be interesting for you is in 
+
+CSM/Prepare_data.py
+	contains the code to create the right dataframes
+
+CSM/Baseline.py
+	contains the code for the model.
+
+websites/se/Data/Time.csv 
+	data that will be interesting for you is in 
+
+websites/se/Data/Media.p 
+	includes all the marketing data
+
+
+--
+
+python lookup
+
+@staticmethod
+@property
+def _combinations
+def powers_
+why write __main__
+
+

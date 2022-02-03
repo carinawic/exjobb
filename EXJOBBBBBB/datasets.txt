@@ -1,0 +1,68 @@
+
+NASDAQ, väder SMHI, nyhetsaggregator sentimentalanalys
+
+
+Folkhälsomyndigheten, löpande nyheter från "nyheter och press"
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv
+
+
+	scrapa efter ord som "covid restriktioner den __ {månad}"
+	upphävs, skärps, åtgärder, restriktioner (basera på ett synonymlexikon och lägg till alla synonymer manuellt i en array)
+	fånga alla dessa:
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2022/januari/fler-atgarder-infors-mot-den-okade-smittspridningen-av-covid-19/
+Fler åtgärder införs mot den ökade smittspridningen av covid-19
+10 JANUARI 2022
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2022/januari/flera-atgarder-mot-covid-19-bedoms-kunna-avvecklas-9-februari/
+Flera åtgärder mot covid-19 bedöms kunna avvecklas 9 februari
+26 JANUARI 2022
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2021/december/flera-nya-atgarder-vidtas-den-23-december-nar-smittspridningen-vantas-oka/
+Flera nya åtgärder vidtas den 23 december när smittspridningen väntas öka
+21 DECEMBER 2021
+i artikeln: "De tre nya scenarierna för smittspridning som Folkhälsomyndigheten nu presenterar gäller för perioden 20 december till den 20 mars 2022."
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2021/december/skarpta-krav-vid-inresa-till-sverige/
+Skärpta krav vid inresa till Sverige
+16 DECEMBER 2021
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2021/september/manga-restriktioner-tas-bort-den-29-september/
+Många restriktioner tas bort den 29 september
+07 SEPTEMBER 2021
+
+https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2021/mars/inga-lattnader-av-restriktioner-i-april/
+Förslag: Inga lättnader av restriktioner i april
+i artikeln: "Folkhälsomyndigheten föreslår därför att datumet för när vissa verksamheter ska kunna öppna upp skjuts fram till den 3 maj"
+
+
+Folkhälsomyndigheten "aktuella utbrott"
+
+https://www.folkhalsomyndigheten.se/smittskydd-beredskap/utbrott/aktuella-utbrott/covid-19/skydda-dig-och-andra/atgarder-mot-covid-19/
+Åtgärder mot covid-19 i februari
+i artikeln: "Flera åtgärder mot covid-19 förstärks eller tillkommer i januari."
+
+
+regeringen.se artiklar /datum 
+
+kan söka och filtrera (Social­departementet):
+https://www.regeringen.se/artiklar
+
+https://www.regeringen.se/artiklar/2021/09/fler-restriktioner-tas-bort-fran-och-med-den-29-september/
+Fler restriktioner tas bort från och med den 29 september
+
+https://www.regeringen.se/artiklar/2022/01/restriktioner-kvar-i-ytterligare-tva-veckor/
+Publicerad 26 januari 2022
+Restriktioner kvar i ytterligare två veckor
+
+regeringen pressmeddelanden 
+https://www.regeringen.se/pressmeddelanden/2022/01/skarpta-smittskyddsatgarder-infors-den-12-januari-2022/
+Skärpta smittskyddsåtgärder införs den 12 januari 2022
+
+https://www.regeringen.se/pressmeddelanden/2021/11/regeringen-foreslar-forlangning-av-covid-19-lagen-och-lagen-om-tillfalliga-smittskyddsatgarder-pa-serveringsstallen-till-och-med-sista-maj-2022/
+Regeringen föreslår förlängning av covid-19-lagen och lagen om tillfälliga smittskyddsåtgärder på serveringsställen till och med sista maj 2022
+Publicerad 18 november 2021
+
+
