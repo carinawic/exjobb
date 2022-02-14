@@ -1,0 +1,3 @@
+scrapa efter ord som "covid restriktioner den __ {månad}"
+upphävs, skärps, åtgärder, restriktioner (basera på ett synonymlexikon och lägg till alla synonymer manuellt i en array)
+fånga alla dessa:

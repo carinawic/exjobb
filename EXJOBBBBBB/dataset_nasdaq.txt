@@ -1,8 +1,0 @@
-NASDAQ
-
-https://www.nasdaq.com/market-activity/index/comp/historical
-- can download data as csv 
-[Date,Close/Last,Volume,Open,High,Low]
-daily data from 02/02/2012 until current date
-
-Resonera varför det skulle vara kopplat till flygresor

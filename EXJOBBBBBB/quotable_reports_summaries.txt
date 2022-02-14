@@ -33,6 +33,8 @@ The tourism forecasting competition George Athanasopoulos (2010)
     
     How to measure errors
         MAPE (mean absolute percentage error measure)
+		It measures this accuracy as a percentage
+		The performance of a na ï ve forecasting model should be the baseline for determining whether your values are good. It is irresponsible to set arbitrary forecasting performance targets (such as MAPE < 10% is Excellent, MAPE < 20% is Good) without the context of the forecastability of your data.
             "The MAPE is clearly the most commonly used forecast accuracy measure in the forecasting literature. Hyndman and Koehler (2006) provide some warnings regarding this measure and highlight the conditions under which it is unsuitable and should not be used"
             Problem
                 Only defined for non-zero values, and percentage errors assumes a "meaningful zero" - but none of these issues were relevant in the current report.
@@ -112,6 +114,26 @@ Time series Forecast of Call volume in Call Centre using Statistical and Machine
                         https://www.youtube.com/watch?v=S27pHKBEp30
                     Transformers were introduced 2017 (super recently!)
                     They work much like RNN but input can be sent in parallel. 
+
+LSTM 
+	(is an artificial recurrent neural network (RNN)), used in deep learning
+	Unlike standard feedforward neural networks, LSTM has feedback connections.
+	(can do it via Keras)
+	RNNs = Recurrent neural network
+	sequential memory 
+	LSTM: Long short-term memory
+		invented by Hochreiter and Schmidhuber in 1997
+		Around 2007, LSTM started to revolutionize speech recognition,
+			outperforming traditional models (https://en.wikipedia.org/wiki/Recurrent_neural_network)
+
+LSTM vs ARIMA
+	The LSTM is great at detecting seasonality because it often has autocorrelation.
+	https://machinelearningmastery.com/suitability-long-short-term-memory-networks-time-series-forecasting/
+	Someone on the internet said
+		LSTM’s have an advantage over more classical statistical approaches like ARIMA : they can fit non-linear functions
+		LSTM works better if we are dealing with huge amount of data and enough training data is available, while ARIMA is better for smaller datasets (we have growing data)
+			https://datascience.stackexchange.com/questions/12721/time-series-prediction-using-arima-vs-lstm
+			(The biggest problem with RNN in general (including LSTM) is that they are hard to train due to gradient exploration and gradient vanishing problem. The practical limit for LSTM seems to be around 200~ steps with standard gradient descent and random initialization)
 
 Basis for choice of model for Sentiment Analysis:
     Detecting hate speech on Twitter, A comparative study on the naive Bayes classifier (bachelor thesis)

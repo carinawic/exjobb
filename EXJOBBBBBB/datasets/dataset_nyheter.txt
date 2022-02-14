@@ -1,0 +1,9 @@
+nyhetsaggregator omni
+
+gör en sentimentalanalys där varje nyhet får ett sentimentalvärde:
+
+"nu ska vi oroa oss för covid" - kolla efter saker som "skärpta restriktioner", "covid dödsfall smittofall", "forskare varnar"
+"nu ska vi inte flyga" - kolla efter saker som "flyg inställda", "stanna hemma" 
+"nu kan vi slappna av" - kolla efter saker som "restriktioner upphävs"
+
+se hur detta påverkar data en tid efter att nyheten släpps

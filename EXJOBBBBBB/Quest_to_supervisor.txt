@@ -1,0 +1,29 @@
+Tidsplan, är jag i fas?
+Introduction v 8 och background v 10. Kan inte vänta 5 veckor.
+
+Börjarn på 4e veckan
+
+ARIMA: 
+
+Bra resultat i 
+The tourism forecasting competition
+Department of Econometrics and Business Statistics and Tourism Research Unit,
+Monash University, VIC 3800, Australia.
+
+LSTM (Long Short-Term Memory) 1997
+How LSTM networks solve the problem of vanishing gradients
+
+recurrent neural network (RNN), LSTM has feedback connections.
+
+LSTM vs ARIMA
+	LSTM = bätter för stora datamängder -> växande data 
+	"LSTM is dead. Long Live Transformers!" (transformers = 2017)
+		de tyckte att LSTM är för långsamt
+
+Företaget vill att jag kollar på covid
+restriktionerna släpper i sverige, covid är irrelevant
+
+Läs igenom min individuella plan
+
+GRU-noder, förenkling av LSTM-noder (4 interna ates är för mycket)
+
