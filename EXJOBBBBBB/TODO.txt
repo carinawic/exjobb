@@ -1,6 +1,19 @@
+aggregate marketing into the list given by pierre and mattias
+base it on screenshots from that website
+
+weather = top importance according to mattias
+
+especially important in summer
+
+"resturctions opening up in" (top 5 places) us thailand great britain turkey greece
+
+for omni : only look back at previous compilation about covid and use their dates
+
+traffic stops at: mello, sport events, world cup final, terror attack - no need to market oneself then for a few hours.
+
+
+
 TODO:
-    individual plan! Project plan/specification with Erik’s support
-    Registrering till examensarbetet så fort vettigen kommer in - maila då också till Pawel
 
     (tävling) challenges - tidsserier model sentiment
         Vilka modeller har presterat bra? Använd det som bas för att välja modell.

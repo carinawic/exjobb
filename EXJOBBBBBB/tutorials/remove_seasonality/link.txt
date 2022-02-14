@@ -1,0 +1,40 @@
+1. find the seasonalities by
+- looking at the data
+- following these tutorials
+
+find and remove seasonality? Do this first to analyze if the data is even seasonal weekly and yearly, (clearly yearly)
+https://coderzcolumn.com/tutorials/data-science/how-to-remove-trend-and-seasonality-from-time-series-data-using-python-pandas
+https://machinelearningmastery.com/time-series-seasonality-with-python/#:~:text=Removing%20Seasonality&text=The%20model%20of%20seasonality%20can,referred%20to%20as%20non%2Dstationary.
+
+LSTM Keras
+
+(pollution each hour for five years at the US embassy in Beijing, China.)
+multivariate time series using LSTM, Keras.
+https://machinelearningmastery.com/multivariate-time-series-forecasting-lstms-keras/
+
+Try to fit ARIMAS on it with yearly OR weekly seasonality (depending on the results from 1)
+
+Then optimize the ARIMA to fit seasonality (SARIMA, VARMA?)
+
+ARIMA for multivariate data here? aka VARMA
+https://analyticsindiamag.com/a-guide-to-varma-with-auto-arima-in-time-series-modelling/
+
+How to do multi seasonal data with ARIMA:
+https://stackoverflow.com/questions/50711771/multiple-seasonality-time-series-analysis-in-python
+
+SARIMA is designed for single seasonality
+we can try Fourier terms
+or removing a seasonality like the week (depending on results from 1)
+
+
+What else are there: (for the report)
+
+TBABS - another method
+https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
+
+prophet - can also do multivariate analysis
+https://facebook.github.io/prophet/docs/installation.html
+
+https://facebook.github.io/prophet/docs/seasonality,_holiday_effects,_and_regressors.html
+"Prophet will by default fit weekly and yearly seasonalities, if the time series is more than two cycles long. It will also fit daily seasonality for a sub-daily time series"
+
