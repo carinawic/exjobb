@@ -1,7 +1,3 @@
-Tidsplan, är jag i fas?
-Introduction v 8 och background v 10. Kan inte vänta 5 veckor.
-
-Börjarn på 4e veckan
 
 ARIMA: 
 
@@ -19,11 +15,7 @@ LSTM vs ARIMA
 	LSTM = bätter för stora datamängder -> växande data 
 	"LSTM is dead. Long Live Transformers!" (transformers = 2017)
 		de tyckte att LSTM är för långsamt
+	LSTM är bra på att hitta effekter efter långt "lag" i tid
 
-Företaget vill att jag kollar på covid
-restriktionerna släpper i sverige, covid är irrelevant
-
-Läs igenom min individuella plan
-
-GRU-noder, förenkling av LSTM-noder (4 interna ates är för mycket)
+Kolla på GRU-noder i LSTM: förenkling av LSTM-noder (4 interna ates är för mycket)
 

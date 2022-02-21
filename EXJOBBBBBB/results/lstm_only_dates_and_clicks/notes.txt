@@ -1,0 +1,8 @@
+
+
+# mask before covid
+mask3 = (df_complete.iloc[:, 0] > '2016-01-01') & (df_complete.iloc[:, 0] <= '2020-02-19')
+
+# mask during covid, after this date is NAN-clickouts
+mask3 = (df_complete.iloc[:, 0] > '2020-02-19') & (df_complete.iloc[:, 0] <= '2021-12-01')
+

@@ -1,0 +1,45 @@
+statistical significance in comparing cm models
+
+Background
+https://machinelearningmastery.com/statistical-significance-tests-for-comparing-machine-learning-algorithms
+https://machinelearningmastery.com/use-statistical-significance-tests-interpret-machine-learning-results/
+
+Model A considering only seasonality and media investment
+- Accuracy 60%
+
+Model B (Model A with added Weather)
+- Accuracy 70%
+
+Model C (Model A with added Covid)
+- Accuracy 70%
+
+Model D (Model A with Weather AND Covid)
+- Accuracy 70%
+
+Model E (Model A with News)
+- Accuracy 70%
+
+
+...
+
+modified paired Student’s t-test
+using the proposed method by Nadeau and Bengio
+
+the null hypothesis is that there is no difference in performance between the two ML models
+
+We get a p-value 
+https://medium.com/analytics-vidhya/using-the-corrected-paired-students-t-test-for-comparing-the-performance-of-machine-learning-dc6529eaa97f
+
+calculating accuracy using LSTM and building an LSTM model for predicting gender of a german name
+https://towardsdatascience.com/choosing-the-right-hyperparameters-for-a-simple-lstm-using-keras-f8e9ed76f046
+
+leftovers:
+
+Feature importance
+
+Assess how much the additional features each affect the predictive of the model using the methods:
+Mean Decrease Accuracy (MDA)
+Calculate an accuracy score for the model using all features. Then, one feature at the time, scramble that feature and calculate the decrease in accuracy.
+Single Feature Importance (SFI)
+For each feature, consider only one feature, then calculate the accuracy of the model when using only that feature. 
+

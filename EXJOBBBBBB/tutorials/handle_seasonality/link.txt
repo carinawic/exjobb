@@ -26,7 +26,6 @@ SARIMA is designed for single seasonality
 we can try Fourier terms
 or removing a seasonality like the week (depending on results from 1)
 
-
 What else are there: (for the report)
 
 TBABS - another method

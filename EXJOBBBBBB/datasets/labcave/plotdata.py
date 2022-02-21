@@ -84,13 +84,10 @@ def plot_media_and_clickouts_together():
     df2 = pd.read_csv('media_imprs.csv')
     df2['sum_total'] = df2.sum(axis=1)
 
-    format = '%Y-%m-%d'
-    startdate = datetime.datetime.strptime("2021-11-24", format)
-    enddate = datetime.datetime.strptime("2021-11-30", format)
 
     df3 = pd.read_csv('Time.csv')
-    mask1 = (df1.iloc[:, 0] > '2016-01-01') & (df1.iloc[:, 0] <= '2021-12-01')
-    mask2 = (df2.iloc[:, 0] > '2016-01-01') & (df2.iloc[:, 0] <= '2021-12-01')
+    mask1 = (df1.iloc[:, 0] > '2016-01-01') & (df1.iloc[:, 0] <= '2021-12-01') # 2021-12-01
+    mask2 = (df2.iloc[:, 0] > '2016-01-01') & (df2.iloc[:, 0] <= '2021-12-01') # 2020-02-19
     mask3 = (df3.iloc[:, 0] > '2016-01-01') & (df3.iloc[:, 0] <= '2021-12-01')
     
     print("df1")

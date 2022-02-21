@@ -1,17 +1,5 @@
-
-
 conda activate new_csm
 python Train_baseline_snippet.py
-
-
-challenges - tidsserier model sentiment
-LSTM
-Transformers
-time series prediction, tidsserieprediktion 
-
-https://www.youtube.com/watch?v=TQQlZhbC5ps
-https://www.youtube.com/watch?v=xI0HHN5XKDo
-https://www.youtube.com/c/joshstarmer
 
 How to run the code
 
@@ -39,7 +27,6 @@ websites/se/Data/Time.csv
 
 websites/se/Data/Media.p 
 	includes all the marketing data
-
 
 --
 

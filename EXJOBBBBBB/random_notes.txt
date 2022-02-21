@@ -1,20 +1,15 @@
+To write in the report
+
 aggregate marketing into the list given by pierre and mattias
 base it on screenshots from that website
 
 weather = top importance according to mattias
-
 especially important in summer
-
 "resturctions opening up in" (top 5 places) us thailand great britain turkey greece
-
 for omni : only look back at previous compilation about covid and use their dates
-
 traffic stops at: mello, sport events, world cup final, terror attack - no need to market oneself then for a few hours.
 
-
-
 TODO:
-
     (tävling) challenges - tidsserier model sentiment
         Vilka modeller har presterat bra? Använd det som bas för att välja modell.
 
@@ -23,24 +18,5 @@ TODO:
         Om man vet (från sentimentalanalys eller motsvarande) att restriktionerna kommer lyfta ett datum, förutspå effekten av det
         Kolla historiskt data av nyhetsaggregator - sök efter "restriktioner lyfts" eller "nya restriktioner", 
         se vad detta har haft för effekt historiskt.
-
-Programming notes
-
-    install conda
-    follow Pierre's instructions
-    python3 Train...
-    nltk.corpus package, natural languaging toolkit in python 
-
-Research questions
-    hur mycket bättre är en ml modell med samma data
-    feature importance, lägg till eller ta bort ett värde i taget och se hur det påverkar 
-    eller: stoppa in medianvärdet hela tiden
-    hur mycket bättre är en ml modell med tillagda värden
-
-    analysera relativa förändringar i % pga faktor, kodning av data 
-
-    ANN arkitektur, antal lager, 
-    hyperparametrar mot grunddata,
-    covarierar med väder 
 
 

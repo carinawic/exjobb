@@ -1,6 +1,6 @@
 from tbats import TBATS, BATS
 
-import "github.com/intive-DataScience/tbats"
+import requests
 
 # Fit the model
 estimator = TBATS(seasonal_periods=(7, 365.25))
