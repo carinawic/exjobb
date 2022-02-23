@@ -109,15 +109,33 @@ def workingexample():
     testPredict = model.predict(Xtest)
 
     # invert predictions WHY??
-    trainPredict = scaler.inverse_transform(trainPredict)
-    ytrain = scaler.inverse_transform([ytrain])
-    testPredict = scaler.inverse_transform(testPredict)
-    ytest = scaler.inverse_transform([ytest])
+    
+    print("before")
+    print(trainPredict)
+    print(ytrain)
+    print(testPredict)
+    print(ytest)
+
+    #trainPredict = scaler.inverse_transform(trainPredict)
+    #ytrain = scaler.inverse_transform([ytrain])
+    #testPredict = scaler.inverse_transform(testPredict)
+    #ytest = scaler.inverse_transform([ytest])
+
+    trainPredict = numpy.array(trainPredict,dtype=float)
+    ytrain = numpy.array(ytrain,dtype=float)
+    testPredict = numpy.array(testPredict,dtype=float)
+    ytest = numpy.array(ytest,dtype=float)
+    
+    print("after")
+    print(trainPredict)
+    print(ytrain)
+    print(testPredict)
+    print(ytest)
 
     # calculate root mean squared error
-    trainScore = math.sqrt(mean_squared_error(ytrain[0], trainPredict[:,0]))
+    trainScore = math.sqrt(mean_squared_error(ytrain, trainPredict))
     print('Train Score: %.2f RMSE' % (trainScore))
-    testScore = math.sqrt(mean_squared_error(ytest[0], testPredict[:,0]))
+    testScore = math.sqrt(mean_squared_error(ytest, testPredict))
     print('Test Score: %.2f RMSE' % (testScore))
 
     """
