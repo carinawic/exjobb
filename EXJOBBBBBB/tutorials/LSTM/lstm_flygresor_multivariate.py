@@ -14,7 +14,7 @@ click_outs = []
 week = []
 clicks_media = []
 impr_media = []
-trainTestLimit = 5 # 1000
+trainTestLimit = 1000
 
 # TODO: 
 # 1. add marketing (and maybe week) to click_outs and put graphs into document
@@ -28,6 +28,7 @@ trainTestLimit = 5 # 1000
 #
 # add weather as input to model
 
+np.random.seed(0)
 
 def unpickle_data_as_Impr():
 
@@ -113,42 +114,43 @@ def workingexample():
     dataset = scaler.fit_transform(dataset)
     # split into train and test sets
 
-    look_back = 2
-    n_features = 2
+    look_back = 5
+    n_features = 1
 
     # define input sequence
-    in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
-    in_seq2 = np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
-    out_seq = np.array([in_seq1[i]+in_seq2[i] for i in range(len(in_seq1))])
+    #in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
+    #in_seq2 = np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
+    #out_seq = np.array([in_seq1[i]+in_seq2[i] for i in range(len(in_seq1))])
 
-    #pop(0)
-    in_seq1 = in_seq1[1:]
-    in_seq2 = in_seq2[1:]
-    out_seq = out_seq[:-1]
-
+    
     #click_outs = []
     #week = []
     #clicks_media = []
     #impr_media = []
         
-    #in_seq1 = click_outs# clicks_media
-    #in_seq2 = click_outs# impr_media
-    #out_seq = click_outs
+    #in_seq1 = clicks_media# clicks_media
+    #in_seq2 = impr_media# impr_media
+    in_seq2 = week# impr_media
+    out_seq = click_outs
+
+    #pop(0)
+    #in_seq1 = in_seq1[1:]
+    in_seq2 = in_seq2[1:]
+    out_seq = out_seq[:-1]
 
     # convert to [rows, columns] structure
-    in_seq1 = in_seq1.reshape((len(in_seq1), 1))
+    #in_seq1 = in_seq1.reshape((len(in_seq1), 1))
     in_seq2 = in_seq2.reshape((len(in_seq2), 1))
     out_seq = out_seq.reshape((len(out_seq), 1))
 
     # horizontally stack columns
-    dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
+    #dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
+    dataset_stacked = np.hstack((in_seq2, out_seq))
 
     Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, trainTestLimit)
     #print("shapes")
     #print(Xtrain.shape, ytrain.shape)
     #print(Xtest.shape, ytest.shape)
-
-
 
     model = Sequential()
     model.add(LSTM(50, activation='relu', input_shape=(look_back, n_features+1))) 
@@ -156,7 +158,7 @@ def workingexample():
     model.compile(optimizer='adam', loss='mse')
 
     # fit model
-    model.fit(Xtrain, ytrain, epochs=50, batch_size=1, verbose=2)
+    model.fit(Xtrain, ytrain, epochs=100, batch_size=1, verbose=2)
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
 
@@ -195,7 +197,7 @@ def workingexample():
     
     # plotting training prediction trainPredict
     trainPredictFlatten = trainPredict.flatten()
-    plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-o', label="train prediction")
+    plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-x', label="train prediction")
     
     #plotting testing data ytest
     plt.plot(
@@ -212,23 +214,3 @@ def workingexample():
 if __name__ == "__main__":
     prepare_data()
     workingexample()
-
-    """
-    in_seq1 = np.array([1,2,3,4,5,6,7,8,9]) # np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
-    in_seq2 = np.array([1,2,3,4,5,6,7,8,9]) # np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
-    # out_seq = np.array([in_seq1[i]+in_seq2[i] for i in range(len(in_seq1))])
-    out_seq = np.array([1,2,3,4,5,6,7,8,9])
-
-    
-    # convert to [rows, columns] structure
-    in_seq1 = in_seq1.reshape((len(in_seq1), 1))
-    in_seq2 = in_seq2.reshape((len(in_seq2), 1))
-    out_seq = out_seq.reshape((len(out_seq), 1))
-
-    # horizontally stack columns
-    dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
-
-    x = split_sequences(dataset_stacked, 2, trainTestLimit)
-
-    print(x)
-    """
