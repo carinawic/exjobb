@@ -16,17 +16,56 @@ clicks_media = []
 impr_media = []
 trainTestLimit = 1000
 
-# TODO: 
-# 1. add marketing (and maybe week) to click_outs and put graphs into document
-# do for covid and post-covid separately
-# 
-# 2. get weather dataset
-# plot weather next to clickouts
-# 
-# calculate p-value for every extreme weather effect 
-# "extreme snow" - clickouts, "not extreme snow" - clickouts
-#
-# add weather as input to model
+"""
+Search:
+['Media_Bing_lowerfunnel_search_brand',
+ 'Media_Bing_midfunnel_search_midbrand',
+ 'Media_Bing_upperfunnel_search_nobrand',
+ 'Media_Google_lowerfunnel_search_brand',
+ 'Media_Google_midfunnel_search_midbrand',
+ 'Media_Google_upperfunnel_search_nobrand']
+Inactive:
+['Media_Google_video_lowerfunnel_Youtube',
+ 'Media_Google_video_upperfunnel_Youtube',
+ 'Media_Youtube_Masthead_upperfunnel_video',
+ 'Media_Online_radio_upperfunnel',
+ 'Media_Radio_upperfunnel',
+ 'Media_TV_upperfunnel',
+ 'Media_DBM_upperfunnel_video',
+ 'Media_DC_DBM_upperfunnel_video',
+ 'Media_MediaMath_upperfunnel_video',
+ 'Media_Snapchat_upperfunnel_video',
+ 'Media_Tiktok_upperfunnel_video',
+ 'Media_Eurosize_upperfunnel_OOH_JCD',
+ 'Media_Eurosize_upperfunnel_OOH_VA']
+Active:
+['Media_Adwell_upperfunnel_native',
+ 'Media_DBM_lowerfunnel_display',
+ 'Media_DBM_midfunnel_display',
+ 'Media_DBM_upperfunnel_display',
+ 'Media_Facebook_lowerfunnel_display',
+ 'Media_Facebook_lowerfunnel_video',
+ 'Media_Facebook_upperfunnel_display',
+ 'Media_Facebook_upperfunnel_video',
+ 'Media_Flygstart_upperfunnel_newsletter',
+ 'Media_Google_lowerfunnel_display',
+ 'Media_Google_midfunnel_display',
+ 'Media_Google_upperfunnel_display',
+ 'Media_HejSenior_upperfunnel_newsletter',
+ 'Media_Instagram_lowerfunnel_display',
+ 'Media_Instagram_lowerfunnel_video',
+ 'Media_Instagram_upperfunnel_display',
+ 'Media_Instagram_upperfunnel_video',
+ 'Media_LinkedIn_upperfunnel_display',
+ 'Media_Newsletter_lowerfunnel',
+ 'Media_Newsner_midfunnel_native',
+ 'Media_Secreteescape_midfunnel_display',
+ 'Media_Smarter_Travel_upperfunnel_affiliate',
+ 'Media_Snapchat_upperfunnel_display',
+ 'Media_Sociomantic_lowerfunnel_retarg_display',
+ 'Media_Sociomantic_upperfunnel_prospecting_display',
+ 'Media_TradeTracker_upperfunnel_affiliate']
+"""
 
 np.random.seed(0)
 

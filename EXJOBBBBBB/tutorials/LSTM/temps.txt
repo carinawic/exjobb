@@ -1,0 +1,1 @@
+https://opendata-download-metobs.smhi.se/inspire/parameter/2/station/97400/period/corrected-archive.gml
