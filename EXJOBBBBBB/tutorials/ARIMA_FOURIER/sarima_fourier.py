@@ -44,9 +44,8 @@ def working():
     y_to_train = y.iloc[:(len(y)-365)]
     y_to_test = y.iloc[(len(y)-365):] # last year for testing
 
-
     
-    # creating the curve polnomial
+    # creating the 8-degree curve polnomial curve
     X = [i%365 for i in range(0, len(y.values))]
     y_vals = y.values
     degree = 8
@@ -60,40 +59,11 @@ def working():
             value += X[i]**(degree-d) * coef[d]
         curve.append(value)
     
+    # printing the 8-degree curve polynomial
     #plt.plot( range(len(y_to_train)), y_to_train, color='green')
     #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='green')
     #plt.plot( range(len(curve)), curve, color='black', linewidth=3)
        
-        
-
-    
-
-    #plt.show()
-
-    # prepare Fourier terms
-    #exog = pd.DataFrame({'date': y.index})
-    #exog = exog.set_index(pd.PeriodIndex(exog['date'], freq='D'))
-    #exog['weekly'] = a
-    #exog = exog.drop(columns=['date'])
-    #exog_to_train = exog.iloc[:(len(y)-365)]
-    #exog_to_test = exog.iloc[(len(y)-365):]
-
-    # Fit model
-    #arima_exog_model = auto_arima(y=y_to_train, exogenous=exog_to_train, seasonal=True, m=7)
-    # Forecast
-    #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365, exogenous=exog_to_test)
-
-    #print(arima_exog_model.summary())
-   
-    # plot curve over original data
-  
-    
-    #plt.plot( range(len(curve)), curve, color='black')
-
-    #exog = pd.DataFrame({'date': y.index})
-    #exog = exog.set_index(pd.PeriodIndex(exog['date'], freq='D'))
-    #exog['passengers'] = y
-
     
     
     decompose_result = seasonal_decompose(y, model="additive", period=365)
@@ -106,41 +76,60 @@ def working():
     #plt.plot( range(len(trend)), trend, color='black')
     #plt.plot( range(len(seasonal)), seasonal, color='green')
     #plt.plot( range(365,365*2),seasonal[:365], color='blue')
-    m,b = np.polyfit(range(len(trend)),trend,1)
+
+    m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
+    
     #plt.plot(range(len(trend)),m*range(len(trend))+b, color='purple')
     #plt.plot(range(len(trend)),m*np.log(range(len(trend)))+b, color='green')
     
     clickouts = np.array(y.values)
 
+
     clickouts_wo_trend = []
     clickouts_wo_trend_or_seasonality = []
-    moving_average = []
-
     
     seasonal = [x for x in seasonal if not x is(None)] # remove None values
 
-    print("seasonal")
-    print(len(seasonal))
-    print("clickouts")
-    print(len(clickouts))
-
-    # first remove trend, then remove seasonality!! because otherwise the seasonality is skewed and tricky
-
-    
-
+    # creating the datasets without seasonality or trend
     for i,real_val in enumerate(clickouts):
-        #print(real_val)
-        #print((m*i+b))
-        #print(seasonal[i])
-        #preprocessed_clickouts.append(real_val - (m*i+b) - seasonal[i])
         
-
         clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
         clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i] + b)
-        #moving_average.append((m*i+b) + curve[i])
 
-    """
+
+
+    ### SARIMAX model making forecast without seasonality or trend ###
+
+    cl_train = clickouts_wo_trend_or_seasonality[:len(clickouts_wo_trend_or_seasonality)-365]
+    cl_test = clickouts_wo_trend_or_seasonality[len(clickouts_wo_trend_or_seasonality)-365:]
+
+    arima_exog_model = auto_arima(y=cl_train, seasonal=True, m=7)
+    y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
+
+    print("y_arima_exog_forecast")
+    print(y_arima_exog_forecast)
+    print(type(y_arima_exog_forecast))
+
+    y_arima_exog_forecast_with_trend = []
+    y_arima_exog_forecast_with_trend_and_seasonality = []
+
+    #print(arima_exog_model.summary())
+
+    for i in range(len(y_arima_exog_forecast)): # go through the forecast
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i)
+    #    y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend + curve[i] - b)
+
+
+    
+    plt.plot( range(len(y_arima_exog_forecast_with_trend)), y_arima_exog_forecast_with_trend, color='blue')
+    #plt.plot( range(len(y_vals)), y_vals, color='green')
+    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
+
+    
+    ### SARIMAX model compensating with added seasonality and trend ###
+
     # plotting data without seasonality or trend!
+    """
     fig, axs = plt.subplots(3)
     fig.suptitle('Removing trend and seasonality')
     axs[0].plot( range(len(y_to_train)), y_to_train, color='green')
@@ -158,24 +147,6 @@ def working():
     
     """
     
-    
-   
-
-    #plt.plot( range(len(y_to_train)), y_to_train, color='green')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='green')
-    #plt.plot( range(len(clickouts_wo_trend)), clickouts_wo_trend, color='black')
-    #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='orange')
-
-    #plt.plot(range(len(preprocessed_clickouts)), preprocessed_clickouts, color='green')
-
-    #plt.plot( range(len(y_to_train)), y_to_train, color='green')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='green')
-    #plt.plot(range(len(curve)), curve, color='red')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast, color="red")
-    
-    #pyplot.plot(curve, color='black', linewidth=3)
-
-    #plt.plot( a, color="yellow")
     plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
