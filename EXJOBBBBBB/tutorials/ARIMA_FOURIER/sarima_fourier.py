@@ -12,6 +12,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 from pandas import read_csv
 from matplotlib import pyplot
 from numpy import polyfit
+from sklearn.metrics import mean_squared_error,  mean_absolute_error, mean_absolute_percentage_error
 
 # https://stackoverflow.com/questions/49235508/statsmodel-arima-multiple-input
 # https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
@@ -48,7 +49,7 @@ def working():
     # creating the 8-degree curve polnomial curve
     X = [i%365 for i in range(0, len(y.values))]
     y_vals = y.values
-    degree = 8
+    degree = 16 # 8 looked reasonable
     coef = polyfit(X, y_vals, degree)
     print('Coefficients: %s' % coef)
     # create curve
@@ -116,14 +117,22 @@ def working():
     #print(arima_exog_model.summary())
 
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i)
-    #    y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend + curve[i] - b)
-
+        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i)
+        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast[i] + curve[i] - b)
+       
 
     
-    plt.plot( range(len(y_arima_exog_forecast_with_trend)), y_arima_exog_forecast_with_trend, color='blue')
-    #plt.plot( range(len(y_vals)), y_vals, color='green')
+
+    
+    #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue')
+    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='green')
+    
+    plt.plot( range(len(y_vals)), y_vals, color='green')
+    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='purple')
+    plt.plot( range(len(curve)), curve, color='orange')
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
+    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='yellow')
 
     
     ### SARIMAX model compensating with added seasonality and trend ###
@@ -146,6 +155,18 @@ def working():
 
     
     """
+
+
+    # calculate root mean squared error
+    # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+    testScore = math.sqrt(mean_squared_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality))
+    print('Test Score: %.2f RMSE' % (testScore))
+
+    testScore = mean_absolute_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality)
+    print('Test Score: %.2f MAE' % (testScore))
+
+    testScore = mean_absolute_percentage_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality)
+    print('Test Score: %.2f MAPE' % (testScore))
     
     plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
