@@ -14,6 +14,10 @@ from matplotlib import pyplot
 from numpy import polyfit
 from sklearn.metrics import mean_squared_error,  mean_absolute_error, mean_absolute_percentage_error
 
+from pandas import read_csv
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 # https://stackoverflow.com/questions/49235508/statsmodel-arima-multiple-input
 # https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
 # https://www.quora.com/How-does-multivariate-ARIMA-work
@@ -107,7 +111,7 @@ def working():
     for i,real_val in enumerate(clickouts):
         
         clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
-        clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i] + b)
+        clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i])
 
     
     print("len(clickouts_wo_trend_or_seasonality)")
@@ -118,8 +122,21 @@ def working():
     cl_train = clickouts_wo_trend_or_seasonality[:len(clickouts_wo_trend_or_seasonality)-365]
     cl_test = clickouts_wo_trend_or_seasonality[len(clickouts_wo_trend_or_seasonality)-365:]
 
-    arima_exog_model = auto_arima(y=cl_train, seasonal=True, m=7)
-    y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
+    #arima_exog_model = auto_arima(y=cl_train, seasonal=False, m=7) ##TODO set true
+    #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
+
+    model = SARIMAX(cl_train, order=(2,0,1), seasonal_order=(2,0,1,7))
+    model_fit = model.fit()
+
+    print(len(y_to_train))
+    # one-step out-of sample forecast
+    #y_arima_exog_forecast = model_fit.predict(1145,1509)
+    y_arima_exog_forecast = model_fit.forecast(steps=365)
+
+    
+
+    print("length of y_arima_exog_forecast")
+    print(len(y_arima_exog_forecast))
 
 
     y_arima_exog_forecast_with_trend = []
@@ -136,34 +153,37 @@ def working():
     #y_arima_exog_forecast = cl_test # this is the best case scenario forecast, the test data without trend or seasonality
     # (will give 0 RMSE)
 
+    #minus_twenty = clickouts_wo_trend[0] - curve[0]
+    #y_arima_exog_forecast = np.ones(365)*minus_twenty
+
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
         y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
-        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i]-b)
+        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
        
     print("len(y_arima_exog_forecast_with_trend_and_seasonality)")
     print(len(y_arima_exog_forecast_with_trend_and_seasonality))
 
-    
-    
     print("len(y_arima_exog_forecast_with_trend_and_seasonality)")
     print(len(y_arima_exog_forecast_with_trend_and_seasonality))
 
-    
-    
     print("len(y_to_test)")
     print(len(y_to_test))
 
-    
-    
     #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue')
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='green')
     
-    plt.plot( range(len(y_vals)), y_vals, color='green')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    plt.plot( range(len(curve)), curve, color='orange')
-    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
-    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='yellow')
+
+    # good plots
+    #plt.plot( range(len(y_vals)), y_vals, color='green')
+    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
+    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    #plt.plot( range(len(curve)), curve, color='orange')
+    
+
+    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
+    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='green')
+
+    plt.plot( range(len(cl_train)), cl_train, color='yellow')
 
     
     ### SARIMAX model compensating with added seasonality and trend ###
