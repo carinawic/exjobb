@@ -46,6 +46,10 @@ def working():
     y_to_test = y.iloc[(len(y)-365):] # last year for testing
 
     
+    print("len(y_to_test)")
+    print(len(y_to_test))
+
+    
     # creating the 8-degree curve polnomial curve
     X = [i%365 for i in range(0, len(y.values))]
     y_vals = y.values
@@ -59,6 +63,11 @@ def working():
         for d in range(degree):
             value += X[i]**(degree-d) * coef[d]
         curve.append(value)
+
+    
+    print("len(y_vals)")
+    print(len(y_vals))
+    
     
     # printing the 8-degree curve polynomial
     #plt.plot( range(len(y_to_train)), y_to_train, color='green')
@@ -85,6 +94,9 @@ def working():
     
     clickouts = np.array(y.values)
 
+    
+    print("len(clickouts)")
+    print(len(clickouts))
 
     clickouts_wo_trend = []
     clickouts_wo_trend_or_seasonality = []
@@ -97,7 +109,9 @@ def working():
         clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
         clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i] + b)
 
-
+    
+    print("len(clickouts_wo_trend_or_seasonality)")
+    print(len(clickouts_wo_trend_or_seasonality))
 
     ### SARIMAX model making forecast without seasonality or trend ###
 
@@ -107,29 +121,46 @@ def working():
     arima_exog_model = auto_arima(y=cl_train, seasonal=True, m=7)
     y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
 
-    print("y_arima_exog_forecast")
-    print(y_arima_exog_forecast)
-    print(type(y_arima_exog_forecast))
 
     y_arima_exog_forecast_with_trend = []
     y_arima_exog_forecast_with_trend_and_seasonality = []
 
     #print(arima_exog_model.summary())
 
-    for i in range(len(y_arima_exog_forecast)): # go through the forecast
-        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i)
-        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast[i] + curve[i] - b)
-       
+
+    i_test_values = range(len(y_vals)-365, len(y_vals))
+    curve_test = curve[-365:]
 
     
+    
+    #y_arima_exog_forecast = cl_test # this is the best case scenario forecast, the test data without trend or seasonality
+    # (will give 0 RMSE)
 
+    for i in range(len(y_arima_exog_forecast)): # go through the forecast
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
+        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i]-b)
+       
+    print("len(y_arima_exog_forecast_with_trend_and_seasonality)")
+    print(len(y_arima_exog_forecast_with_trend_and_seasonality))
+
+    
+    
+    print("len(y_arima_exog_forecast_with_trend_and_seasonality)")
+    print(len(y_arima_exog_forecast_with_trend_and_seasonality))
+
+    
+    
+    print("len(y_to_test)")
+    print(len(y_to_test))
+
+    
     
     #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue')
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='green')
     
     plt.plot( range(len(y_vals)), y_vals, color='green')
-    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='purple')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
     plt.plot( range(len(curve)), curve, color='orange')
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='yellow')
@@ -159,13 +190,13 @@ def working():
 
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
-    testScore = math.sqrt(mean_squared_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality))
+    testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
     print('Test Score: %.2f RMSE' % (testScore))
 
-    testScore = mean_absolute_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality)
+    testScore = mean_absolute_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
     print('Test Score: %.2f MAE' % (testScore))
 
-    testScore = mean_absolute_percentage_error(cl_test, y_arima_exog_forecast_with_trend_and_seasonality)
+    testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
     print('Test Score: %.2f MAPE' % (testScore))
     
     plt.show()
