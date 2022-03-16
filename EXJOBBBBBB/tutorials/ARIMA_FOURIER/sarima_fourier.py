@@ -174,16 +174,16 @@ def working():
     
 
     # good plots
-    #plt.plot( range(len(y_vals)), y_vals, color='green')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    #plt.plot( range(len(curve)), curve, color='orange')
+    plt.plot( range(len(y_vals)), y_vals, color='green')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    plt.plot( range(len(curve)), curve, color='orange')
     
 
-    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
-    plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='green')
-
-    plt.plot( range(len(cl_train)), cl_train, color='yellow')
+    # also good plots
+    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
+    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='green')
+    #plt.plot( range(len(cl_train)), cl_train, color='yellow')
 
     
     ### SARIMAX model compensating with added seasonality and trend ###
