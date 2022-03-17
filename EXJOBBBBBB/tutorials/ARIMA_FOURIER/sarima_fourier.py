@@ -80,7 +80,7 @@ def working():
        
     
     
-    decompose_result = seasonal_decompose(y, model="additive", period=365)
+    decompose_result = seasonal_decompose(y_to_train, model="additive", period=365)
     trend = decompose_result.trend
     seasonal = decompose_result.seasonal
     residual = decompose_result.resid
@@ -125,13 +125,26 @@ def working():
     #arima_exog_model = auto_arima(y=cl_train, seasonal=False, m=7) ##TODO set true
     #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
 
-    model = SARIMAX(cl_train, order=(2,0,1), seasonal_order=(2,0,1,7))
+    #model = SARIMAX(cl_train, order=(2,0,0), seasonal_order=(2,0,0,7), exog = np.zeros(len(cl_train)))
+    model = SARIMAX(cl_train, order=(3,1,2), seasonal_order=(3,1,2,7), exog = np.zeros(len(cl_train)))
     model_fit = model.fit()
+
+    # 2 0 0  -> big to small amplotude, follows max-ampl 5145.37 RMSE
+    # 0 2 0  -> trend enourmosly skewed upwards, inf RMSE
+    # 0 0 2  -> seasonality dies, just one line, 5000 RMSE
+    # 2 0 2  -> looks reasonable, 2900 RMSE
+    # 2 1 2  -> same as above but seem to float upwards, 3000 RMSE
+    # 2 2 2  -> trend enourmosly skews away downwards
+    # 2 0 1  -> 2646 RMSE
+    # 1 0 2  -> 3133 RMSE
+    # 3 0 1  -> 2763 RMSE
+    # change trend to accurately only take into account the training data in the decomposition!
+    # 3,1,2 -> BEST 2890.00 RMSE
 
     print(len(y_to_train))
     # one-step out-of sample forecast
     #y_arima_exog_forecast = model_fit.predict(1145,1509)
-    y_arima_exog_forecast = model_fit.forecast(steps=365)
+    y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[np.zeros(len(cl_test))]])
 
     
 
@@ -146,6 +159,16 @@ def working():
 
 
     i_test_values = range(len(y_vals)-365, len(y_vals))
+    
+
+    offset = 4000
+    curve_with_trend = []
+    print("len(curve)")
+    print(len(curve))
+    
+    for i in range(len(curve)):
+        curve_with_trend.append(curve[i] + m*i)
+
     curve_test = curve[-365:]
 
     
@@ -159,6 +182,8 @@ def working():
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
         y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
+
+        #y_arima_exog_forecast_with_trend_and_seasonality.append(curve_test[i] + y_arima_exog_forecast[i])
        
     print("len(y_arima_exog_forecast_with_trend_and_seasonality)")
     print(len(y_arima_exog_forecast_with_trend_and_seasonality))
@@ -173,11 +198,16 @@ def working():
     #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='green')
     
 
+    trend_line = []
+    for i in range(len(y_vals)):
+        trend_line.append(i*m+b)
+
     # good plots
     plt.plot( range(len(y_vals)), y_vals, color='green')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    plt.plot( range(len(curve)), curve, color='orange')
+    plt.plot( range(len(y_vals)), trend_line, color='orange')
+    plt.plot( range(len(curve)), curve_with_trend, color='black')
     
 
     # also good plots
