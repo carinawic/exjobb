@@ -1,0 +1,91 @@
+LSTM: it takes about 5? minutes to run all 100 epochs, should time this!
+
+We just put in the data
+
+LSTM errors
+
+Figure_1
+Train Score: 1105.37 RMSE
+Test Score: 5851.86 RMSE
+Train Score: 845.68 MAE
+Test Score: 1469.65 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.07 MAPE
+
+Figure_2
+Train Score: 1266.25 RMSE
+Test Score: 1867.72 RMSE
+Train Score: 981.01 MAE
+Test Score: 1185.57 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.05 MAPE
+
+we think that it might be overfitting to one feature
+
+now we normalize the media_input features between 0 and 1 
+normalizing is a good preprocessing step so to prevent that one extreme feature value has big impact on the result 
+
+Figure_3
+Train Score: 2763.43 RMSE
+Test Score: 2939.29 RMSE
+Train Score: 1981.86 MAE
+Test Score: 2096.28 MAE
+Train Score: 0.09 MAPE
+Test Score: 0.09 MAPE
+
+But we lose the outlier
+
+theory: when scaling so narrowly, we lose some precision due to underflow
+
+now we scale (0,30) instead
+
+Figure_4
+Train Score: 2728.17 RMSE
+Test Score: 2917.90 RMSE
+Train Score: 2154.31 MAE
+Test Score: 2338.33 MAE
+Train Score: 0.10 MAPE
+Test Score: 0.10 MAPE
+
+now we scale (0,1000) instead
+Figure_5
+Train Score: 1192.27 RMSE
+Test Score: 1421.99 RMSE
+Train Score: 901.42 MAE
+Test Score: 1003.54 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.04 MAPE
+
+better accuracy but we see the one outlier around 1020
+
+running experiment again
+
+
+better accuracy but we see the one outlier around 1020
+Figure_6
+Same we run again
+Train Score: 1160.75 RMSE
+Test Score: 1297.10 RMSE
+Train Score: 861.87 MAE
+Test Score: 953.83 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.04 MAPE
+
+Figure 7
+scale (0,500)
+Train Score: 1231.28 RMSE
+Test Score: 1359.29 RMSE
+Train Score: 921.20 MAE
+Test Score: 1038.33 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.04 MAPE
+
+Figure 8
+same as 7
+Train Score: 1170.49 RMSE
+Test Score: 1261.96 RMSE
+Train Score: 871.86 MAE
+Test Score: 953.09 MAE
+Train Score: 0.04 MAPE
+Test Score: 0.04 MAPE
+

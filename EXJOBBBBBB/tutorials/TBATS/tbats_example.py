@@ -1,22 +1,37 @@
 from tbats import TBATS
+import pandas as pd
 import numpy as np
 
-# required on windows for multi-processing,
-# see https://docs.python.org/2/library/multiprocessing.html#windows
+def myfun():
+    df = pd.read_csv('kaggle_sales.csv')
+    df = df[(df['store'] == 1) & (df['item'] == 1)] # item 1 in store 1
+    df = df.set_index('date')
+    y = df['sales']
+    y_to_train = y.iloc[:(len(y)-365)]
+    y_to_test = y.iloc[(len(y)-365):] # last year for testing
+
+    ## stack multivariate data
+    feature1_train = np.array(range(y_to_train.size))
+    feature1_test = np.array(range(y_to_test.size))
+
+    # make input into 2 time series
+    data = np.dstack([y_to_train.values, feature1_train])
+
+    print("data")
+    print(data)
+
+
+    # Fit the model
+    estimator = TBATS(seasonal_periods=(7, 365.25))
+    model = estimator.fit(y_to_train)
+    # Forecast 365 days ahead
+    y_forecast = model.forecast(steps=365)
+        # Summarize fitted model
+    print(model.summary())
+
+
+    #print('MAE', np.mean(np.abs(y_forecast - y_to_test)))
+    # multivariate RMSE?
+    
 if __name__ == '__main__':
-    np.random.seed(2342)
-    t = np.array(range(0, 160))
-    y = 5 * np.sin(t * 2 * np.pi / 7) + 2 * np.cos(t * 2 * np.pi / 30.5) + \
-        ((t / 20) ** 1.5 + np.random.normal(size=160) * t / 50) + 10
-    
-    # Create estimator
-    estimator = TBATS(seasonal_periods=[14, 30.5])
-    
-    # Fit model
-    fitted_model = estimator.fit(y)
-    
-    # Forecast 14 steps ahead
-    y_forecasted = fitted_model.forecast(steps=14)
-    
-    # Summarize fitted model
-    print(fitted_model.summary())
+    myfun()

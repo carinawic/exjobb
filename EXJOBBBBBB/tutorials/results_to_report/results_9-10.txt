@@ -1,0 +1,6 @@
+Train Score: 641.53 RMSE
+Test Score: 1197.23 RMSE
+Train Score: 422.42 MAE
+Test Score: 954.80 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE

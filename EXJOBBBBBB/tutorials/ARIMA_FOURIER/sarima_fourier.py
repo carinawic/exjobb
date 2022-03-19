@@ -92,6 +92,28 @@ def working():
     #plt.plot( range(365,365*2),seasonal[:365], color='blue')
 
     m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
+    coefficients = np.polyfit(range(len(trend)),trend,2) # f(x) = m*i + b
+
+    p = np.poly1d(coefficients)
+    print("values")
+    print(p(0))
+    print(p(1))
+
+    logestimate = []
+    linestimate = []
+    for i in range(len(trend)):
+        logestimate.append(p(i))
+    
+    for i in range(len(trend)):
+        linestimate.append(m*i+b)
+    
+    plt.plot(range(len(trend)), trend, 'black')
+    plt.plot(range(len(trend)), logestimate, 'red')
+    plt.plot(range(len(trend)), linestimate, 'blue')
+    plt.show()
+    
+    
+
     
     #plt.plot(range(len(trend)),m*range(len(trend))+b, color='purple')
     #plt.plot(range(len(trend)),m*np.log(range(len(trend)))+b, color='green')
@@ -161,13 +183,6 @@ def working():
     i_test_values = range(len(y_vals)-365, len(y_vals))
     
 
-    offset = 4000
-    curve_with_trend = []
-    print("len(curve)")
-    print(len(curve))
-    
-    for i in range(len(curve)):
-        curve_with_trend.append(curve[i] + m*i)
 
     curve_test = curve[-365:]
 
@@ -202,10 +217,20 @@ def working():
     for i in range(len(y_vals)):
         trend_line.append(i*m+b)
 
+    
+    offset = 5000
+    curve_with_trend = []
+    print("len(curve)")
+    print(len(curve))
+    
+    for i in range(len(curve)):
+        curve_with_trend.append(curve[i] + m*i - offset)
+        
+
     # good plots
     plt.plot( range(len(y_vals)), y_vals, color='green')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
     plt.plot( range(len(y_vals)), trend_line, color='orange')
     plt.plot( range(len(curve)), curve_with_trend, color='black')
     
@@ -238,6 +263,7 @@ def working():
     """
 
 
+    
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
     testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
