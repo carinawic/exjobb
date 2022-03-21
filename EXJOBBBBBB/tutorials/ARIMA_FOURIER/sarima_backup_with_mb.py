@@ -18,90 +18,10 @@ from pandas import read_csv
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
-from scipy.optimize.minpack import curve_fit
-
-from sklearn.preprocessing import MinMaxScaler, minmax_scale 
-
 # https://stackoverflow.com/questions/49235508/statsmodel-arima-multiple-input
 # https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
 # https://www.quora.com/How-does-multivariate-ARIMA-work
 
-
-click_outs = []
-week = []
-clicks_media = []
-impr_media = []
-trainTestLimit = 1000 # 430 or 1000
-
-clicks_Search = []
-clicks_Inactive = []
-clicks_Active = []
-clicks_Extreme = []
-
-def prepare_data():
-
-    global click_outs, week, clicks_media, impr_media, clicks_Search, clicks_Inactive, clicks_Active, clicks_Extreme
-
-    # read dataset
-    df_complete = pd.read_csv('Time.csv')
-
-    # read media_clicks_df as pd df and add sum_total col
-    media_clicks_df = pd.read_csv('media_clicks.csv')
-    media_imprs_df = pd.read_csv('media_imprs.csv')
-    
-    media_clicks_df['sum_total'] = media_clicks_df.sum(axis=1)
-
-    media_clicks_df['media_clicks_SEARCH_df'] = media_clicks_df['Media_Bing_lowerfunnel_search_brand'] + media_clicks_df['Media_Bing_midfunnel_search_midbrand'] + media_clicks_df['Media_Bing_upperfunnel_search_nobrand'] + media_clicks_df['Media_Google_lowerfunnel_search_brand'] + media_clicks_df['Media_Google_midfunnel_search_midbrand'] + media_clicks_df['Media_Google_upperfunnel_search_nobrand'] 
-    
-    media_clicks_df['media_clicks_INACTIVE_df'] = media_imprs_df['Media_Google_video_lowerfunnel_Youtube'] + media_imprs_df['Media_Google_video_upperfunnel_Youtube'] + media_imprs_df['Media_Online_radio_upperfunnel'] + media_imprs_df['Media_Radio_upperfunnel'] + media_imprs_df['Media_TV_upperfunnel'] + media_imprs_df['Media_DBM_upperfunnel_video'] + media_imprs_df['Media_DC_DBM_upperfunnel_video'] + media_imprs_df['Media_MediaMath_upperfunnel_video'] + media_imprs_df['Media_Snapchat_upperfunnel_video'] + media_imprs_df['Media_Tiktok_upperfunnel_video'] + media_imprs_df['Media_Eurosize_upperfunnel_OOH_JCD'] + media_imprs_df['Media_Eurosize_upperfunnel_OOH_VA'] 
-
-    # should also have Media_Youtube_Masthead_upperfunnel_video
-    media_clicks_df['media_clicks_ACTIVE_df'] =  media_clicks_df['Media_Adwell_upperfunnel_native'] + media_clicks_df['Media_DBM_lowerfunnel_display'] + media_clicks_df['Media_DBM_midfunnel_display'] + media_clicks_df['Media_DBM_upperfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_video'] + media_clicks_df['Media_Facebook_upperfunnel_display'] + media_clicks_df['Media_Facebook_upperfunnel_video'] + media_clicks_df['Media_Flygstart_upperfunnel_newsletter'] + media_clicks_df['Media_Google_lowerfunnel_display'] + media_clicks_df['Media_Google_midfunnel_display'] + media_clicks_df['Media_Google_upperfunnel_display'] + media_clicks_df['Media_HejSenior_upperfunnel_newsletter'] + media_clicks_df['Media_Instagram_lowerfunnel_display'] + media_clicks_df['Media_Instagram_lowerfunnel_video'] + media_clicks_df['Media_Instagram_upperfunnel_display'] + media_clicks_df['Media_Instagram_upperfunnel_video'] + media_clicks_df['Media_Newsletter_lowerfunnel'] + media_clicks_df['Media_Newsner_midfunnel_native'] + media_clicks_df['Media_Secreteescape_midfunnel_display'] + media_clicks_df['Media_Smarter_Travel_upperfunnel_affiliate'] + media_clicks_df['Media_Snapchat_upperfunnel_display'] + media_clicks_df['Media_Sociomantic_lowerfunnel_retarg_display'] + media_clicks_df['Media_Sociomantic_upperfunnel_prospecting_display'] + media_clicks_df['Media_TradeTracker_upperfunnel_affiliate'] 
-    
-    
-    #media_clicks_df['sum_media_clicks_SEARCH'] = media_clicks_SEARCH_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_INACTIVE'] = media_clicks_INACTIVE_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_ACTIVE'] = media_clicks_ACTIVE_df.sum(axis=1)
-
-    #print(media_clicks_df['media_clicks_SEARCH_df'])
-
-
-    precovid_startdate = '2016-01-01'
-    precovid_enddate = '2020-02-19'
-    postcovid_startdate = '2020-02-20'
-    postcovid_enddate = '2021-12-01'
-    
-    # mask between certain dates DURING COVID
-    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
-    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
-    #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
- 
-    click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
-    week = np.array(df_complete['week'][mask_clickouts].values)
-
-
-    clicks_Search = np.array(media_clicks_df["media_clicks_SEARCH_df"][mask_media_clicks].values)
-    clicks_Inactive = np.array(media_clicks_df["media_clicks_INACTIVE_df"][mask_media_clicks].values)
-    clicks_Active = np.array(media_clicks_df["media_clicks_ACTIVE_df"][mask_media_clicks].values)
-    clicks_Extreme = np.array(media_clicks_df['Media_Youtube_Masthead_upperfunnel_video'][mask_media_clicks].values)
-
-    #scaling the inputs
-    clicks_Search = minmax_scale(clicks_Search, feature_range=(0,500))
-    clicks_Inactive = minmax_scale(clicks_Inactive, feature_range=(0,500))
-    clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
-    clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,500))
-
-    
-    plt.xlabel('days')
-    plt.ylabel('clicks')
-    plt.title('Media invesment')
-
-    plt.plot(range(len(clicks_Search)), clicks_Active, 'red')
-    plt.plot(range(len(clicks_Search)), clicks_Inactive, 'green')
-    plt.plot(range(len(clicks_Search)), clicks_Search, 'blue')
-    plt.plot(range(len(clicks_Search)), clicks_Extreme, 'orange')
-    
-    plt.show()
 
 def working():
     #df = pd.read_csv('kaggle_sales.csv')
@@ -154,13 +74,25 @@ def working():
     #decompose_result.plot()
     #plt.plot( range(len(trend)), trend, color='purple')
     trend = [x for x in trend if not math.isnan(x)] # remove nan values
-    
+    # estimate m and c for a linear approxmation of trend
     m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
+    #coefficients = np.polyfit(range(len(trend)),np.log(trend),1) # f(x) = m*i + b
+
+
+    from scipy.optimize.minpack import curve_fit
 
     def func(x, a, tau, c):
         return a * np.exp(-x/tau) + c
 
     popt, pcov = curve_fit(func, np.array(range(len(trend))), trend)
+
+    plt.plot(range(len(trend)), func(np.array(range(len(trend))), *popt),'--r', label='Fit')
+
+
+    
+    plt.show()
+    print("HERE IS THE FUNC")
+    print(func(np.array(range(len(y_vals))), *popt))
 
     #coefficients = np.polyfit(np.log(range(1,len(trend))), trend[:-1], 1)
 
@@ -186,6 +118,17 @@ def working():
     for i in range(len(trend)):
         linestimate.append(m*i+b)
     
+
+    plt.plot(range(len(y_vals)), func(np.array(range(len(y_vals))), *popt), 'green')
+    plt.show()
+    #plt.plot(range(len(trend)), trend, 'black')
+    plt.plot(range(len(y_vals)), logestimate, 'red')
+    #plt.plot(range(len(y_vals)), linestimate, 'blue')
+    plt.show()
+    
+    print("the log functions length is ", len(logestimate))
+    
+
     
     #plt.plot(range(len(trend)),m*range(len(trend))+b, color='purple')
     #plt.plot(range(len(trend)),m*np.log(range(len(trend)))+b, color='green')
@@ -219,9 +162,6 @@ def working():
 
     #arima_exog_model = auto_arima(y=cl_train, seasonal=False, m=7) ##TODO set true
     #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
-
-    clicks_Search_test = clicks_Search[-365:]
-    clicks_Search_train = clicks_Search[:len(clicks_Search)-365]
 
     #model = SARIMAX(cl_train, order=(2,0,0), seasonal_order=(2,0,0,7), exog = np.zeros(len(cl_train)))
     model = SARIMAX(cl_train, order=(3,1,2), seasonal_order=(3,1,2,7), exog = np.zeros(len(cl_train)))
@@ -271,15 +211,16 @@ def working():
         y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
 
+
+
     # curve_with_trend is the curve with offset is added just for plotting nicely
-    offset = 23000
+    offset = 5000
     curve_with_trend = []
-    print(" b is ")
-    print( b)
+    print("len(curve)")
+    print(len(curve))
     
     for i in range(len(curve)):
-        #curve_with_trend.append(curve[i] + m*i - offset)
-        curve_with_trend.append(curve[i] + logestimate[i] -offset)
+        curve_with_trend.append(curve[i] + m*i - offset)
         
     # good plots
     plt.plot( range(len(y_vals)), y_vals, color='green')
@@ -309,6 +250,5 @@ def working():
     plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
-    prepare_data()
-    #working()
+    working()
 
