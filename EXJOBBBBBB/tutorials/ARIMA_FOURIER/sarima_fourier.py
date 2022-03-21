@@ -59,12 +59,6 @@ def prepare_data():
     media_clicks_df['media_clicks_ACTIVE_df'] =  media_clicks_df['Media_Adwell_upperfunnel_native'] + media_clicks_df['Media_DBM_lowerfunnel_display'] + media_clicks_df['Media_DBM_midfunnel_display'] + media_clicks_df['Media_DBM_upperfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_video'] + media_clicks_df['Media_Facebook_upperfunnel_display'] + media_clicks_df['Media_Facebook_upperfunnel_video'] + media_clicks_df['Media_Flygstart_upperfunnel_newsletter'] + media_clicks_df['Media_Google_lowerfunnel_display'] + media_clicks_df['Media_Google_midfunnel_display'] + media_clicks_df['Media_Google_upperfunnel_display'] + media_clicks_df['Media_HejSenior_upperfunnel_newsletter'] + media_clicks_df['Media_Instagram_lowerfunnel_display'] + media_clicks_df['Media_Instagram_lowerfunnel_video'] + media_clicks_df['Media_Instagram_upperfunnel_display'] + media_clicks_df['Media_Instagram_upperfunnel_video'] + media_clicks_df['Media_Newsletter_lowerfunnel'] + media_clicks_df['Media_Newsner_midfunnel_native'] + media_clicks_df['Media_Secreteescape_midfunnel_display'] + media_clicks_df['Media_Smarter_Travel_upperfunnel_affiliate'] + media_clicks_df['Media_Snapchat_upperfunnel_display'] + media_clicks_df['Media_Sociomantic_lowerfunnel_retarg_display'] + media_clicks_df['Media_Sociomantic_upperfunnel_prospecting_display'] + media_clicks_df['Media_TradeTracker_upperfunnel_affiliate'] 
     
     
-    #media_clicks_df['sum_media_clicks_SEARCH'] = media_clicks_SEARCH_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_INACTIVE'] = media_clicks_INACTIVE_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_ACTIVE'] = media_clicks_ACTIVE_df.sum(axis=1)
-
-    #print(media_clicks_df['media_clicks_SEARCH_df'])
-
 
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
@@ -72,8 +66,8 @@ def prepare_data():
     postcovid_enddate = '2021-12-01'
     
     # mask between certain dates DURING COVID
-    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
-    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
+    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= postcovid_enddate)
+    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= postcovid_enddate)
     #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
  
     click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
@@ -96,11 +90,12 @@ def prepare_data():
     plt.ylabel('clicks')
     plt.title('Media invesment')
 
-    plt.plot(range(len(clicks_Search)), clicks_Active, 'red')
-    plt.plot(range(len(clicks_Search)), clicks_Inactive, 'green')
-    plt.plot(range(len(clicks_Search)), clicks_Search, 'blue')
-    plt.plot(range(len(clicks_Search)), clicks_Extreme, 'orange')
-    
+    plt.plot(range(len(clicks_Search)), clicks_Active, 'red', label='clicks active')
+    plt.plot(range(len(clicks_Search)), clicks_Inactive, 'green', label='impressions inactive')
+    plt.plot(range(len(clicks_Search)), clicks_Search, 'blue', label='clicks search')
+    plt.plot(range(len(clicks_Search)), clicks_Extreme, 'orange', label='clicks campaign')
+    plt.legend()
+
     plt.show()
 
 def working():
