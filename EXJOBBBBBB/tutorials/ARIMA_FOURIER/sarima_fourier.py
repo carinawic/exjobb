@@ -92,26 +92,59 @@ def working():
     #plt.plot( range(365,365*2),seasonal[:365], color='blue')
 
     m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
-    coefficients = np.polyfit(range(len(trend)),trend,2) # f(x) = m*i + b
+    #coefficients = np.polyfit(range(len(trend)),np.log(trend),1) # f(x) = m*i + b
+
+
+    from scipy.optimize.minpack import curve_fit
+
+    def func(x, a, tau, c):
+        return a * np.exp(-x/tau) + c
+
+    popt, pcov = curve_fit(func, np.array(range(len(trend))), trend)
+
+    plt.plot(range(len(trend)), func(np.array(range(len(trend))), *popt),'--r', label='Fit')
+
+
+
+    plt.show()
+    print("HERE IS THE FUNC")
+    print(func(np.array(range(len(y_vals))), *popt))
+
+    #coefficients = np.polyfit(np.log(range(1,len(trend))), trend[:-1], 1)
+
+    coefficients = np.polyfit(range(len(trend)), trend, 2)
+
 
     p = np.poly1d(coefficients)
-    print("values")
-    print(p(0))
-    print(p(1))
+    #print("values")
+    #print(p(0))
+    #print(p(1))
+
+    
+
+    print("HERE")
+    print(coefficients)
 
     logestimate = []
     linestimate = []
-    for i in range(len(trend)):
-        logestimate.append(p(i))
+    #for i in range(len(y_vals)):
+        #logestimate.append(p(i))
+    #    logestimate.append(func(np.array(range(len(y_vals))), *popt))
+    
+    logestimate = (func(np.array(range(len(y_vals))), *popt))
     
     for i in range(len(trend)):
         linestimate.append(m*i+b)
     
-    plt.plot(range(len(trend)), trend, 'black')
-    plt.plot(range(len(trend)), logestimate, 'red')
-    plt.plot(range(len(trend)), linestimate, 'blue')
+
+    plt.plot(range(len(y_vals)), func(np.array(range(len(y_vals))), *popt), 'green')
+    plt.show()
+    #plt.plot(range(len(trend)), trend, 'black')
+    plt.plot(range(len(y_vals)), logestimate, 'red')
+    #plt.plot(range(len(y_vals)), linestimate, 'blue')
     plt.show()
     
+    print("the log functions length is ", len(logestimate))
     
 
     
@@ -195,7 +228,8 @@ def working():
     #y_arima_exog_forecast = np.ones(365)*minus_twenty
 
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
+        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]]-b)
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
 
         #y_arima_exog_forecast_with_trend_and_seasonality.append(curve_test[i] + y_arima_exog_forecast[i])
@@ -230,9 +264,11 @@ def working():
     # good plots
     plt.plot( range(len(y_vals)), y_vals, color='green')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
     plt.plot( range(len(y_vals)), trend_line, color='orange')
     plt.plot( range(len(curve)), curve_with_trend, color='black')
+    plt.plot( range(len(logestimate)), logestimate, color='red')
+    plt.plot( range(len(trend)), trend, color='red')
     
 
     # also good plots
