@@ -113,8 +113,6 @@ def working():
     #coefficients = np.polyfit(np.log(range(1,len(trend))), trend[:-1], 1)
 
     coefficients = np.polyfit(range(len(trend)), trend, 2)
-
-
     p = np.poly1d(coefficients)
     #print("values")
     #print(p(0))
@@ -165,7 +163,8 @@ def working():
     # creating the datasets without seasonality or trend
     for i,real_val in enumerate(clickouts):
         
-        clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
+        #clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
+        clickouts_wo_trend.append(real_val - logestimate[i]) # centered around b now!
         clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i])
 
     
@@ -229,7 +228,8 @@ def working():
 
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
         #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i])
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]]-b)
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
+        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]]-b)
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
 
         #y_arima_exog_forecast_with_trend_and_seasonality.append(curve_test[i] + y_arima_exog_forecast[i])
@@ -265,10 +265,10 @@ def working():
     plt.plot( range(len(y_vals)), y_vals, color='green')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
     plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    plt.plot( range(len(y_vals)), trend_line, color='orange')
+    #plt.plot( range(len(y_vals)), trend_line, color='orange')
     plt.plot( range(len(curve)), curve_with_trend, color='black')
     plt.plot( range(len(logestimate)), logestimate, color='red')
-    plt.plot( range(len(trend)), trend, color='red')
+    #plt.plot( range(len(trend)), trend, color='red')
     
 
     # also good plots
