@@ -105,7 +105,7 @@ def working():
     plt.plot(range(len(trend)), func(np.array(range(len(trend))), *popt),'--r', label='Fit')
 
 
-
+    
     plt.show()
     print("HERE IS THE FUNC")
     print(func(np.array(range(len(y_vals))), *popt))
@@ -251,7 +251,6 @@ def working():
     for i in range(len(y_vals)):
         trend_line.append(i*m+b)
 
-    
     offset = 5000
     curve_with_trend = []
     print("len(curve)")
@@ -271,33 +270,6 @@ def working():
     #plt.plot( range(len(trend)), trend, color='red')
     
 
-    # also good plots
-    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), y_arima_exog_forecast, color='red')
-    #plt.plot( range(len(cl_train), len(cl_train)+len(cl_test)), cl_test, color='green')
-    #plt.plot( range(len(cl_train)), cl_train, color='yellow')
-
-    
-    ### SARIMAX model compensating with added seasonality and trend ###
-
-    # plotting data without seasonality or trend!
-    """
-    fig, axs = plt.subplots(3)
-    fig.suptitle('Removing trend and seasonality')
-    axs[0].plot( range(len(y_to_train)), y_to_train, color='green')
-    axs[0].plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='green')
-    axs[0].set_title('original flight data')
-    axs[1].plot(range(len(clickouts_wo_trend)), clickouts_wo_trend, color='black')
-    axs[1].set_title('data without trend')
-    axs[2].plot(range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='purple')
-    axs[2].set_title('data without seasonality')
-    fig.tight_layout()
-
-    for ax in axs.flat:
-        ax.set(xlabel='days', ylabel='clicks')
-
-    
-    """
-
 
     
     # calculate root mean squared error
@@ -311,6 +283,12 @@ def working():
     testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
     print('Test Score: %.2f MAPE' % (testScore))
     
+    
+    plt.legend()
+    plt.xlabel('days')
+    plt.ylabel('flights')
+    plt.title('Forecast using SARIMAX')
+
     plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
