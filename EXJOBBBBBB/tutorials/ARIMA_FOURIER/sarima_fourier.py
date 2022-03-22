@@ -17,6 +17,7 @@ from sklearn.metrics import mean_squared_error,  mean_absolute_error, mean_absol
 from pandas import read_csv
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 from scipy.optimize.minpack import curve_fit
 
@@ -66,8 +67,8 @@ def prepare_data():
     postcovid_enddate = '2021-12-01'
     
     # mask between certain dates DURING COVID
-    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= postcovid_enddate)
-    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= postcovid_enddate)
+    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
+    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
     #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
  
     click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
@@ -85,7 +86,9 @@ def prepare_data():
     clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
     clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,500))
 
-    
+    """
+    # plotting the media investment
+
     plt.xlabel('days')
     plt.ylabel('clicks')
     plt.title('Media invesment')
@@ -97,6 +100,8 @@ def prepare_data():
     plt.legend()
 
     plt.show()
+    """
+    
 
 def working():
     #df = pd.read_csv('kaggle_sales.csv')
@@ -218,31 +223,62 @@ def working():
     clicks_Search_test = clicks_Search[-365:]
     clicks_Search_train = clicks_Search[:len(clicks_Search)-365]
 
+
+    clicks_Active_test = clicks_Active[-365:]
+    clicks_Active_train = clicks_Active[:len(clicks_Search)-365]
+
+    clicks_Inactive_test = clicks_Inactive[-365:]
+    clicks_Inactive_train = clicks_Inactive[:len(clicks_Search)-365]
+
+    clicks_Extreme_test = clicks_Extreme[-365:]
+    clicks_Extreme_train = clicks_Extreme[:len(clicks_Search)-365]
+
+    """
+    exog zeros:
+
+    Test Score: 2545.85 RMSE
+    Test Score: 1982.96 MAE
+    Test Score: 0.09 MAPE
+
+
+    
+    """
+
+
+    # Create figure
+    #fig, (ax1, ax2) = plt.subplots(2,1, figsize=(12,8))
+    
+    # Plot the ACF of df_store_2_item_28_timeon ax1
+    #plot_acf(cl_train,lags=7, zero=False, ax=ax1)
+
+    # Plot the PACF of df_store_2_item_28_timeon ax2
+    #plot_pacf(cl_train,lags=7, zero=False, ax=ax2)
+
+    #plt.show()
+
     #model = SARIMAX(cl_train, order=(2,0,0), seasonal_order=(2,0,0,7), exog = np.zeros(len(cl_train)))
-    model = SARIMAX(cl_train, order=(3,1,2), seasonal_order=(3,1,2,7), exog = np.zeros(len(cl_train)))
+
+    exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train))
+    exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test))
+
+    model = SARIMAX(cl_train, order=(3,1,2), seasonal_order=(3,1,2,7), exog = exog_train)
     model_fit = model.fit()
 
-    # 2 0 0  -> big to small amplotude, follows max-ampl 5145.37 RMSE
-    # 0 2 0  -> trend enourmosly skewed upwards, inf RMSE
-    # 0 0 2  -> seasonality dies, just one line, 5000 RMSE
-    # 2 0 2  -> looks reasonable, 2900 RMSE
-    # 2 1 2  -> same as above but seem to float upwards, 3000 RMSE
-    # 2 2 2  -> trend enourmosly skews away downwards
-    # 2 0 1  -> 2646 RMSE
-    # 1 0 2  -> 3133 RMSE
-    # 3 0 1  -> 2763 RMSE
+    #model_fit.plot_diagnostics()
+    print(model_fit.summary())
+
+    """
+    with including marketing investment as input
+    
+    """
     # change trend to accurately only take into account the training data in the decomposition!
     # 3,1,2 -> BEST 2890.00 RMSE
 
     print(len(y_to_train))
     # one-step out-of sample forecast
     #y_arima_exog_forecast = model_fit.predict(1145,1509)
-    y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[np.zeros(len(cl_test))]])
+    y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
 
-    
-
-    print("length of y_arima_exog_forecast")
-    print(len(y_arima_exog_forecast))
 
 
     y_arima_exog_forecast_with_trend = []
@@ -305,5 +341,5 @@ def working():
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     prepare_data()
-    #working()
+    working()
 
