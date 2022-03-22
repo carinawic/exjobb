@@ -261,66 +261,119 @@ def working():
     exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train))
     exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test))
 
-    model = SARIMAX(cl_train, order=(3,1,2), seasonal_order=(3,1,2,7), exog = exog_train)
-    model_fit = model.fit()
+    import itertools
+    permutations = list(itertools.product([1], repeat=7))
 
-    #model_fit.plot_diagnostics()
-    print(model_fit.summary())
+    RMSE_highscore = {}
 
-    """
-    with including marketing investment as input
-    
-    """
-    # change trend to accurately only take into account the training data in the decomposition!
-    # 3,1,2 -> BEST 2890.00 RMSE
+    for sublist in permutations:
 
-    print(len(y_to_train))
-    # one-step out-of sample forecast
-    #y_arima_exog_forecast = model_fit.predict(1145,1509)
-    y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
+        a = sublist[0]
+        b = sublist[1]
+        c = sublist[2]
+        d = sublist[3]
+        e = sublist[4]
+        f = sublist[5]
+
+        model = SARIMAX(cl_train, order=(a,b,c), seasonal_order=(d,e,f,7), exog = exog_train)
+        model_fit = model.fit()
+
+        #model_fit.plot_diagnostics()
+        print(model_fit.summary())
+
+        """
+        Non-seasonal part:
+        p = autoregressive order
+        d = differencing (used for comparing the current timestep with a previous one at offset d in order to even out the trend)
+        q = moving average order
+        Seasonal part:
+        P = seasonal AR order
+        D = seasonal differencing
+        Q = seasonal MA order
+        S = length of seasonal pattern
+
+
+        with including marketing investment as input
+        (3,1,2)(3,1,2,7)
+        est Score: 2647.43 RMSE
+        Test Score: 2071.88 MAE
+        Test Score: 0.09 MAPE
+
+        (1,1,1)(1,1,1,7)
+        Test Score: 2986.49 RMSE
+        Test Score: 2461.09 MAE
+        Test Score: 0.11 MAPE
+
+        (1,1,1)(0,1,1,7)
+        -> 2200
+        seasonal:
+        1,0,1 -> shit
+        1,1,0 -> 2335
+
+
+        """
+        # change trend to accurately only take into account the training data in the decomposition!
+        # 3,1,2 -> BEST 2890.00 RMSE
+
+        #print(len(y_to_train))
+        # one-step out-of sample forecast
+        #y_arima_exog_forecast = model_fit.predict(1145,1509)
+        y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
 
 
 
-    y_arima_exog_forecast_with_trend = []
-    y_arima_exog_forecast_with_trend_and_seasonality = []
+        y_arima_exog_forecast_with_trend = []
+        y_arima_exog_forecast_with_trend_and_seasonality = []
 
-    #print(arima_exog_model.summary())
-
-
-    i_test_values = range(len(y_vals)-365, len(y_vals))
-    
+        #print(arima_exog_model.summary())
 
 
-    curve_test = curve[-365:]
-
-    
-    
-    #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
-
-    for i in range(len(y_arima_exog_forecast)): # go through the forecast
-        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
-        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
-
-    # curve_with_trend is the curve with offset is added just for plotting nicely
-    offset = 23000
-    curve_with_trend = []
-    print(" b is ")
-    print( b)
-    
-    for i in range(len(curve)):
-        #curve_with_trend.append(curve[i] + m*i - offset)
-        curve_with_trend.append(curve[i] + logestimate[i] -offset)
+        i_test_values = range(len(y_vals)-365, len(y_vals))
         
-    # good plots
-    plt.plot( range(len(y_vals)), y_vals, color='green')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-    #plt.plot( range(len(y_vals)), trend_line, color='orange')
-    plt.plot( range(len(curve)), curve_with_trend, color='black')
-    plt.plot( range(len(logestimate)), logestimate, color='red')
-    #plt.plot( range(len(trend)), trend, color='red')
-    
+
+
+        curve_test = curve[-365:]
+
+        
+        
+        #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
+
+        for i in range(len(y_arima_exog_forecast)): # go through the forecast
+            #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
+            y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
+            y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
+
+        # curve_with_trend is the curve with offset is added just for plotting nicely
+        offset = 23000
+        curve_with_trend = []
+        #print(" b is ")
+        #print( b)
+        
+        for i in range(len(curve)):
+            #curve_with_trend.append(curve[i] + m*i - offset)
+            curve_with_trend.append(curve[i] + logestimate[i] -offset)
+            """
+        # good plots
+        plt.plot( range(len(y_vals)), y_vals, color='green')
+        plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
+        plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+        #plt.plot( range(len(y_vals)), trend_line, color='orange')
+        plt.plot( range(len(curve)), curve_with_trend, color='black')
+        plt.plot( range(len(logestimate)), logestimate, color='red')
+        #plt.plot( range(len(trend)), trend, color='red')
+        
+        """
+        testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
+        print('Test Score: %.2f RMSE' % (testScore))
+        print("when using parameters ", a,b,c,d,e,f)
+
+        string_ints = [str(int) for int in [a,b,c,d,e,f]]
+        str_of_ints = ",".join(string_ints)
+
+        RMSE_highscore[str_of_ints] = testScore
+
+    print("the full dict: ")
+    print(RMSE_highscore)
 
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
@@ -337,7 +390,7 @@ def working():
     plt.ylabel('flights')
     plt.title('Forecast using SARIMAX')
 
-    plt.show()
+    #plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     prepare_data()
