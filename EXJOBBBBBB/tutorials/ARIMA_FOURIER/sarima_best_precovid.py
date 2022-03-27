@@ -26,7 +26,13 @@ from sklearn.preprocessing import MinMaxScaler, minmax_scale
 # https://stackoverflow.com/questions/49235508/statsmodel-arima-multiple-input
 # https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
 # https://www.quora.com/How-does-multivariate-ARIMA-work
+"""
+note to self
 
+- if something breaks regarding accuracy, remove the mega_offset!
+- if accuracy is low, remove the scaling
+
+"""
 
 click_outs = []
 week = []
@@ -39,6 +45,7 @@ clicks_Active = []
 clicks_Extreme = []
 
 open_exchange_SEK_EUR = []
+open_exchange_SEK_USD = []
 open_nasdaq = []
 near25th = []
 
@@ -54,12 +61,13 @@ def createNear25th():
     df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 27, 2)
     print(df)
 
-    near25th = np.array(df['Is25th'].values)
-
-    #print("near25th is ", near25th)
-    print("len is ", len(near25th))
 
     
+    near25th = np.array(df['Is25th'].values)
+
+    #scaling?
+    near25th = minmax_scale(near25th, feature_range=(0,500))
+
     """
     peaking around non-25th days gives:
     df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 10, 2)
@@ -76,8 +84,27 @@ def createNear25th():
 
     """
 
+def prepare_exchange_rates_USD():
+    global open_exchange_SEK_USD
 
-def prepare_exchange_rates():
+    df = read_csv('SEK_USD_FILLED.csv')
+    exchange_SEK_USD = np.array(df['Open'].values)
+
+    
+    exchange_SEK_USD_rounded = []
+
+    for i in exchange_SEK_USD:
+        exchange_SEK_USD_rounded.append(int(float(i*10000)))
+
+    open_exchange_SEK_USD = exchange_SEK_USD_rounded
+
+    #scaling?
+    open_exchange_SEK_USD = minmax_scale(open_exchange_SEK_USD, feature_range=(0,500))
+
+
+    
+
+def prepare_exchange_rates_EUR():
     global open_exchange_SEK_EUR
 
     df = read_csv('SEK_EUR_FILLED.csv')
@@ -93,7 +120,9 @@ def prepare_exchange_rates():
 
     open_exchange_SEK_EUR = exchange_SEK_EUR_rounded
 
-    print(open_exchange_SEK_EUR)
+    #scaling?
+    open_exchange_SEK_EUR = minmax_scale(open_exchange_SEK_EUR, feature_range=(0,500))
+
 
 def prepare_data():
 
@@ -255,12 +284,13 @@ def working():
     
     seasonal = [x for x in seasonal if not x is(None)] # remove None values
 
+    mega_offset = 0 # 40000 #
     # creating the datasets without seasonality or trend
     for i,real_val in enumerate(clickouts):
         
         #clickouts_wo_trend.append(real_val - (m*i)) # centered around b now!
         clickouts_wo_trend.append(real_val - logestimate[i]) # centered around b now!
-        clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i])
+        clickouts_wo_trend_or_seasonality.append(clickouts_wo_trend[i] - curve[i] + mega_offset)
 
     
     print("len(clickouts_wo_trend_or_seasonality)")
@@ -294,9 +324,27 @@ def working():
     open_exchange_SEK_EUR_test = open_exchange_SEK_EUR[-365:]
     open_exchange_SEK_EUR_train = open_exchange_SEK_EUR[:train_len]
 
-    randlist = np.random.randint(100, size=len(clicks_Search))
+    open_exchange_SEK_USD_test = open_exchange_SEK_USD[-365:]
+    open_exchange_SEK_USD_train = open_exchange_SEK_USD[:train_len]
+
+
+    randlist = np.random.randint(500, size=len(clicks_Search))
     randlist_test = randlist[-365:]
     randlist_train = randlist[:train_len]
+
+    """
+    here we plot the 
+    clickouts_wo_trend_or_seasonality
+    together with the features that we try to find correlations with
+    
+    """
+
+    
+    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='green')
+    plt.plot( range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR*(-50), color='red')
+    plt.plot( range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD*(-50), color='black')
+    plt.plot( range(len(near25th)), near25th*(-50), color='blue')
+    plt.show()
 
     #print("len(near25th_train)")
     #print(len(near25th_train))
@@ -342,15 +390,25 @@ def working():
     
     #exog_train = open_exchange_SEK_EUR_train
     #exog_test = open_exchange_SEK_EUR_test
+    """
+    exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, randlist_train, open_exchange_SEK_USD_train))
+    exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, randlist_test, open_exchange_SEK_USD_test))
+    """
 
-    exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train))
-    exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test))
-    
+    exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, open_exchange_SEK_USD_train))
+    exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, open_exchange_SEK_USD_test))
 
     # best using all media:
-    # model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 360)
-    model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 7)
-    model_fit = model.fit(maxiter=200) # increase maxiter otherwise encounter convergence error
+    # model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 360) # 2267
+    model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+
+
+    from tensorflow.keras.callbacks import EarlyStopping
+
+    callback=EarlyStopping(monitor="loss",patience=30)
+
+
+    model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
     #model_fit.plot_diagnostics()
     print(model_fit.summary())
     """
@@ -397,17 +455,17 @@ def working():
     #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
         #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
     # curve_with_trend is the curve with offset is added just for plotting nicely
-    offset = 23000
+    offset_for_plotting_only = 23000
     curve_with_trend = []
     #print(" b is ")
     #print( b)
     
     for i in range(len(curve)):
-        #curve_with_trend.append(curve[i] + m*i - offset)
-        curve_with_trend.append(curve[i] + logestimate[i] -offset)
+        #curve_with_trend.append(curve[i] + m*i - offset_for_plotting_only)
+        curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)
     
     # good plots
     plt.plot( range(len(y_vals)), y_vals, color='green')
@@ -439,7 +497,8 @@ def working():
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     prepare_data()
-    prepare_exchange_rates()
+    prepare_exchange_rates_EUR()
+    prepare_exchange_rates_USD()
     createNear25th()
 
     working()
