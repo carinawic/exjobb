@@ -38,6 +38,7 @@ clicks_Inactive = []
 clicks_Active = []
 clicks_Extreme = []
 
+open_exchange_SEK_EUR = []
 open_nasdaq = []
 near25th = []
 
@@ -75,50 +76,24 @@ def createNear25th():
 
     """
 
-def create_NASDAQ():
-    #global nasdaq_array
-    # put nasdaq data in array
-    nasdaq_df = read_csv('NASDAQ.csv')
+
+def prepare_exchange_rates():
+    global open_exchange_SEK_EUR
+
+    df = read_csv('SEK_EUR_FILLED.csv')
+    exchange_SEK_EUR = np.array(df['Öppen'].values)
+    #print(exchange_SEK_EUR)
+    #print(len(exchange_SEK_EUR))  
+
     
-    #nasdaq_df.index = pd.DatetimeIndex(nasdaq_df.index)
-    #idx = pd.date_range('01/01/2016', '19/02/2020')
-    #nasdaq_df = nasdaq_df.reindex(idx, fill_value=0)
+    exchange_SEK_EUR_rounded = []
 
-    precovid_startdate = '2016-01-01'
-    precovid_enddate = '2020-02-19'
+    for i in exchange_SEK_EUR:
+        exchange_SEK_EUR_rounded.append(int(float(i.replace(",", "."))*10000))
 
-    #nasdaq_df.index = pd.DatetimeIndex(nasdaq_df['Date']).floor('D')
+    open_exchange_SEK_EUR = exchange_SEK_EUR_rounded
 
-
-    #all_days = pd.date_range(precovid_startdate, precovid_enddate, freq='D')
-    #nasdaq_df = nasdaq_df.loc[all_days]
-
-    nasdaq_df['Date'] = pd.to_datetime(nasdaq_df['Date'])
-    nasdaq_df = nasdaq_df.set_index('Date') 
-
-    #nasdaq_df['Date'] = pd.to_datetime(nasdaq_df['Date'])
-
-    nasdaq_df = nasdaq_df.resample('D').mean()
-    nasdaq_df = nasdaq_df.fillna(method='ffill')
-
-    nasdaq_df.to_csv('NASDAQ_complete.csv')
-
-def prepare_NASDAQ(): # not working just yet
-    
-    nasdaq_df = read_csv('NASDAQ_complete.csv')
-    
-    #nasdaq_df.reset_index(drop=True, inplace=True)
-
-    precovid_startdate = '2016-01-01'
-    precovid_enddate = '2020-02-19'
-
-    mask_nasdaq = (nasdaq_df.iloc[:, 0] >= precovid_startdate) & (nasdaq_df.iloc[:, 0] <= precovid_enddate)
-
-    open_nasdaq = np.array(nasdaq_df['Open'][mask_nasdaq].values)
-
-    print(nasdaq_df)
-    print(open_nasdaq)
-    
+    print(open_exchange_SEK_EUR)
 
 def prepare_data():
 
@@ -299,26 +274,35 @@ def working():
     #arima_exog_model = auto_arima(y=cl_train, seasonal=False, m=7) ##TODO set true
     #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
 
-    clicks_Search_test = clicks_Search[-365:]
-    clicks_Search_train = clicks_Search[:len(clicks_Search)-365]
+    train_len = len(clicks_Search)-365
 
+    clicks_Search_test = clicks_Search[-365:]
+    clicks_Search_train = clicks_Search[:train_len]
 
     clicks_Active_test = clicks_Active[-365:]
-    clicks_Active_train = clicks_Active[:len(clicks_Search)-365]
+    clicks_Active_train = clicks_Active[:train_len]
 
     clicks_Inactive_test = clicks_Inactive[-365:]
-    clicks_Inactive_train = clicks_Inactive[:len(clicks_Search)-365]
+    clicks_Inactive_train = clicks_Inactive[:train_len]
 
     clicks_Extreme_test = clicks_Extreme[-365:]
-    clicks_Extreme_train = clicks_Extreme[:len(clicks_Search)-365]
+    clicks_Extreme_train = clicks_Extreme[:train_len]
 
     near25th_test = near25th[-365:]
-    near25th_train = near25th[:len(near25th)-365]
+    near25th_train = near25th[:train_len]
 
-    print("len(near25th_train)")
-    print(len(near25th_train))
-    print("len(near25th_test)")
-    print(len(near25th_test))
+    open_exchange_SEK_EUR_test = open_exchange_SEK_EUR[-365:]
+    open_exchange_SEK_EUR_train = open_exchange_SEK_EUR[:train_len]
+
+    randlist = np.random.randint(100, size=len(clicks_Search))
+    randlist_test = randlist[-365:]
+    randlist_train = randlist[:train_len]
+
+    #print("len(near25th_train)")
+    #print(len(near25th_train))
+    #print("len(near25th_test)")
+    #print(len(near25th_test))
+
     """
     exog zeros:
 
@@ -353,14 +337,20 @@ def working():
     exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test, near25th_test))
     
     """
-    exog_train = near25th_train
-    exog_test = near25th_test
+    #exog_train = near25th_train
+    #exog_test = near25th_test
+    
+    #exog_train = open_exchange_SEK_EUR_train
+    #exog_test = open_exchange_SEK_EUR_test
 
+    exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train))
+    exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test))
+    
 
     # best using all media:
     # model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 360)
     model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 7)
-    model_fit = model.fit()
+    model_fit = model.fit(maxiter=200) # increase maxiter otherwise encounter convergence error
     #model_fit.plot_diagnostics()
     print(model_fit.summary())
     """
@@ -449,6 +439,7 @@ def working():
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     prepare_data()
-    #prepare_NASDAQ()
+    prepare_exchange_rates()
     createNear25th()
+
     working()
