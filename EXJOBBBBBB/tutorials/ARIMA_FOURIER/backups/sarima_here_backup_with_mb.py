@@ -51,7 +51,6 @@ def working():
     print("len(y_to_test)")
     print(len(y_to_test))
 
-    
     # creating the 8-degree curve polnomial curve
     X = [i%365 for i in range(0, len(y.values))]
     y_vals = y.values

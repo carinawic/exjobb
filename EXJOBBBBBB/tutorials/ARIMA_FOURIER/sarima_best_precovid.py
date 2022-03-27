@@ -32,12 +32,93 @@ click_outs = []
 week = []
 clicks_media = []
 impr_media = []
-trainTestLimit = 1000 # 430 or 1000
 
 clicks_Search = []
 clicks_Inactive = []
 clicks_Active = []
 clicks_Extreme = []
+
+open_nasdaq = []
+near25th = []
+
+def createNear25th():
+    global near25th
+    # create an array of 5 dates starting at '2015-02-24', one per day
+    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    df = pd.DataFrame({ 'Date': rng}) 
+    df["Is25th"] = 1
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 24, 2)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 25, 5)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 26, 4)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 27, 2)
+    print(df)
+
+    near25th = np.array(df['Is25th'].values)
+
+    #print("near25th is ", near25th)
+    print("len is ", len(near25th))
+
+    
+    """
+    peaking around non-25th days gives:
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 10, 2)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 11, 5)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 12, 4)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 13, 2)
+    gives P=0.593
+
+    peaking around 25:th gives P=0.00
+
+    evaluating the best curve
+    1: 2,5,4,2 -> Test Score: 2299.71 RMSE     232.2443     51.259
+    1: -,5,-,- -> Test Score: 2370.27 RMSE     206.5547     40.816
+
+    """
+
+def create_NASDAQ():
+    #global nasdaq_array
+    # put nasdaq data in array
+    nasdaq_df = read_csv('NASDAQ.csv')
+    
+    #nasdaq_df.index = pd.DatetimeIndex(nasdaq_df.index)
+    #idx = pd.date_range('01/01/2016', '19/02/2020')
+    #nasdaq_df = nasdaq_df.reindex(idx, fill_value=0)
+
+    precovid_startdate = '2016-01-01'
+    precovid_enddate = '2020-02-19'
+
+    #nasdaq_df.index = pd.DatetimeIndex(nasdaq_df['Date']).floor('D')
+
+
+    #all_days = pd.date_range(precovid_startdate, precovid_enddate, freq='D')
+    #nasdaq_df = nasdaq_df.loc[all_days]
+
+    nasdaq_df['Date'] = pd.to_datetime(nasdaq_df['Date'])
+    nasdaq_df = nasdaq_df.set_index('Date') 
+
+    #nasdaq_df['Date'] = pd.to_datetime(nasdaq_df['Date'])
+
+    nasdaq_df = nasdaq_df.resample('D').mean()
+    nasdaq_df = nasdaq_df.fillna(method='ffill')
+
+    nasdaq_df.to_csv('NASDAQ_complete.csv')
+
+def prepare_NASDAQ(): # not working just yet
+    
+    nasdaq_df = read_csv('NASDAQ_complete.csv')
+    
+    #nasdaq_df.reset_index(drop=True, inplace=True)
+
+    precovid_startdate = '2016-01-01'
+    precovid_enddate = '2020-02-19'
+
+    mask_nasdaq = (nasdaq_df.iloc[:, 0] >= precovid_startdate) & (nasdaq_df.iloc[:, 0] <= precovid_enddate)
+
+    open_nasdaq = np.array(nasdaq_df['Open'][mask_nasdaq].values)
+
+    print(nasdaq_df)
+    print(open_nasdaq)
+    
 
 def prepare_data():
 
@@ -63,12 +144,10 @@ def prepare_data():
 
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
-    postcovid_startdate = '2020-02-20'
-    postcovid_enddate = '2021-12-01'
     
     # mask between certain dates DURING COVID
-    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
-    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
+    mask_clickouts = (df_complete.iloc[:, 0] >= precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
+    mask_media_clicks = (media_clicks_df.iloc[:, 0] >= precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
     #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
  
     click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
@@ -86,6 +165,8 @@ def prepare_data():
     clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
     clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,500))
 
+    print("len(clicks_Active)")
+    print(len(clicks_Active))
     """
     # plotting the media investment
 
@@ -114,10 +195,8 @@ def working():
 
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
-    postcovid_startdate = '2020-02-20'
-    postcovid_enddate = '2021-12-01'
 
-    mask_clickouts = (df.iloc[:, 0] > precovid_startdate) & (df.iloc[:, 0] <= precovid_enddate)
+    mask_clickouts = (df.iloc[:, 0] >= precovid_startdate) & (df.iloc[:, 0] <= precovid_enddate)
 
     y = df['clicks_out'][mask_clickouts]
 
@@ -233,6 +312,13 @@ def working():
     clicks_Extreme_test = clicks_Extreme[-365:]
     clicks_Extreme_train = clicks_Extreme[:len(clicks_Search)-365]
 
+    near25th_test = near25th[-365:]
+    near25th_train = near25th[:len(near25th)-365]
+
+    print("len(near25th_train)")
+    print(len(near25th_train))
+    print("len(near25th_test)")
+    print(len(near25th_test))
     """
     exog zeros:
 
@@ -258,122 +344,91 @@ def working():
 
     #model = SARIMAX(cl_train, order=(2,0,0), seasonal_order=(2,0,0,7), exog = np.zeros(len(cl_train)))
 
-    exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train))
-    exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test))
+    # removed clicks_Inactive_train, clicks_Extreme_train
+    """
+    only inactive and near25th => 2279.05 RMSE and good looking graph
+    the correlation graph tells us that the factors clicks_Active_train, clicks_Inactive_test, clicks_Extreme_test have high p values and are not relevant. We can not find a good linear help from them. So we could leave them out. clicks_Search_train has very high correlation, and so does near25th_test. So we should only keep near25th_test. When evaluating features, it's almost cheating to include clicks_Search_train because it correlates so much. In order to investigate near25th_test's impact, should we remove the super highly correlating clicks_Search_test?
 
-    import itertools
-    permutations = list(itertools.product([1], repeat=7))
-
-    RMSE_highscore = {}
-
-    for sublist in permutations:
-
-        a = sublist[0]
-        b = sublist[1]
-        c = sublist[2]
-        d = sublist[3]
-        e = sublist[4]
-        f = sublist[5]
-
-        model = SARIMAX(cl_train, order=(a,b,c), seasonal_order=(d,e,f,7), exog = exog_train)
-        model_fit = model.fit()
-
-        #model_fit.plot_diagnostics()
-        print(model_fit.summary())
-
-        """
-        Non-seasonal part:
-        p = autoregressive order
-        d = differencing (used for comparing the current timestep with a previous one at offset d in order to even out the trend)
-        q = moving average order
-        Seasonal part:
-        P = seasonal AR order
-        D = seasonal differencing
-        Q = seasonal MA order
-        S = length of seasonal pattern
+    exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train, near25th_train))
+    exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test, near25th_test))
+    
+    """
+    exog_train = near25th_train
+    exog_test = near25th_test
 
 
-        with including marketing investment as input
-        (3,1,2)(3,1,2,7)
-        est Score: 2647.43 RMSE
-        Test Score: 2071.88 MAE
-        Test Score: 0.09 MAPE
+    # best using all media:
+    # model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 360)
+    model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 7)
+    model_fit = model.fit()
+    #model_fit.plot_diagnostics()
+    print(model_fit.summary())
+    """
+    Non-seasonal part:
+    p = autoregressive order
+    d = differencing (used for comparing the current timestep with a previous one at offset d in order to even out the trend)
+    q = moving average order
+    Seasonal part:
+    P = seasonal AR order
+    D = seasonal differencing
+    Q = seasonal MA order
+    S = length of seasonal pattern
+    with including marketing investment as input
+    (3,1,2)(3,1,2,7)
+    est Score: 2647.43 RMSE
+    Test Score: 2071.88 MAE
+    Test Score: 0.09 MAPE
+    (1,1,1)(1,1,1,7)
+    Test Score: 2986.49 RMSE
+    Test Score: 2461.09 MAE
+    Test Score: 0.11 MAPE
+    (1,1,1)(0,1,1,7)
+    -> 2200
+    seasonal:
+    1,0,1 -> shit
+    1,1,0 -> 2335
 
-        (1,1,1)(1,1,1,7)
-        Test Score: 2986.49 RMSE
-        Test Score: 2461.09 MAE
-        Test Score: 0.11 MAPE
+    (0,1,2)(1,0,1)
+    """
+    # change trend to accurately only take into account the training data in the decomposition!
+    # 3,1,2 -> BEST 2890.00 RMSE
+    #print(len(y_to_train))
+    # one-step out-of sample forecast
+    #y_arima_exog_forecast = model_fit.predict(1145,1509)
+    y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
+    y_arima_exog_forecast_with_trend = []
+    y_arima_exog_forecast_with_trend_and_seasonality = []
+    #print(arima_exog_model.summary())
+    i_test_values = range(len(y_vals)-365, len(y_vals))
+    
+    curve_test = curve[-365:]
+    
+    
+    #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
+    for i in range(len(y_arima_exog_forecast)): # go through the forecast
+        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
+        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
+        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
+    # curve_with_trend is the curve with offset is added just for plotting nicely
+    offset = 23000
+    curve_with_trend = []
+    #print(" b is ")
+    #print( b)
+    
+    for i in range(len(curve)):
+        #curve_with_trend.append(curve[i] + m*i - offset)
+        curve_with_trend.append(curve[i] + logestimate[i] -offset)
+    
+    # good plots
+    plt.plot( range(len(y_vals)), y_vals, color='green')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    #plt.plot( range(len(y_vals)), trend_line, color='orange')
+    #plt.plot( range(len(curve)), curve_with_trend, color='black')
+    #plt.plot( range(len(logestimate)), logestimate, color='red')
+    #plt.plot( range(len(trend)), trend, color='red')
+    
 
-        (1,1,1)(0,1,1,7)
-        -> 2200
-        seasonal:
-        1,0,1 -> shit
-        1,1,0 -> 2335
-
-
-        """
-        # change trend to accurately only take into account the training data in the decomposition!
-        # 3,1,2 -> BEST 2890.00 RMSE
-
-        #print(len(y_to_train))
-        # one-step out-of sample forecast
-        #y_arima_exog_forecast = model_fit.predict(1145,1509)
-        y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
-
-
-
-        y_arima_exog_forecast_with_trend = []
-        y_arima_exog_forecast_with_trend_and_seasonality = []
-
-        #print(arima_exog_model.summary())
-
-
-        i_test_values = range(len(y_vals)-365, len(y_vals))
-        
-
-
-        curve_test = curve[-365:]
-
-        
-        
-        #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
-
-        for i in range(len(y_arima_exog_forecast)): # go through the forecast
-            #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
-            y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]])
-            y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
-
-        # curve_with_trend is the curve with offset is added just for plotting nicely
-        offset = 23000
-        curve_with_trend = []
-        #print(" b is ")
-        #print( b)
-        
-        for i in range(len(curve)):
-            #curve_with_trend.append(curve[i] + m*i - offset)
-            curve_with_trend.append(curve[i] + logestimate[i] -offset)
-            """
-        # good plots
-        plt.plot( range(len(y_vals)), y_vals, color='green')
-        plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-        plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
-        #plt.plot( range(len(y_vals)), trend_line, color='orange')
-        plt.plot( range(len(curve)), curve_with_trend, color='black')
-        plt.plot( range(len(logestimate)), logestimate, color='red')
-        #plt.plot( range(len(trend)), trend, color='red')
-        
-        """
-        testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
-        print('Test Score: %.2f RMSE' % (testScore))
-        print("when using parameters ", a,b,c,d,e,f)
-
-        string_ints = [str(int) for int in [a,b,c,d,e,f]]
-        str_of_ints = ",".join(string_ints)
-
-        RMSE_highscore[str_of_ints] = testScore
-
-    print("the full dict: ")
-    print(RMSE_highscore)
 
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
@@ -390,9 +445,10 @@ def working():
     plt.ylabel('flights')
     plt.title('Forecast using SARIMAX')
 
-    #plt.show()
+    plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     prepare_data()
+    #prepare_NASDAQ()
+    createNear25th()
     working()
-
