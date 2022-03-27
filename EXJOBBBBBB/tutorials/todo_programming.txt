@@ -1,0 +1,6 @@
+plot the 7 day average of the data-without-seasonality-or-trend
+show this plot next to each factor
+- near25th
+- nasdaq
+- exchange_rate
+- temperature

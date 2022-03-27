@@ -14,7 +14,7 @@ click_outs = []
 week = []
 clicks_media = []
 impr_media = []
-trainTestLimit = 430 # 430 or 1000
+trainTestLimit = 1145 # 430 or 1000
 
 clicks_Search = []
 clicks_Inactive = []
@@ -85,31 +85,25 @@ def unpickle_data_as_clicks():
 
 def prepare_data():
 
-    global click_outs, week, clicks_media, impr_media, clicks_Search, clicks_Inactive, clicks_Active
+    global click_outs, week, clicks_media, impr_media, clicks_Search, clicks_Inactive, clicks_Active, clicks_Extreme
 
     # read dataset
     df_complete = pd.read_csv('Time.csv')
 
     # read media_clicks_df as pd df and add sum_total col
     media_clicks_df = pd.read_csv('media_clicks.csv')
+    media_imprs_df = pd.read_csv('media_imprs.csv')
     
     media_clicks_df['sum_total'] = media_clicks_df.sum(axis=1)
 
     media_clicks_df['media_clicks_SEARCH_df'] = media_clicks_df['Media_Bing_lowerfunnel_search_brand'] + media_clicks_df['Media_Bing_midfunnel_search_midbrand'] + media_clicks_df['Media_Bing_upperfunnel_search_nobrand'] + media_clicks_df['Media_Google_lowerfunnel_search_brand'] + media_clicks_df['Media_Google_midfunnel_search_midbrand'] + media_clicks_df['Media_Google_upperfunnel_search_nobrand'] 
     
-    media_clicks_df['media_clicks_INACTIVE_df'] = media_clicks_df['Media_Google_video_lowerfunnel_Youtube'] + media_clicks_df['Media_Google_video_upperfunnel_Youtube'] + media_clicks_df['Media_Youtube_Masthead_upperfunnel_video'] + media_clicks_df['Media_Online_radio_upperfunnel'] + media_clicks_df['Media_Radio_upperfunnel'] + media_clicks_df['Media_TV_upperfunnel'] + media_clicks_df['Media_DBM_upperfunnel_video'] + media_clicks_df['Media_DC_DBM_upperfunnel_video'] + media_clicks_df['Media_MediaMath_upperfunnel_video'] + media_clicks_df['Media_Snapchat_upperfunnel_video'] + media_clicks_df['Media_Tiktok_upperfunnel_video'] + media_clicks_df['Media_Eurosize_upperfunnel_OOH_JCD'] + media_clicks_df['Media_Eurosize_upperfunnel_OOH_VA'] 
+    media_clicks_df['media_clicks_INACTIVE_df'] = media_imprs_df['Media_Google_video_lowerfunnel_Youtube'] + media_imprs_df['Media_Google_video_upperfunnel_Youtube'] + media_imprs_df['Media_Online_radio_upperfunnel'] + media_imprs_df['Media_Radio_upperfunnel'] + media_imprs_df['Media_TV_upperfunnel'] + media_imprs_df['Media_DBM_upperfunnel_video'] + media_imprs_df['Media_DC_DBM_upperfunnel_video'] + media_imprs_df['Media_MediaMath_upperfunnel_video'] + media_imprs_df['Media_Snapchat_upperfunnel_video'] + media_imprs_df['Media_Tiktok_upperfunnel_video'] + media_imprs_df['Media_Eurosize_upperfunnel_OOH_JCD'] + media_imprs_df['Media_Eurosize_upperfunnel_OOH_VA'] 
 
+    # should also have Media_Youtube_Masthead_upperfunnel_video
     media_clicks_df['media_clicks_ACTIVE_df'] =  media_clicks_df['Media_Adwell_upperfunnel_native'] + media_clicks_df['Media_DBM_lowerfunnel_display'] + media_clicks_df['Media_DBM_midfunnel_display'] + media_clicks_df['Media_DBM_upperfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_display'] + media_clicks_df['Media_Facebook_lowerfunnel_video'] + media_clicks_df['Media_Facebook_upperfunnel_display'] + media_clicks_df['Media_Facebook_upperfunnel_video'] + media_clicks_df['Media_Flygstart_upperfunnel_newsletter'] + media_clicks_df['Media_Google_lowerfunnel_display'] + media_clicks_df['Media_Google_midfunnel_display'] + media_clicks_df['Media_Google_upperfunnel_display'] + media_clicks_df['Media_HejSenior_upperfunnel_newsletter'] + media_clicks_df['Media_Instagram_lowerfunnel_display'] + media_clicks_df['Media_Instagram_lowerfunnel_video'] + media_clicks_df['Media_Instagram_upperfunnel_display'] + media_clicks_df['Media_Instagram_upperfunnel_video'] + media_clicks_df['Media_Newsletter_lowerfunnel'] + media_clicks_df['Media_Newsner_midfunnel_native'] + media_clicks_df['Media_Secreteescape_midfunnel_display'] + media_clicks_df['Media_Smarter_Travel_upperfunnel_affiliate'] + media_clicks_df['Media_Snapchat_upperfunnel_display'] + media_clicks_df['Media_Sociomantic_lowerfunnel_retarg_display'] + media_clicks_df['Media_Sociomantic_upperfunnel_prospecting_display'] + media_clicks_df['Media_TradeTracker_upperfunnel_affiliate'] 
     
     
-    #media_clicks_df['sum_media_clicks_SEARCH'] = media_clicks_SEARCH_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_INACTIVE'] = media_clicks_INACTIVE_df.sum(axis=1)
-    #media_clicks_df['sum_media_clicks_ACTIVE'] = media_clicks_ACTIVE_df.sum(axis=1)
-
-    #print(media_clicks_df['media_clicks_SEARCH_df'])
-
-    media_imprs_df = pd.read_csv('media_imprs.csv')
-    media_imprs_df['sum_total'] = media_imprs_df.sum(axis=1)
 
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
@@ -117,39 +111,25 @@ def prepare_data():
     postcovid_enddate = '2021-12-01'
     
     # mask between certain dates DURING COVID
-    mask_clickouts = (df_complete.iloc[:, 0] > postcovid_startdate) & (df_complete.iloc[:, 0] <= postcovid_enddate)
-    mask_media_clicks = (media_clicks_df.iloc[:, 0] > postcovid_startdate) & (media_clicks_df.iloc[:, 0] <= postcovid_enddate)
+    mask_clickouts = (df_complete.iloc[:, 0] > precovid_startdate) & (df_complete.iloc[:, 0] <= precovid_enddate)
+    mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
     #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
  
     click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
     week = np.array(df_complete['week'][mask_clickouts].values)
 
-    #clicks_media = np.array(media_clicks_df["sum_total"][mask_media_clicks].values)
-    #impr_media = np.array(media_clicks_df["sum_total"][mask_media_imprs].values)
-
- 
     clicks_Search = np.array(media_clicks_df["media_clicks_SEARCH_df"][mask_media_clicks].values)
     clicks_Inactive = np.array(media_clicks_df["media_clicks_INACTIVE_df"][mask_media_clicks].values)
     clicks_Active = np.array(media_clicks_df["media_clicks_ACTIVE_df"][mask_media_clicks].values)
+    clicks_Extreme = np.array(media_clicks_df['Media_Youtube_Masthead_upperfunnel_video'][mask_media_clicks].values)
 
-    #min_max_scaler = MinMaxScaler()
-    #clicks_Search = min_max_scaler.fit_transform(clicks_Search)
-    #clicks_Inactive = min_max_scaler.fit_transform(clicks_Inactive)
-    #clicks_Active = min_max_scaler.fit_transform(clicks_Active)
-
+    #scaling the inputs
     clicks_Search = minmax_scale(clicks_Search, feature_range=(0,500))
     clicks_Inactive = minmax_scale(clicks_Inactive, feature_range=(0,500))
     clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
+    clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,500))
 
-    # len is 1510 "pre covid"
-    # len is 651 "post covid"
-    #print(len(clicks_media))
-    #print(len(impr_media))
-    #print(len(click_outs))
-    #print(len(week))
-
-    #x = clicksMedia['Media_Bing_lowerfunnel_search_brand']
-    #print(x[mask_media1])
+    
 
 def split_sequences(sequences, n_steps, trainTestLimit):
         X, y = list(), list()
@@ -185,8 +165,8 @@ def workingexample():
     dataset = scaler.fit_transform(dataset)
     # split into train and test sets
 
-    look_back = 2
-    n_features = 3
+    look_back = 5
+    n_features = 4
 
     # define input sequence
     #in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
@@ -199,12 +179,16 @@ def workingexample():
     in_seq2 = clicks_Active
     in_seq3 = clicks_Inactive
     
+    in_seq4 = clicks_Extreme
+
     out_seq = click_outs
 
     # remove the first item of each data because the [0-3] first clicks match with the [1-4] first clickouts
     in_seq1 = in_seq1[1:]
     in_seq2 = in_seq2[1:]
     in_seq3 = in_seq3[1:]
+    in_seq4 = in_seq4[1:]
+
     out_seq = out_seq[:-1]
 
     # convert to [rows, columns] structure
@@ -212,11 +196,13 @@ def workingexample():
     in_seq1 = in_seq1.reshape((len(in_seq1), 1))
     in_seq2 = in_seq2.reshape((len(in_seq2), 1))
     in_seq3 = in_seq3.reshape((len(in_seq3), 1))
+    in_seq4 = in_seq3.reshape((len(in_seq4), 1))
+
     out_seq = out_seq.reshape((len(out_seq), 1))
 
     # horizontally stack columns
     #dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
-    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, out_seq))
+    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3,in_seq4, out_seq))
 
     Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, trainTestLimit)
     #print("shapes")
@@ -225,11 +211,12 @@ def workingexample():
 
     model = Sequential()
     model.add(LSTM(50, activation='relu', input_shape=(look_back, n_features+1))) 
+    model.add(Dense(15, activation='relu', input_shape=(look_back, 50))) 
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
 
     # fit model
-    model.fit(Xtrain, ytrain, epochs=100, batch_size=1, verbose=2)
+    model.fit(Xtrain, ytrain, epochs=100, batch_size=1, verbose=2) # epochs=100
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
 
@@ -279,20 +266,25 @@ def workingexample():
     print('Test Score: %.2f MAPE' % (testScore))
 
     # plotting training data ytrain
-    plt.plot(range(len(ytrain)),ytrain,'-', label="training data ytrain")
+    plt.plot(range(len(ytrain)),ytrain,'-', label="training data ytrain", color="red")
     
     # plotting training prediction trainPredict
     trainPredictFlatten = trainPredict.flatten()
-    plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-', label="train prediction")
+    plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-', label="train prediction", color="green")
     
     #plotting testing data ytest
     plt.plot(
         range(len(ytrain), len(ytest) + len(ytrain)),
-        ytest,'-', label="testing data ytest")
+        ytest,'-', label="testing data ytest", color='purple')
         
     #plotting testing prediction testPredict
     testPredictFlatten = testPredict.flatten()
-    plt.plot(range(len(ytrain),len(testPredictFlatten)+len(ytrain)),testPredictFlatten,'-', label="test prediction")
+    plt.plot(range(len(ytrain),len(testPredictFlatten)+len(ytrain)),testPredictFlatten,'-', label="test prediction", color="blue")
+
+    
+    plt.xlabel('days')
+    plt.ylabel('flights')
+    plt.title('Forecast using LSTM')
 
     plt.legend()
     plt.show()

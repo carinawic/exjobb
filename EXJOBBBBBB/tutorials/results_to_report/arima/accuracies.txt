@@ -1,0 +1,4 @@
+best_sarimax_log
+Test Score: 2552.28 RMSE
+Test Score: 1988.89 MAE
+Test Score: 0.09 MAPE
