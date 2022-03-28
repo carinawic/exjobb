@@ -1,0 +1,28 @@
+﻿Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+Norsborg 2;97160;2.0
+
+Parameternamn;Beskrivning;Enhet
+Nederbörd;1 gång/dygn, kl 18;code
+
+Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+1968-01-01 00:00:00;1974-12-31 23:59:59;15.0;59.2524;17.7989
+1975-01-01 00:00:00;2022-02-28 23:59:59;8.671;59.2518;17.7960
+
+Från Datum Tid (UTC);Till Datum Tid (UTC);Representativt dygn;Nederbörd;Kvalitet;;Tidsutsnitt:
+2021-11-18 06:00:01;2021-11-19 06:00:00;2021-11-18;duggregn;G;;Data från senaste fyra månaderna
+2021-12-01 06:00:01;2021-12-02 06:00:00;2021-12-01;snowfall;G;;Tidsperiod (fr.o.m.) = 2021-11-18 00:00:01 (UTC)
+2021-12-10 06:00:01;2021-12-11 06:00:00;2021-12-10;regn;G;;Tidsperiod (t.o.m.) = 2022-03-28 18:00:00 (UTC)
+2021-12-15 06:00:01;2021-12-16 06:00:00;2021-12-15;duggregn;G;;Samplingstid = 24 timmar
+2021-12-29 06:00:01;2021-12-30 06:00:00;2021-12-29;regnskurar;G;;
+2022-01-01 06:00:01;2022-01-02 06:00:00;2022-01-01;regn;Y;;Kvalitetskoderna:
+2022-01-07 06:00:01;2022-01-08 06:00:00;2022-01-07;snowfall;G;;Grön (G) = Kontrollerade och godkända värden.
+2022-01-11 06:00:01;2022-01-12 06:00:00;2022-01-11;snowfall;G;;Gul (Y) = Misstänkta eller aggregerade värden. Grovt kontrollerade arkivdata och okontrollerade realtidsdata (senaste 2 tim).
+2022-01-19 06:00:01;2022-01-20 06:00:00;2022-01-19;snowfall;G;;
+2022-01-25 06:00:01;2022-01-26 06:00:00;2022-01-25;duggregn;G;;Orsaker till saknade data:
+2022-01-27 06:00:01;2022-01-28 06:00:00;2022-01-27;snowfall;G;;  stationen eller givaren har varit ur funktion.
+2022-01-28 06:00:01;2022-01-29 06:00:00;2022-01-28;byar av snöblandat regn;G
+2022-01-29 06:00:01;2022-01-30 06:00:00;2022-01-29;regn;G
+2022-02-03 06:00:01;2022-02-04 06:00:00;2022-02-03;regn;G
+2022-02-07 06:00:01;2022-02-08 06:00:00;2022-02-07;snowfall;G
+2022-02-13 06:00:01;2022-02-14 06:00:00;2022-02-13;duggregn;G
+2022-02-15 06:00:01;2022-02-16 06:00:00;2022-02-15;regn;G

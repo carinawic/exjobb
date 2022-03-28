@@ -339,11 +339,21 @@ def working():
     
     """
 
+    open_exchange_SEK_EUR_plotonly = [x*100 - 35000 for x in open_exchange_SEK_EUR]
+    open_exchange_SEK_USD_plotonly = [x*100 - 35000 for x in open_exchange_SEK_USD]
+    near25th_plotonly = [x*10 - 35000 for x in near25th]
+
+    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='green', label='flights')
+    plt.plot( range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR_plotonly, color='red', label='SEK_EUR')
+    plt.plot( range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD_plotonly, color='black', label='SEK_USD')
+    plt.plot( range(len(near25th)), near25th_plotonly, color='blue', label='salary')
+
     
-    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='green')
-    plt.plot( range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR*(-50), color='red')
-    plt.plot( range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD*(-50), color='black')
-    plt.plot( range(len(near25th)), near25th*(-50), color='blue')
+    plt.xlabel('days')
+    plt.ylabel('flights minus expected seasonality')
+    plt.legend()
+    plt.title('scaled features for display')
+
     plt.show()
 
     #print("len(near25th_train)")

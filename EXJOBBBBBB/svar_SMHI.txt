@@ -1,0 +1,30 @@
+Hej Carina!
+ 
+Fick svar av min kollega:
+ 
+”Tack för ditt mail, trevligt att du intresserad av avvikelsekartorna!
+Tyvärr finns inte dagliga temperaturavvikelser tillgängliga som nedladdningsbara data i nuläget.
+Men kartunderlaget baseras på öppna data, så det bör vara fullt möjligt att beräkna detta på egen hand.
+ 
+Det enklaste bör i så fall vara att utgå från öppna data för dygnsmedeltemperatur:
+https://www.smhi.se/data/utforskaren-oppna-data/se-acmf-meteorologiska-observationer-lufttemperatur-medelvarde-1-dygn
+ 
+och månadsvis normalvärden (gällande 1991-2020 nedan, länkar till övriga normalperioder):
+https://www.smhi.se/data/meteorologi/dataserier-med-normalvarden-for-perioden-1991-2020-1.167775
+ 
+Det knepiga blir sedan att skapa dygnsvis normalvärden.
+Till kartorna på hemsidan används tyvärr en ganska komplicerad metod för att beräkna dygnsnormaler från månadsnormaler.
+Om det inte behöver överensstämma exakt med SMHI:s kartor är det nog klokt att t.ex. anta ett enklare linjärt samband mellan månadsnormalerna.
+Förslagsvis används månadsnormalen för den mittersta dagen i varje månad och sedan antas en linjär förändring till mitten av nästa månad.
+Med detta samband kan sedan ett normalvärde för varje dygn uppskattas.
+Denna metodik kommer dock att fungera mindre bra då normaltemperaturkurvan vänder (under sommar/vinter).
+Så det beror lite på vad detta ska användas till.
+ 
+Det går förstås även att beräkna dygnsnormalerna direkt från observationerna.
+Men det medför en del andra utmaningar (t.ex. data saknas, hackig normalkurva).
+ 
+Vi skulle eventuellt även kunna hjälpa till att beräkna + leverera de data som efterfrågas, men i så fall behöver vi ta betalt för det arbetet.
+Återkom gärna om det skulle vara intressant.”
+ 
+ 
+Önskar dig en fin dag!
