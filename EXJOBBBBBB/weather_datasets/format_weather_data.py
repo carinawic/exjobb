@@ -84,11 +84,11 @@ def format_lufttemp():
         if endmonth > startmonth:
 
             for i in range(len(list_to_be_filtered)):
-                if(month_list[i] <= endmonth) and (month_list[i] >= startmonth):# it is summer, between august (8) and 
+                if(month_list[i] <= endmonth) and (month_list[i] >= startmonth):
                     list_to_be_filtered[i] = 0
         else:
             for i in range(len(list_to_be_filtered)):
-                if((month_list[i] <= endmonth) or (month_list[i] >= startmonth)):# it is summer, between august (8) and 
+                if((month_list[i] <= endmonth) or (month_list[i] >= startmonth)):
                    list_to_be_filtered[i] = 0
                     
                     
@@ -121,13 +121,39 @@ def format_lufttemp():
    
     plt.show()
     
-    
-
 def format_neder():
     neder_corrected = pd.read_csv("Observatoriekullen\\nederbördsmängd_corrected.csv",sep=';')
     neder_latest = pd.read_csv("Observatoriekullen\\nederbördsmängd_latest.csv",sep=';')
+    neder_full = pd.concat([neder_corrected, neder_latest], ignore_index=True)
+
+    neder_full = neder_full.drop(['Från Datum Tid (UTC)','Till Datum Tid (UTC)','Kvalitet'], axis=1)
+
+    print(neder_full)
     
+    neder_full_values = neder_full['Nederbördsmängd'].values
+
+    regn_consecutive = []
+    for regn_magnitude in neder_full_values:
+
+        min_rain = 4 # we are below x degrees difference from expected temp
+        days_in_row_threshold = 2
+        
+        if regn_magnitude > min_rain:
+            counter += 1
+            if counter >= days_in_row_threshold:
+                regn_consecutive.append(10)
+                continue
+        else: 
+            counter = 0
+        regn_consecutive.append(0)
+
+    plt.plot(range(len(neder_full_values)), neder_full_values, color='blue', label='rain magnitude')
+    plt.plot(range(len(regn_consecutive)), regn_consecutive, color='red', label='rain consecutive')
+    plt.legend()
+    plt.xlabel('days')
+    plt.ylabel('rain magnitude')
+    plt.show()
 
 
 if __name__ == "__main__":
-    format_lufttemp()
+    format_neder()
