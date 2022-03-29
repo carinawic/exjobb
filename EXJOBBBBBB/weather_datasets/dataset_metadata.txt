@@ -1,0 +1,68 @@
+Lufttemperatur_latest.csv
+
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Observatoriekullen A;98230;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Lufttemperatur;medelvärde 1 dygn, 1 gång/dygn, kl 00;degree celsius
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1996-10-01 00:00:00;2022-03-28 17:00:00;43.133;59.3417;18.0549
+
+Lufttemperatur_corrected.csv
+
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Observatoriekullen A;98230;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Lufttemperatur;medelvärde 1 dygn, 1 gång/dygn, kl 00;degree celsius
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1996-10-01 00:00:00;2022-02-28 23:59:59;43.133;59.3417;18.0549
+
+    Från Datum Tid (UTC);Till Datum Tid (UTC);Representativt dygn;Lufttemperatur;Kvalitet;;Tidsutsnitt:
+    1996-10-01 00:00:01;1996-10-02 00:00:00;1996-10-01;11.1;Y;;Kvalitetskontrollerade historiska data (utom de senaste 3 mån)
+
+Nederbördsmängd_corrected
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Observatoriekullen;98210;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Nederbördsmängd;summa 1 dygn, 1 gång/dygn, kl 06;millimetre
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1859-01-01 00:00:00;2022-03-01 10:00:00;43.133;59.3417;18.0549
+
+
+Nederbördsmängd_latest
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Observatoriekullen;98210;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Nederbördsmängd;summa 1 dygn, 1 gång/dygn, kl 06;millimetre
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1859-01-01 00:00:00;2022-03-28 17:00:00;43.133;59.3417;18.0549
+
+väder_latest
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Bromma Flygplats;97200;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Rådande väder;momentanvärde, 1 gång/tim resp 8 gånger/dygn;code
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1939-01-01 00:00:00;2022-03-28 18:00:00;14.0;59.3537;17.9513
+
+väder_corrected
+    Stationsnamn;Klimatnummer;Mäthöjd (meter över marken)
+    Stockholm-Bromma Flygplats;97200;2.0
+
+    Parameternamn;Beskrivning;Enhet
+    Rådande väder;momentanvärde, 1 gång/tim resp 8 gånger/dygn;code
+
+    Tidsperiod (fr.o.m);Tidsperiod (t.o.m);Höjd (meter över havet);Latitud (decimalgrader);Longitud (decimalgrader)
+    1939-01-01 00:00:00;2022-03-01 13:00:00;14.0;59.3537;17.9513
+
+
+Datum;Tid (UTC);Rådande väder;Kvalitet

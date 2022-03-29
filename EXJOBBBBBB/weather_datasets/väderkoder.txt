@@ -1,0 +1,258 @@
+Rådande väder
+momentanvärde, 1 gång/tim resp 8 gånger/dygn
+
+Code	Value
+0	Molnens utveckling har icke kunnat observeras eller icke observerats
+1	Moln har upplösts helt eller avtagit i utsträckning, i mäktighet eller i täthet
+2	Molnhimlen i stort sett oförändrad
+3	Moln har bildats eller tilltagit i utsträckning, i mäktighet eller i täthet
+4	Sikten nedsatt av brandrök eller fabriksrök
+5	Torrdis (solrök)
+6	Stoft svävar i luften, men uppvirvlas ej av vinden vid observationsterminen .
+7	Stoft eller sand uppvirvlas av vinden men ingen utpräglad sandvirvel och ingen sandstorm inom synhåll
+8	Utpräglad stoft- eller sandvirvel vid obsterminen eller under senaste timmen meningen sandstorm
+9	Sandstorm under senaste timmen eller inom synhåll vid obs-terminen
+10	Fuktdis med sikt 1-10 km
+11	Låg dimma i bankar på stationen, skiktets mäktighet överstiger ej 2 m på land eller 10 m till sjöss
+12	Mer eller mindre sammanhängande låg dimma på stationen, skiktets mäktighet överstiger ej 2 m på land eller 10 m till sjöss
+13	Kornblixt
+14	Nederbörd inom synhåll, som ej når marken eller havsytan (fallstrimmor)
+15	Nederbörd, som når marken eller havsytaninom synhåll på ett avstånd större än 5 km från stationen
+16	Nederbörd, som når marken eller havsytan inom synhåll på ett avstånd mindre än 5 km, men ej på stationen
+17	Åska vid observationsterminen men ingen nederbörd på stationen
+18	Utpräglade starka vindbyar på stationen eller inom synhåll vid obs-terminen eller under senaste timmen
+19	Skydrag eller tromb på stationen eller inom synhåll vid obs-terminen eller under senaste timmen
+20	Duggregn eller kornsnö under senaste timmen men ej vid observationsterterminen
+21	Regn under senaste timmen men ej vid observationsterterminen
+22	Snöfall under senaste timmen men ej vid observationsterterminen
+23	Snöblandat regn eller iskorn under senaste timmen men ej vid observationsterterminen
+24	Underkylt regn eller duggregn under senaste timmen men ej vid observationsterterminen
+25	Regnskura runder senaste timmen men ej vid observationsterterminen
+26	Byar av snö eller snöblandat regn under senaste timmen men ej vid observationsterterminen
+27	Byar av hagel med eller utan regn under senaste timmen men ej vid observationsterterminen
+28	Dimma under senaste timmen men ej vid observationsterterminen
+29	Åska (med eller utan nederbörd) under senaste timmen men ej vid observationsterterminen
+30	Lätt eller måttlig sandstorm har avtagit istyrka under senaste timmen
+31	Lätt eller måttlig sandstorm utan märkbar förändring under senaste timmen
+32	Lätt eller måttlig sandstorm har börjat eller tilltagit i styrka under senaste timmen
+33	Kraftig sandstorm har avtagit i styrka under senaste timmen
+34	Kraftig sandstorm utan märkbar förändring under senaste timmen
+35	Kraftig sandstorm har börjat eller tilltagit i styrka under senaste timmen
+36	Lågt och lätt eller måttligt snödrev
+37	Lågt men tätt snödrev
+38	Högt men lätt eller måttligt snödrev
+39	Högt och tätt snödrev
+40	Dimma inom synhåll vid observationsterminen, nående över ögonhöjd (dock ej dimma på stationen under senaste timmen) (VV ?10)
+41	Dimma i bankar på stationen (VV< 10)
+42	Dimma, med skymt av himlen, har blivit lättare under senaste timmen
+43	Dimma, utan skymt av himlen, har blivit lättare under senaste timmen
+44	Dimma, med skymt av himlen, oförändrad under senaste timmen
+45	Dimma, utan skymt av himlen, oförändrad under senaste timmen
+46	Dimma, med skymt av himlen, har börjat eller tätnat under senaste timmen
+47	Dimma, utan skymt av himlen, har börjat eller tätnat under senaste timmen
+48	Underkyld dimma, med skymt av himlen
+49	Underkyld dimma, utan skymt av himlen
+50	Lätt duggregn med avbrott
+51	Lätt duggregn, ihållande
+52	Måttligt duggregn med avbrott
+53	Måttligt duggregn, ihållande
+54	Tätt duggregn med avbrott
+55	Tätt duggregn, ihållande
+56	Lätt underkylt duggregn
+57	Måttligt eller tätt underkylt duggregn
+58	Lätt duggregn tillsammans med regn
+59	Måttligt eller tätt duggregn tillsammans med regn
+60	Lätt regn med avbrott
+61	Lätt regn, ihållande
+62	Måttligt regn med avbrott
+63	Måttligt regn, ihållande
+64	Starkt regn med avbrott
+65	Starkt regn ihållande
+66	Lätt underkylt regn
+67	Måttligt eller starkt underkylt regn
+68	Lätt regn eller duggregn tillsammans med snö
+69	Måttligt eller starkt regn eller duggregn tillsammans med snö
+70	Lätt snöfall med avbrott
+71	Lätt snöfall, ihållande
+72	Måttligt snöfall med avbrott
+73	Måttligt snöfall, ihållande
+74	Tätt snöfall med avbrott
+75	Tätt snöfall, ihållande
+76	Isnålar (med el. utan dimma)
+77	Kornsnö (med el. utan dimma)
+78	Enstaka snöstjärnor (med el. utan dimma)
+79	Iskorn
+80	Lätta regnskurar
+81	Måttliga eller kraftiga regnskurar
+82	Mycket kraftiga regnskurar (skyfall)
+83	Lätt snöblandat regn i byar
+84	Måttligt eller kraftigt snöblandat regn i byar
+85	Lätta snöbyar
+86	Måttliga eller kraftiga snöbyar
+87	Lätta byar av småhagel eller snöhagel (trindsnö) med eller utan regn eller snöblandat regn
+88	Måttliga eller kraftiga byar av småhagel eller snöhagel (trindsnö) med eller utan regn eller snöblandat regn
+89	Lätta byar av ishagel med eller utan regn eller snöblandat regn, utan åska
+90	Måttliga eller kraftiga byar av ishagel med eller utan regn eller snöblandat regn, utan åska
+91	Lätt regn vid observationsterminen, åskväder under senaste timmen men ej vid observationsterminen
+92	Måttligt el. starkt regn vid observationsterminen, åskväder under senaste timmen men ej vid observationsterminen
+93	Lätt snöfall, snöblandat regn eller hagel vid observationsterminen, åskväder under senaste timmen men ej vid observationsterminen
+94	Måttligt el. starkt snöfall, snöblandat regn eller hagel vid observationsterminen, åskväder under senaste timmen men ej vid observationsterminen
+95	Svagt eller måttligt åskväder vid observationsterminen utan hagel men med regn eller snö
+96	Svagt eller måttligt åskväder vid observationsterminen med hagel
+97	Kraftigt åskväder vid observationsterminen utan hagel men med regn eller snö
+98	Kraftigt åskväder vid observationsterminen med sandstorm
+99	Kraftigt åskväder vid observationsterminen med hagel
+100	Inget signifikant väder observerat
+101	Moln har upplösts helt eller avtagit i utsträckning, i mäktighet eller i täthet, under senste timmen
+102	Molnhimlen i stort sett oförändrad under senste timmen
+103	Moln har bildats eller tilltagit i utsträckning, i mäktighet eller i täthet, under senste timmen
+104	Dis eller rök, eller stoft som är spritt i luften, sikt större eller lika med 1 km
+105	Dis eller rök, eller stoft som är spritt i luften, sikt mindre än 1 km
+110	Fuktdis med sikt 1-10 km
+111	Isnålar
+112	Blixt på avstånd
+118	Utpräglade starka vindbyar
+120	Dimma
+121	Nederbörd
+122	Duggregn eller kornsnö
+123	Regn
+124	Snöfall
+125	Underkylt duggregn eller regn
+126	Åskväder (med eller utan nederbörd)
+127	Snödrev eller sandstorm
+128	Snödrev eller sandstorm, sikt större eller lika med 1 km
+129	Snödrev eller sandstorm, sikt mindre än 1 km
+130	Dimma
+131	Dimma i bankar på stationen
+132	Dimma, har blivit lättare under senaste timmen
+133	Dimma, oförändrad under senaste timmen
+134	Dimma, har börjat eller tätnat under senaste timmen
+135	Underkyld dimma
+140	Nederbörd
+141	Lätt eller måttlig nederbörd
+142	Kraftig nederbörd
+143	Flytande nederbörd, lätt eller måttlig
+144	Flytande nederbörd, kraftig
+145	Fast nederbörd, lätt eller måttlig
+146	Fast nederbörd, kraftig
+147	Lätt eller måttlig underkyld nederbörd
+148	Kraftig underkyld nederbörd
+150	Duggregn
+151	Lätt duggregn
+152	Måttligt duggregn
+153	Tätt duggregn
+154	Lätt underkylt duggregn
+155	Måttligt underkylt duggregn
+156	Tätt duggregn
+157	Lätt duggregn tillsammans med regn
+158	Måttligt eller tätt duggregn tillsammans med regn
+160	Regn
+161	Lätt regn
+162	Måttligt regn
+163	Starkt regn
+164	Lätt underkylt regn
+165	Måttligt underkylt regn
+166	Starkt underkylt regn
+167	Lätt regn eller duggregn tillsammans med snö
+168	Måttligt eller starkt regn eller duggregn tillsammans med snö
+170	Snöfall
+171	Lätt snöfall
+172	Måttligt snöfall
+173	Tätt snöfall
+174	Lätt småhagel
+175	Måttligt småhagel
+176	Kraftigt småhagel
+177	Kornsnö
+178	Isnålar
+180	Regnskurar
+181	Lätta regnskurar
+182	Måttliga regnskurar
+183	Kraftiga regnskurar
+184	Mycket kraftiga regnskurar (skyfall)
+185	Lätta snöbyar
+186	Måttliga snöbyar
+187	Kraftiga snöbyar
+189	Hagel
+190	Åskväder
+191	Svagt eller måttligt åskväder utan nederbörd
+192	Svagt eller måttligt åskväder med regnskurar eller snöbyar
+193	Svagt eller måttligt åskväder med hagel
+194	Kraftigt åskväder utan nederbörd
+195	Kraftigt åskväder med regnskurar eller snöbyar
+196	Kraftigt åskväder med hagel
+199	Tromb eller Tornado
+204	Vulkanaska som spridits högt upp i luften
+206	Tjockt stoftdis, sikt mindre än 1 km
+207	Vattenstänk vid station pga blåst
+208	Drivande stoft (eller sand)
+209	Kraftig stoft- eller sandstorm på avstånd (Haboob)
+210	Snödis
+211	Snöstorm eller kraftigt snödrev som ger extremt dålig sikt
+213	Blixt mellan moln och marken
+217	Åska utan regnskur
+219	Tromb eller tornado (förödande) vid stationen eller inom synhåll under den senaste timmen
+220	Avlagring av vulkanaska
+221	Avlagring av stoft eller sand
+222	Dagg
+223	Utfällning av blöt snö
+224	Lätt eller måttlig dimfrost
+225	Kraftig dimfrost
+226	Rimfrost
+227	Kraftig isbeläggning pga underkyld nederbörd
+228	Isskorpa
+230	Stoft- eller sandstorm med temperatur under fryspunkten
+239	Kraftigt snödrev och/eller snöfall
+241	Dimma till havs
+242	Dimma i dalgång
+243	Sjörök i Arktis eller vid Antarktis
+244	Advektionsdimma (över vatten)
+245	Advektionsdimma (över land)
+246	Dimma över is eller snö
+247	Tät dimma, sikt 60-90 m
+248	Tät dimma, sikt 30-60 m
+249	Tät dimma, sikt mindre än 30 m
+250	Duggregn, intensitet mindre än 0,10 mm/timme
+251	Duggregn, intensitet 0,10-0,19 mm/timme
+252	Duggregn, intensitet 0,20-0,39 mm/timme
+253	Duggregn, intensitet 0,40-0,79 mm/timme
+254	Duggregn, intensitet 0,80-1,59 mm/timme
+255	Duggregn, intensitet 1,60-3,19 mm/timme
+256	Duggregn, intensitet 3,20-6,39 mm/timme
+257	Duggregn, intensitet större än 6,40 mm/timme
+259	Duggregn och snöfall
+260	Regn, intensitet mindre än 1,0 mm/timme
+261	Regn, intensitet 1,0-1,9 mm/timme
+262	Regn, intensitet 2,0-3,9 mm/timme
+263	Regn, intensitet 4,0-7,9 mm/timme
+264	Regn, intensitet 8,0-15,9 mm/timme
+265	Regn, intensitet 16,0-31,9 mm/timme
+266	Regn, intensitet 32,0-63,9 mm/timme
+267	Regn, intensitet större än 64,0 mm/timme
+270	Snö, intensitet mindre än 1,0 cm/timme
+271	Snö, intensitet 1,0-1,9 cm/timme
+272	Snö, intensitet 2,0-3,9 cm/timme
+273	Snö, intensitet 4,0-7,9 cm/timme
+274	Snö, intensitet 8,0-15,9 cm/timme
+275	Snö, intensitet 16,0-31,9 cm/timme
+276	Snö, intensitet 32,0-63,9 cm/timme
+277	Snö, intensitet större än 64,0 cm/timme
+278	Snöfall eller isnålar från en klar himmel
+279	Frysande blötsnö
+280	Regn
+281	Underkylt regn
+282	Snöblandat regn
+283	Snöfall
+284	Småhagel eller snöhagel
+285	Småhagel eller snöhagel tillsammans med regn
+286	Småhagel eller snöhagel tillsammans med snöblandat regn
+287	Småhagel eller snöhagel tillsammans med snö
+288	Hagel
+289	Hagel tillsammans med regn
+290	Hagel tillsammans med snöblandat regn
+291	Hagel tillsammans med snö
+292	Skurar eller åska till havs
+293	Skurar eller åska över berg
+508	Inga signifikanta fenomen att rapportera, rådande och gammalt väder utelämnas
+509	Ingen observation, data ej tillgängligt, rådande och gammalt väder utelämnas
+510	Rådande och gammalt väder saknas men förväntades.
+511	Saknat värde
