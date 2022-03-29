@@ -1,3 +1,4 @@
+from time import time
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ def format_lufttemp():
 
     lufttemp_full = lufttemp_full.drop(['Från Datum Tid (UTC)','Till Datum Tid (UTC)','Kvalitet'], axis=1)
 
-    print(lufttemp_full)
+    #print(lufttemp_full)
     
     #lufttemp_full = lufttemp_full.set_index('Representativt dygn')
     lufttemp_full.index = pd.to_datetime(lufttemp_full['Representativt dygn'])
@@ -17,7 +18,7 @@ def format_lufttemp():
     lufttemp_full = lufttemp_full.reindex(new_date_range, fill_value=None)
     lufttemp_full = lufttemp_full.fillna(method='ffill')
 
-    print(lufttemp_full)
+    #print(lufttemp_full)
 
     #lufttemp_full['mean_month'] = lufttemp_full.resample('M', on='Från Datum Tid (UTC)').mean()
     lufttemp_full['MonthlyAverage'] = (lufttemp_full.groupby(lufttemp_full['Representativt dygn'].dt.to_period('M'))['Lufttemperatur'].transform('mean'))
@@ -26,29 +27,6 @@ def format_lufttemp():
 
     g = lufttemp_full.groupby(pd.Grouper(key='Representativt dygn', freq='M'))
     # groups to a list of dataframes with list comprehension
-    dfs = [group for _,group in g] 
-
-    fixed_temperatures_all_days = []
-    step_temperatures_all_days = []
-
-    # for each dataframe (each containing one month) except last month
-    for i,month_group in enumerate(dfs[:-1]):
-        
-        current_month_avg_values = dfs[i]['MonthlyAverage'].values
-        current_month_avg = current_month_avg_values[0]
-
-        next_month_avg_values = dfs[i+1]['MonthlyAverage'].values
-        next_month_avg = next_month_avg_values[0]
-
-        delta = current_month_avg - next_month_avg / len(current_month_avg_values)
-
-        # for each day in the current month
-        for num,day in enumerate(current_month_avg_values):
-            fixed_temperatures_all_days.append(current_month_avg + num*delta)
-            step_temperatures_all_days.append(current_month_avg)
-
-    #    print(fixed_temperatures_all_days)
-
     
     x = range(len(lufttemp_full['Lufttemperatur'].values))
     
@@ -62,18 +40,86 @@ def format_lufttemp():
     coef = polyfit(X, y_vals, degree)
     print('Coefficients: %s' % coef)
     # create curve
-    curve = list()
+    curve2 = list()
     for i in range(len(X)):
         value = coef[-1]
         for d in range(degree):
             value += X[i]**(degree-d) * coef[d]
-        curve.append(value)
+        curve2.append(value)
 
-    plt.plot(range(len(curve)), curve, color='red')
-    plt.show()
+    time = np.array(range(len(y)))
+    sinwave = np.sin(2 * np.pi * time/365 - np.deg2rad(110)) * 10 + 9.4
     
-    #plt.plot(range(len(fixed_temperatures_all_days)), fixed_temperatures_all_days, color='green')
-    #plt.plot(x, y, color='black')
+    deviation_from_sine = y - sinwave
+
+    deviation_consecutive = []
+    month_list = []
+    
+    for i in lufttemp_full['Representativt dygn'].values:
+        month_list.append(i.astype('datetime64[M]').astype(int) % 12 + 1)
+
+
+    counter = 0
+
+    for devpoint in deviation_from_sine:
+
+        at_least_x_degrees_under_expected = -3 # we are below x degrees difference from expected temp
+        days_in_row_threshold = 2
+        
+
+        if devpoint < at_least_x_degrees_under_expected:
+            counter += 1
+            if counter >= days_in_row_threshold:
+                deviation_consecutive.append(10)
+                continue
+        else: 
+            counter = 0
+        
+        deviation_consecutive.append(0)
+        
+
+    def remove_values_during_season(list_to_be_filtered, endmonth=9,startmonth=5):
+        # remove value if not summer
+        
+        if endmonth > startmonth:
+
+            for i in range(len(list_to_be_filtered)):
+                if(month_list[i] <= endmonth) and (month_list[i] >= startmonth):# it is summer, between august (8) and 
+                    list_to_be_filtered[i] = 0
+        else:
+            for i in range(len(list_to_be_filtered)):
+                if((month_list[i] <= endmonth) or (month_list[i] >= startmonth)):# it is summer, between august (8) and 
+                   list_to_be_filtered[i] = 0
+                    
+                    
+    
+    remove_values_during_season(deviation_consecutive, 5,10)
+
+    # get x value of each new month for plotting vertical lines
+    vertical_line_here = []
+    lastmonth = 0
+    for i,month_num in enumerate(month_list):
+        
+        if month_num != lastmonth:
+            if (month_num == 5 or month_num == 10):
+                vertical_line_here.append(i)
+            lastmonth = month_num
+        
+
+    
+    plt.plot(x, y, color='green', label='temperatures')
+    plt.plot(range(len(deviation_from_sine)), deviation_from_sine, color='blue', label='deviation from sin estimate')
+    plt.plot(range(len(sinwave)), sinwave, color='black', label='sin estimate')
+    plt.plot(range(len(deviation_consecutive)), deviation_consecutive, color='orange', label='< 0 deg for 3 consecutive days')
+
+    for xc in vertical_line_here:
+        plt.axvline(x=xc)
+
+    plt.xlabel('days')
+    plt.ylabel('degrees celcius')
+    plt.legend()
+   
+    plt.show()
     
     
 
