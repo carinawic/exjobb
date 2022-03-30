@@ -13,6 +13,41 @@ def createNear25th():
     df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 27, 1)
     print(df)
 
+    """
+    datum där lönen INTE inträffar den 25e:
+    (25:e är röd dag) - notera fredagen innan, om den är röd så gå bakåt till föregående icke-röda dag
+    
+    2020
+    Jan 24
+
+    2019
+    Dec 23
+    Aug 23
+    Maj 24
+    
+    2018
+    Dec 21
+    Nov 23
+    Aug 24
+    Mar 23
+    Feb 23
+
+    2017
+    Dec 22
+    Nov 24
+    Jun 22
+    Maj 24
+    Mar 24
+    Feb 24
+
+    2016
+    Dec 23 
+    Sep 23
+    Jun 23
+
+
+    """
+
     near25th = np.array(df['Is25th'].values)
 
     print("len is ", near25th)
