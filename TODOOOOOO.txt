@@ -1,0 +1,8 @@
+TODO
+
+TODO
+1. Finish chapter about why we chose certain parameters for ARIMA and LSTM, by running experiments  - with different number of layers, different number of nodes per layer - when we have the correct number of layers and such, reason about scaling or not scaling the marketing data, reasoning about the extreme outlier. NOTE to change loopback to 7.
+2. Finish the fucking introduction and send it to Erik
+3. Add all results regarding weather, exchange rate, marketing investment, and salary (around 25th) FOR BOTH LSTM AND SARIMAX 
+4. Improve “around 25th” to “”around salary date
+5. Calculate p value for percent increase around salary date
