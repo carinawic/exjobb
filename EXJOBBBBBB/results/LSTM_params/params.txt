@@ -1,0 +1,269 @@
+Figure_1
+
+(incorrect order of features lookahead gives 1174RMSE)
+
+look_back = 7
+media investment
+callback=EarlyStopping(monitor="loss",patience=30)
+epochs = 100
+batch_size=1
+64->16->1
+
+
+no scale:
+Train Score: 2096.13 RMSE
+Test Score: 2560.22 RMSE
+Train Score: 1598.23 MAE
+Test Score: 1983.66 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.08 MAPE
+
+scale(0,1)
+Train Score: 1858.14 RMSE
+Test Score: 2195.67 RMSE
+Train Score: 1406.39 MAE
+Test Score: 1704.73 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+scale (0,500)
+Train Score: 1529.42 RMSE
+Test Score: 1851.65 RMSE
+Train Score: 1073.15 MAE
+Test Score: 1324.35 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+batch_size=8
+https://medium.com/@canerkilinc/selecting-optimal-lstm-batch-size-63066d88b96b
+
+Train Score: 1775.24 RMSE
+Test Score: 2113.01 RMSE
+Train Score: 1301.29 MAE
+Test Score: 1606.24 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.07 MAPE
+
+batch_size=32
+Train Score: 1909.26 RMSE
+Test Score: 2171.10 RMSE
+Train Score: 1428.91 MAE
+Test Score: 1634.49 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+batch_size=64
+Train Score: 2160.76 RMSE
+Test Score: 2428.69 RMSE
+Train Score: 1646.44 MAE
+Test Score: 1865.57 MAE
+Train Score: 0.08 MAPE
+Test Score: 0.08 MAPE
+
+increasing batch size reduced RMSE but we try combining it with increasing epochs
+
+batch_size=64
+epochs = 400
+
+Train Score: 2061.50 RMSE
+Test Score: 2304.11 RMSE
+Train Score: 1564.91 MAE
+Test Score: 1749.28 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+batch_size=8
+epochs = 400
+Train Score: 1450.63 RMSE
+Test Score: 1831.42 RMSE
+Train Score: 1043.29 MAE
+Test Score: 1317.71 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+Although speeding up the process allows to increase number of epochs, it was not beneficial to increase the batch size.
+
+batch_size=7
+epochs = 400
+Train Score: 1576.26 RMSE
+Test Score: 1850.60 RMSE
+Train Score: 1132.97 MAE
+Test Score: 1312.79 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+Train Score: 1646.36 RMSE
+Test Score: 1945.28 RMSE
+Train Score: 1251.94 MAE
+Test Score: 1451.51 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Another method is to train on batches, then copy the weights and redefine the model,
+predict on batchsize = 1. 
+https://machinelearningmastery.com/use-different-batch-sizes-training-predicting-python-keras/
+
+same but batch size 1
+Train Score: 1494.72 RMSE
+Test Score: 1867.09 RMSE
+Train Score: 1075.26 MAE
+Test Score: 1352.55 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+Train Score: 1940.68 RMSE
+Test Score: 2154.37 RMSE
+Train Score: 1356.82 MAE
+Test Score: 1554.55 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+LAstly, we try different values for lookback
+lookback = 1
+
+Train Score: 2866.16 RMSE
+Test Score: 3025.22 RMSE
+Train Score: 2082.18 MAE
+Test Score: 2263.38 MAE
+Train Score: 0.10 MAPE
+Test Score: 0.09 MAPE
+
+sizes of network
+epochs = 400
+64-1
+batch_size = 1
+Train Score: 1634.81 RMSE
+Test Score: 1941.91 RMSE
+Train Score: 1205.15 MAE
+Test Score: 1453.64 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+batch size = 7 (now onwards) and epochs = 400 and look_back = 7
+64-1
+Train Score: 1465.65 RMSE
+Test Score: 1833.06 RMSE
+Train Score: 1044.75 MAE
+Test Score: 1318.28 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+16-1
+Train Score: 2714.12 RMSE
+Test Score: 2918.30 RMSE
+Train Score: 2130.21 MAE
+Test Score: 2279.80 MAE
+Train Score: 0.10 MAPE
+Test Score: 0.10 MAPE
+way too small!
+
+32-1
+Train Score: 2116.54 RMSE
+Test Score: 2506.90 RMSE
+Train Score: 1545.63 MAE
+Test Score: 1782.09 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+too small as well!
+
+128 - 1
+Train Score: 1411.13 RMSE
+Test Score: 1878.41 RMSE
+Train Score: 1026.91 MAE
+Test Score: 1353.67 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+16-16-1
+Train Score: 1825.95 RMSE
+Test Score: 2100.36 RMSE
+Train Score: 1318.87 MAE
+Test Score: 1452.42 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+32-16-1
+Train Score: 1835.66 RMSE
+Test Score: 2104.04 RMSE
+Train Score: 1367.00 MAE
+Test Score: 1554.40 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+16-32-1
+Train Score: 1788.43 RMSE
+Test Score: 2106.49 RMSE
+Train Score: 1328.82 MAE
+Test Score: 1526.74 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+32-32-1
+Train Score: 2472.70 RMSE
+Test Score: 2642.78 RMSE
+Train Score: 1875.21 MAE
+Test Score: 2002.24 MAE
+Train Score: 0.09 MAPE
+Test Score: 0.08 MAPE
+
+64-16
+Train Score: 1796.94 RMSE
+Test Score: 2097.86 RMSE
+Train Score: 1361.10 MAE
+Test Score: 1624.29 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.07 MAPE
+
+16-64
+Train Score: 1856.90 RMSE
+Test Score: 2096.97 RMSE
+Train Score: 1400.40 MAE
+Test Score: 1558.40 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+64-64
+Train Score: 1505.04 RMSE
+Test Score: 1933.48 RMSE
+Train Score: 1111.44 MAE
+Test Score: 1395.82 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+64-128
+Train Score: 1696.89 RMSE
+Test Score: 2017.69 RMSE
+Train Score: 1215.08 MAE
+Test Score: 1406.97 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+64-64-64
+Train Score: 1736.75 RMSE
+Test Score: 2173.17 RMSE
+Train Score: 1289.05 MAE
+Test Score: 1555.18 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.07 MAPE
+
+32-32-32
+Train Score: 1509.78 RMSE
+Test Score: 2244.54 RMSE
+Train Score: 1107.49 MAE
+Test Score: 1427.67 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+
+---
+
+going back to batch_size = 1
+Train Score: 1530.55 RMSE
+Test Score: 1853.93 RMSE
+Train Score: 1115.86 MAE
+Test Score: 1343.86 MAE
+Train Score: 0.05 MAPE
+Test Score: 0.06 MAPE
+
+
+

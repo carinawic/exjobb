@@ -48,41 +48,369 @@ open_exchange_SEK_EUR = []
 open_exchange_SEK_USD = []
 open_nasdaq = []
 near25th = []
+salaryday = []
+dayBeforeSalaryday = []
+near24th = []
+lufttemp = []
+rain = []
+
+OMSX30 = []
+
+def create_OMSX30():
+    global OMSX30
+    df = read_csv('stonks/OMSX30_ORDERED.csv')
+    stgng = np.array(df['Stängn.kurs'].values)*100
+    #print(stgng)
+    #print(len(stgng))
+    stgng = minmax_scale(stgng, feature_range=(0,500))
+    OMSX30 = stgng
+
+
+def createNeder():
+
+    global rain
+
+    neder_full = pd.read_csv("Observatoriekullen\\nederbördsmängd_corrected.csv",sep=';')
+
+    neder_full = neder_full.drop(['Från Datum Tid (UTC)','Till Datum Tid (UTC)','Kvalitet'], axis=1)
+
+    
+    neder_full_values = neder_full['Nederbördsmängd'].values
+
+    regn_consecutive = []
+    for regn_magnitude in neder_full_values:
+
+        min_rain = 2 # we are below x degrees difference from expected temp
+        days_in_row_threshold = 2
+        
+        if regn_magnitude > min_rain:
+            counter += 1
+            if counter >= days_in_row_threshold:
+                regn_consecutive.append(500)
+                continue
+        else: 
+            counter = 0
+        regn_consecutive.append(0)
+
+    rain = regn_consecutive
+    """
+    plt.plot(range(len(neder_full_values)), neder_full_values, color='blue', label='rain magnitude')
+    plt.plot(range(len(regn_consecutive)), regn_consecutive, color='red', label='rain consecutive')
+    plt.legend()
+    plt.xlabel('days')
+    plt.ylabel('rain magnitude')
+    plt.show()
+    """
+
+
+def createLufttemp():
+
+    global lufttemp
+
+    lufttemp_corrected = pd.read_csv("Observatoriekullen\lufttemperatur_corrected.csv",sep=';',parse_dates=['Representativt dygn'])
+    lufttemp_latest = pd.read_csv("Observatoriekullen\lufttemperatur_latest.csv",sep=';',parse_dates=['Representativt dygn'])
+    lufttemp_full = pd.concat([lufttemp_corrected, lufttemp_latest], ignore_index=True)
+
+    lufttemp_full = lufttemp_full.drop(['Från Datum Tid (UTC)','Till Datum Tid (UTC)','Kvalitet'], axis=1)
+
+    lufttemp_full.index = pd.to_datetime(lufttemp_full['Representativt dygn'])
+    new_date_range = pd.date_range(start="2016-01-01", end="2020-02-19", freq="D")
+    lufttemp_full = lufttemp_full.reindex(new_date_range, fill_value=None)
+    lufttemp_full = lufttemp_full.fillna(method='ffill')
+
+    lufttemp_full['MonthlyAverage'] = (lufttemp_full.groupby(lufttemp_full['Representativt dygn'].dt.to_period('M'))['Lufttemperatur'].transform('mean'))
+
+    lufttemp_full['Dev_from_avg'] = lufttemp_full['Lufttemperatur'] - lufttemp_full['MonthlyAverage']
+
+    
+    y = lufttemp_full['Lufttemperatur'].values
+
+    time = np.array(range(len(y)))
+    sinwave = np.sin(2 * np.pi * time/365 - np.deg2rad(110)) * 10 + 9.4
+    
+    deviation_from_sine = y - sinwave
+
+    deviation_consecutive = []
+    month_list = []
+    
+    for i in lufttemp_full['Representativt dygn'].values:
+        month_list.append(i.astype('datetime64[M]').astype(int) % 12 + 1)
+
+    counter = 0
+
+    for devpoint in deviation_from_sine:
+
+        at_least_x_degrees_under_expected = 1 # we are below x degrees difference from expected temp
+        days_in_row_threshold = 1
+        
+
+        if devpoint < at_least_x_degrees_under_expected:
+            counter += 1
+            if counter >= days_in_row_threshold:
+                deviation_consecutive.append(10)
+                continue
+        else: 
+            counter = 0
+        
+        deviation_consecutive.append(0)
+        
+
+    def remove_values_during_season(list_to_be_filtered, endmonth=9,startmonth=5):
+        # remove value if not summer
+        
+        if endmonth > startmonth:
+
+            for i in range(len(list_to_be_filtered)):
+                if(month_list[i] <= endmonth) and (month_list[i] >= startmonth):
+                    list_to_be_filtered[i] = 0
+        else:
+            for i in range(len(list_to_be_filtered)):
+                if((month_list[i] <= endmonth) or (month_list[i] >= startmonth)):
+                   list_to_be_filtered[i] = 0
+                    
+                    
+    
+    #remove_values_during_season(deviation_consecutive, 5,10)
+    
+    lufttemp = deviation_consecutive
+    lufttemp = minmax_scale(lufttemp, feature_range=(0,500))
+    print("len(lufttemp)")
+    print(len(lufttemp))
+
+def createDayBeforeSalaryDay():
+
+    global dayBeforeSalaryday
+
+    # df should be the one containing clickouts, but only for the good time range 2016-2020
+    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    df = pd.DataFrame({ 'Date': rng}) 
+    df["IsSalaryDay"] = 0
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.day == 24, 1)
+
+    """
+    2016
+    Dec 23 
+    Sep 23
+    Jun 23
+    """
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-12-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-12-22'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-11-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-11-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-06-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-06-22'), 1)
+
+    """
+    2017
+    Dec 22
+    Nov 24
+    Jun 22
+    Maj 24
+    Mar 24
+    Feb 24
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-12-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-12-21'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-11-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-11-23'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-06-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-06-21'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-05-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-05-23'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-03-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-03-23'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-02-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-02-23'), 1)
+    
+    """ 
+    2018
+    Dec 21
+    Nov 23
+    Aug 24
+    Mar 23
+    Feb 23
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-12-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-12-20'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-11-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-11-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-08-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-08-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-03-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-03-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-02-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-02-22'), 1)
+
+    """
+    2019
+    Dec 23
+    Aug 23
+    Maj 24
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-12-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-12-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-08-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-08-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-05-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-05-23'), 1)
+
+    """
+    2020
+    Jan 24
+    """
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2020-01-24'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2020-01-23'), 1)
+
+    
+    dayBeforeSalaryday = np.array(df['IsSalaryDay'].values)
+    dayBeforeSalaryday = minmax_scale(dayBeforeSalaryday, feature_range=(0,500))
+
+def createSalaryDay():
+
+    global salaryday
+
+    # df should be the one containing clickouts, but only for the good time range 2016-2020
+    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    df = pd.DataFrame({ 'Date': rng}) 
+    df["IsSalaryDay"] = 0
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.day == 25, 1)
+
+    """
+    2016
+    Dec 23 
+    Sep 23
+    Jun 23
+    """
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-12-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-12-23'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-11-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-11-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-06-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2016-06-23'), 1)
+
+    """
+    2017
+    Dec 22
+    Nov 24
+    Jun 22
+    Maj 24
+    Mar 24
+    Feb 24
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-12-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-12-22'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-11-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-11-24'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-06-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-06-22'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-05-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-05-24'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-03-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-03-24'), 1)
+    
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-02-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2017-02-24'), 1)
+    
+    """ 
+    2018
+    Dec 21
+    Nov 23
+    Aug 24
+    Mar 23
+    Feb 23
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-12-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-12-21'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-11-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-11-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-08-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-08-24'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-03-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-03-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-02-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2018-02-23'), 1)
+
+    """
+    2019
+    Dec 23
+    Aug 23
+    Maj 24
+    """
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-12-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-12-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-08-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-08-23'), 1)
+
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-05-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2019-05-24'), 1)
+
+    """
+    2020
+    Jan 24
+    """
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2020-01-25'), 0)
+    df["IsSalaryDay"] = df['IsSalaryDay'].mask(df['Date'].dt.date == pd.to_datetime('2020-01-24'), 1)
+
+    
+    salaryday = np.array(df['IsSalaryDay'].values)
+    salaryday = minmax_scale(salaryday, feature_range=(0,500))
 
 def createNear25th():
+
     global near25th
     # create an array of 5 dates starting at '2015-02-24', one per day
     rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
     df = pd.DataFrame({ 'Date': rng}) 
-    df["Is25th"] = 1
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 24, 2)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 25, 5)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 26, 4)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 27, 2)
+    df["Is25th"] = 0
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 25, 1)
     print(df)
-
-
     
     near25th = np.array(df['Is25th'].values)
-
-    #scaling?
     near25th = minmax_scale(near25th, feature_range=(0,500))
 
-    """
-    peaking around non-25th days gives:
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 10, 2)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 11, 5)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 12, 4)
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 13, 2)
-    gives P=0.593
+def createNear24th():
 
-    peaking around 25:th gives P=0.00
-
-    evaluating the best curve
-    1: 2,5,4,2 -> Test Score: 2299.71 RMSE     232.2443     51.259
-    1: -,5,-,- -> Test Score: 2370.27 RMSE     206.5547     40.816
-
-    """
+    global near24th
+    # create an array of 5 dates starting at '2015-02-24', one per day
+    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    df = pd.DataFrame({ 'Date': rng}) 
+    df["Is25th"] = 0
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 24, 1)
+    print(df)
+    
+    near24th = np.array(df['Is25th'].values)
+    near24th = minmax_scale(near24th, feature_range=(0,500))
+    
 
 def prepare_exchange_rates_USD():
     global open_exchange_SEK_USD
@@ -197,6 +525,7 @@ def working():
     df = pd.read_csv('Time.csv')
     #df = df.set_index('date')
 
+    #precovid_startdate = '2016-01-01'
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
 
@@ -321,13 +650,35 @@ def working():
     near25th_test = near25th[-365:]
     near25th_train = near25th[:train_len]
 
+    near24th_test = near24th[-365:]
+    near24th_train = near24th[:train_len]
+
     open_exchange_SEK_EUR_test = open_exchange_SEK_EUR[-365:]
     open_exchange_SEK_EUR_train = open_exchange_SEK_EUR[:train_len]
 
     open_exchange_SEK_USD_test = open_exchange_SEK_USD[-365:]
     open_exchange_SEK_USD_train = open_exchange_SEK_USD[:train_len]
 
+    salaryday_test = salaryday[-365:]
+    salaryday_train = salaryday[:train_len]
 
+    dayBeforeSalaryday_test = dayBeforeSalaryday[-365:]
+    dayBeforeSalaryday_train = dayBeforeSalaryday[:train_len]
+
+    #lufttemp = np.array(lufttemp, int)
+    lufttemp_test = lufttemp[-365:]
+    lufttemp_train = lufttemp[:train_len]
+    
+    rain_test = rain[-365:]
+    rain_train = rain[:train_len]
+
+    combined_lufttemp_rain = np.logical_and(np.array(lufttemp) , np.array(rain))
+    combined_lufttemp_rain = 500*combined_lufttemp_rain # converts bool to int (0 or 500)
+    combined_lufttemp_rain_test = combined_lufttemp_rain[-365:]
+    combined_lufttemp_rain_train = combined_lufttemp_rain[:train_len]
+
+    
+    
     randlist = np.random.randint(500, size=len(clicks_Search))
     randlist_test = randlist[-365:]
     randlist_train = randlist[:train_len]
@@ -339,6 +690,7 @@ def working():
     
     """
 
+    """
     open_exchange_SEK_EUR_plotonly = [x*100 - 35000 for x in open_exchange_SEK_EUR]
     open_exchange_SEK_USD_plotonly = [x*100 - 35000 for x in open_exchange_SEK_USD]
     near25th_plotonly = [x*10 - 35000 for x in near25th]
@@ -346,7 +698,7 @@ def working():
     plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='green', label='flights')
     plt.plot( range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR_plotonly, color='red', label='SEK_EUR')
     plt.plot( range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD_plotonly, color='black', label='SEK_USD')
-    plt.plot( range(len(near25th)), near25th_plotonly, color='blue', label='salary')
+    #plt.plot( range(len(near25th)), near25th_plotonly, color='blue', label='salary')
 
     
     plt.xlabel('days')
@@ -355,7 +707,7 @@ def working():
     plt.title('scaled features for display')
 
     plt.show()
-
+    """
     #print("len(near25th_train)")
     #print(len(near25th_train))
     #print("len(near25th_test)")
@@ -395,27 +747,29 @@ def working():
     exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test, near25th_test))
     
     """
-    #exog_train = near25th_train
-    #exog_test = near25th_test
     
-    #exog_train = open_exchange_SEK_EUR_train
-    #exog_test = open_exchange_SEK_EUR_test
+    exog_train = combined_lufttemp_rain_train
+    exog_test = combined_lufttemp_rain_test
     """
     exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, randlist_train, open_exchange_SEK_USD_train))
     exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, randlist_test, open_exchange_SEK_USD_test))
     """
+    # EXOG_HERE
 
-    exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, open_exchange_SEK_USD_train))
-    exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, open_exchange_SEK_USD_test))
-
+    #exog_train = np.column_stack((salaryday_train, dayBeforeSalaryday_train))
+    #exog_test = np.column_stack((salaryday_test, dayBeforeSalaryday_test))
+    
     # best using all media:
-    # model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,2,7), exog = exog_train, period = 360) # 2267
-    model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+    model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+    #model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7)
+    """
+    RMSE 2339 is the best
+    
+    """
 
 
     from tensorflow.keras.callbacks import EarlyStopping
-
-    callback=EarlyStopping(monitor="loss",patience=30)
+    callback=EarlyStopping(monitor="loss",patience=30) #30
 
 
     model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
@@ -431,28 +785,10 @@ def working():
     D = seasonal differencing
     Q = seasonal MA order
     S = length of seasonal pattern
-    with including marketing investment as input
-    (3,1,2)(3,1,2,7)
-    est Score: 2647.43 RMSE
-    Test Score: 2071.88 MAE
-    Test Score: 0.09 MAPE
-    (1,1,1)(1,1,1,7)
-    Test Score: 2986.49 RMSE
-    Test Score: 2461.09 MAE
-    Test Score: 0.11 MAPE
-    (1,1,1)(0,1,1,7)
-    -> 2200
-    seasonal:
-    1,0,1 -> shit
-    1,1,0 -> 2335
-
-    (0,1,2)(1,0,1)
+   
     """
-    # change trend to accurately only take into account the training data in the decomposition!
-    # 3,1,2 -> BEST 2890.00 RMSE
-    #print(len(y_to_train))
-    # one-step out-of sample forecast
-    #y_arima_exog_forecast = model_fit.predict(1145,1509)
+    
+    #y_arima_exog_forecast = model_fit.forecast(steps=365)
     y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
     y_arima_exog_forecast_with_trend = []
     y_arima_exog_forecast_with_trend_and_seasonality = []
@@ -478,9 +814,9 @@ def working():
         curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)
     
     # good plots
-    plt.plot( range(len(y_vals)), y_vals, color='green')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple')
-    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue')
+    plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')
     #plt.plot( range(len(y_vals)), trend_line, color='orange')
     #plt.plot( range(len(curve)), curve_with_trend, color='black')
     #plt.plot( range(len(logestimate)), logestimate, color='red')
@@ -498,17 +834,30 @@ def working():
 
     testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
     print('Test Score: %.2f MAPE' % (testScore))
+
+    print("number of elements in rain is: ", np.count_nonzero(np.array(rain)))
+    print("number of elements in lufttemp is: ", np.count_nonzero(np.array(lufttemp)))
+    print("number of elements in combined_lufttemp_rain is: ", np.count_nonzero(np.array(combined_lufttemp_rain)))
+
     
     plt.xlabel('days')
     plt.ylabel('flights')
     plt.title('Forecast using SARIMAX')
 
-    plt.show()
+    plt.legend()
+
+    #plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
-    prepare_data()
-    prepare_exchange_rates_EUR()
-    prepare_exchange_rates_USD()
-    createNear25th()
+    #prepare_data()
+    #prepare_exchange_rates_EUR()
+    #prepare_exchange_rates_USD()
+    #createNear25th()
+    #createSalaryDay()
+    #createDayBeforeSalaryDay()
+    #createNear24th()
+    #createLufttemp()
+    #createNeder()
 
+    create_OMSX30() # all data
     working()

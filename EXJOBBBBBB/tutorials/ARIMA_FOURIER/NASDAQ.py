@@ -1,26 +1,27 @@
+from tkinter.ttk import Separator
 from pandas import read_csv
 import numpy as np
 import pandas as pd
 
-def prepare_NASDAQ():
-    # put nasdaq data in array
-    nasdaq_df = read_csv('NASDAQ.csv')
-    
 
-    nasdaq_df.index = pd.DatetimeIndex(s.index)
+def prepare_OMSX30():
+    df = read_csv('stonks\OMSX30.csv', sep=";")
+    df = df.reindex(index=df.index[::-1]) # reverse
+    df = df.set_index('Datum')
+    df.index = pd.to_datetime(df.index)
+    new_date_range = pd.date_range(start="2012-12-28", end="2020-02-19", freq="D")
+    df = df.reindex(new_date_range, fill_value=None)
+    df = df.fillna(method='ffill')
+    df.drop(columns=['Högstakurs','Lägstakurs','Genomsnittspris','Tot.vol.','Oms',df.columns[-1]], axis=1, inplace=True)
+    print(df.head(10))
+    header = ["Stängn.kurs"]
+    df.to_csv("stonks/OMSX30_ORDERED.csv",columns = header)
 
-    idx = pd.date_range('01/01/2016', '19/02/2020')
+def create_OMSX30():
+    df = read_csv('stonks/OMSX30_ORDERED.csv')
+    stgng = np.array(df['Stängn.kurs'].values)
+    print(stgng)
+    print(len(stgng))
 
-    s = s.reindex(idx, fill_value=0)
-
-    precovid_startdate = '01/01/2016'
-    precovid_enddate = '19/02/2020'
-    mask_nasdaq = (nasdaq_df.iloc[:, 0] > precovid_startdate) & (nasdaq_df.iloc[:, 0] <= precovid_enddate)
-
-    open_nasdaq = np.array(nasdaq_df['Open'][mask_nasdaq].values)
-
-    print(len(open_nasdaq))
-    print(open_nasdaq)
-    
 if __name__ == "__main__":
-    prepare_NASDAQ()
+    create_OMSX30()

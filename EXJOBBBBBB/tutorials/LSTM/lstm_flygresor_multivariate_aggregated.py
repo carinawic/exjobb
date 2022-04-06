@@ -124,6 +124,11 @@ def prepare_data():
     clicks_Extreme = np.array(media_clicks_df['Media_Youtube_Masthead_upperfunnel_video'][mask_media_clicks].values)
 
     #scaling the inputs
+    #clicks_Search = minmax_scale(clicks_Search, feature_range=(0,1))
+    #clicks_Inactive = minmax_scale(clicks_Inactive, feature_range=(0,1))
+    #clicks_Active = minmax_scale(clicks_Active, feature_range=(0,1))
+    #clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,1))
+    
     clicks_Search = minmax_scale(clicks_Search, feature_range=(0,500))
     clicks_Inactive = minmax_scale(clicks_Inactive, feature_range=(0,500))
     clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
@@ -165,7 +170,7 @@ def workingexample():
     dataset = scaler.fit_transform(dataset)
     # split into train and test sets
 
-    look_back = 5
+    look_back = 7
     n_features = 4
 
     # define input sequence
@@ -184,12 +189,21 @@ def workingexample():
     out_seq = click_outs
 
     # remove the first item of each data because the [0-3] first clicks match with the [1-4] first clickouts
-    in_seq1 = in_seq1[1:]
+    """in_seq1 = in_seq1[1:]
     in_seq2 = in_seq2[1:]
     in_seq3 = in_seq3[1:]
     in_seq4 = in_seq4[1:]
 
-    out_seq = out_seq[:-1]
+    out_seq = out_seq[:-1]"""
+
+    in_seq1 = in_seq1
+    in_seq2 = in_seq2
+    in_seq3 = in_seq3
+    in_seq4 = in_seq4
+
+    out_seq = out_seq
+
+
 
     # convert to [rows, columns] structure
     #in_seq1 = in_seq1.reshape((len(in_seq1), 1))
@@ -202,7 +216,7 @@ def workingexample():
 
     # horizontally stack columns
     #dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
-    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3,in_seq4, out_seq))
+    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
 
     Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, trainTestLimit)
     #print("shapes")
@@ -210,15 +224,40 @@ def workingexample():
     #print(Xtest.shape, ytest.shape)
 
     model = Sequential()
-    model.add(LSTM(50, activation='relu', input_shape=(look_back, n_features+1))) 
-    model.add(Dense(15, activation='relu', input_shape=(look_back, 50))) 
+    model.add(LSTM(32, activation='relu', input_shape=(look_back, n_features+1))) 
+    model.add(Dense(16, activation='relu')) 
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
 
+    """
+    
+    
+    64-64
+    64-32
+    32-64
+
+    128 - 64
+    64 - 128
+
+    64-16-1
+    16-64-1
+    16-16-1
+    64-64-1
+    16-16-16-1
+    
+    """
+
+
+    
+    from tensorflow.keras.callbacks import EarlyStopping
+    callback=EarlyStopping(monitor="loss",patience=30)
+
     # fit model
-    model.fit(Xtrain, ytrain, epochs=100, batch_size=1, verbose=2) # epochs=100
+    history = model.fit(Xtrain, ytrain, epochs=400, batch_size=1, verbose=2, callbacks=[callback]) # epochs=200
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
+
+    #print(history)
 
     # invert predictions in case we used minmaxscaler earlier
     #trainPredict = scaler.inverse_transform(trainPredict)

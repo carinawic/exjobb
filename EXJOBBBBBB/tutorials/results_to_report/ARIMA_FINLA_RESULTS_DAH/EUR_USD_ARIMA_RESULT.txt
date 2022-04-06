@@ -1,0 +1,50 @@
+1
+
+Tit   = total number of iterations
+Tnf   = total number of function evaluations
+Tnint = total number of segments explored during Cauchy searches
+Skip  = number of BFGS updates skipped
+Nact  = number of active bounds at final generalized Cauchy point
+Projg = norm of the final projected gradient
+F     = final function value
+
+           * * *
+
+   N    Tit     Tnf  Tnint  Skip  Nact     Projg        F
+    8    144    171      1     0     0   1.722D-04   8.671D+00
+  F =   8.67051589424083
+
+CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH
+                                      SARIMAX Results
+===========================================================================================
+Dep. Variable:                                   y   No. Observations:                 1146
+Model:             SARIMAX(1, 1, 2)x(1, 1, [1], 7)   Log Likelihood               -9936.411
+Date:                             Mon, 04 Apr 2022   AIC                          19888.822
+Time:                                     13:46:19   BIC                          19929.119
+Sample:                                          0   HQIC                         19904.041
+                                            - 1146
+Covariance Type:                               opg
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -7.5435      3.757     -2.008      0.045     -14.908      -0.179
+x2            -1.2796      3.668     -0.349      0.727      -8.469       5.910
+ar.L1          0.5595      0.036     15.734      0.000       0.490       0.629
+ma.L1         -0.8652      0.039    -21.956      0.000      -0.942      -0.788
+ma.L2         -0.0956      0.035     -2.704      0.007      -0.165      -0.026
+ar.S.L7        0.3120      0.021     14.780      0.000       0.271       0.353
+ma.S.L7       -0.9997      0.027    -36.934      0.000      -1.053      -0.947
+sigma2      2.135e+06   4.91e-07   4.34e+12      0.000    2.14e+06    2.14e+06
+===================================================================================
+Ljung-Box (L1) (Q):                   0.00   Jarque-Bera (JB):               438.52
+Prob(Q):                              0.95   Prob(JB):                         0.00
+Heteroskedasticity (H):               1.53   Skew:                             0.21
+Prob(H) (two-sided):                  0.00   Kurtosis:                         6.01
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+[2] Covariance matrix is singular or near-singular, with condition number 6.19e+29. Standard errors may be unstable.
+Test Score: 2299.76 RMSE
+Test Score: 1788.63 MAE
+Test Score: 0.08 MAPE

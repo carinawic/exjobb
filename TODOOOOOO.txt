@@ -6,3 +6,8 @@ TODO
 3. Add all results regarding weather, exchange rate, marketing investment, and salary (around 25th) FOR BOTH LSTM AND SARIMAX 
 4. Improve “around 25th” to “”around salary date
 5. Calculate p value for percent increase around salary date
+
+
+How to calculate P value for % increase:
+https://www.statisticshowto.com/probability-and-statistics/hypothesis-testing/one-sample-t-test/
+

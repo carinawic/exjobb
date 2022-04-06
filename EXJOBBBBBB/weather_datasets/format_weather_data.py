@@ -3,7 +3,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+lufttemp = []
+rain = []
+
 def format_lufttemp():
+
+    global lufttemp
+
     lufttemp_corrected = pd.read_csv("Observatoriekullen\lufttemperatur_corrected.csv",sep=';',parse_dates=['Representativt dygn'])
     lufttemp_latest = pd.read_csv("Observatoriekullen\lufttemperatur_latest.csv",sep=';',parse_dates=['Representativt dygn'])
     lufttemp_full = pd.concat([lufttemp_corrected, lufttemp_latest], ignore_index=True)
@@ -25,13 +31,14 @@ def format_lufttemp():
 
     lufttemp_full['Dev_from_avg'] = lufttemp_full['Lufttemperatur'] - lufttemp_full['MonthlyAverage']
 
-    g = lufttemp_full.groupby(pd.Grouper(key='Representativt dygn', freq='M'))
+    #g = lufttemp_full.groupby(pd.Grouper(key='Representativt dygn', freq='M'))
     # groups to a list of dataframes with list comprehension
     
     x = range(len(lufttemp_full['Lufttemperatur'].values))
     
     y = lufttemp_full['Lufttemperatur'].values
 
+    """
     from numpy import polyfit
     # creating the 8-degree curve polnomial curve
     X = [i%365 for i in range(0, len(y))]
@@ -46,6 +53,7 @@ def format_lufttemp():
         for d in range(degree):
             value += X[i]**(degree-d) * coef[d]
         curve2.append(value)
+    """
 
     time = np.array(range(len(y)))
     sinwave = np.sin(2 * np.pi * time/365 - np.deg2rad(110)) * 10 + 9.4
@@ -58,16 +66,15 @@ def format_lufttemp():
     for i in lufttemp_full['Representativt dygn'].values:
         month_list.append(i.astype('datetime64[M]').astype(int) % 12 + 1)
 
-
     counter = 0
 
     for devpoint in deviation_from_sine:
 
-        at_least_x_degrees_under_expected = -3 # we are below x degrees difference from expected temp
-        days_in_row_threshold = 2
+        at_least_x_degrees_under_expected = 9 # we are below x degrees difference from expected temp
+        days_in_row_threshold = 1
         
 
-        if devpoint < at_least_x_degrees_under_expected:
+        if devpoint > at_least_x_degrees_under_expected:
             counter += 1
             if counter >= days_in_row_threshold:
                 deviation_consecutive.append(10)
@@ -93,7 +100,10 @@ def format_lufttemp():
                     
                     
     
-    remove_values_during_season(deviation_consecutive, 5,10)
+    #remove_values_during_season(deviation_consecutive, 5,10)
+    lufttemp = deviation_consecutive
+
+    #print(lufttemp)
 
     # get x value of each new month for plotting vertical lines
     vertical_line_here = []
@@ -122,6 +132,9 @@ def format_lufttemp():
     plt.show()
     
 def format_neder():
+
+    global rain
+
     neder_corrected = pd.read_csv("Observatoriekullen\\nederbördsmängd_corrected.csv",sep=';')
     neder_latest = pd.read_csv("Observatoriekullen\\nederbördsmängd_latest.csv",sep=';')
     neder_full = pd.concat([neder_corrected, neder_latest], ignore_index=True)
@@ -131,29 +144,38 @@ def format_neder():
     print(neder_full)
     
     neder_full_values = neder_full['Nederbördsmängd'].values
-
+    values_in_list = 0
     regn_consecutive = []
     for regn_magnitude in neder_full_values:
 
-        min_rain = 4 # we are below x degrees difference from expected temp
+        min_rain = 6
         days_in_row_threshold = 2
         
         if regn_magnitude > min_rain:
             counter += 1
             if counter >= days_in_row_threshold:
                 regn_consecutive.append(10)
+                values_in_list = values_in_list + 1
                 continue
         else: 
             counter = 0
         regn_consecutive.append(0)
 
+    print(values_in_list, " is HERE ")
+
+    rain = regn_consecutive
     plt.plot(range(len(neder_full_values)), neder_full_values, color='blue', label='rain magnitude')
     plt.plot(range(len(regn_consecutive)), regn_consecutive, color='red', label='rain consecutive')
+    #plt.axhline(y = 1, color = 'r', linestyle = '-')
+    #plt.axhline(y = 2, color = 'r', linestyle = '-')
+    #plt.axhline(y = 3, color = 'r', linestyle = '-')
+    #plt.axhline(y = 6, color = 'r', linestyle = '-')
+    #plt.axhline(y = 10, color = 'r', linestyle = '-')
+    #plt.axhline(y = 15, color = 'r', linestyle = '-')
     plt.legend()
     plt.xlabel('days')
     plt.ylabel('rain magnitude')
     plt.show()
-
 
 if __name__ == "__main__":
     format_neder()
