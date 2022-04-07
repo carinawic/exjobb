@@ -577,10 +577,8 @@ def prepare_data():
     plt.show()
     """
     
-logestimate_eight_years = False
 
 def working():
-    global logestimate_eight_years 
     #df = pd.read_csv('kaggle_sales.csv')
     #df = df[(df['store'] == 1) & (df['item'] == 1)] # item 1 in store 1
     #df = df.set_index('date')
@@ -589,8 +587,7 @@ def working():
     df = pd.read_csv('Time.csv')
     #df = df.set_index('date')
 
-    logestimate_eight_years = False
-    #precovid_startdate = '2013-01-01'
+    #precovid_startdate = '2016-01-01'
     precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
 
@@ -603,7 +600,7 @@ def working():
     
     y_to_train = y.iloc[:(len(y)-365)]
     y_to_test = y.iloc[(len(y)-365):] # last year for testing
-    y_vals = y.values
+
     
     print("len(y_to_test)")
     print(len(y_to_test))
@@ -612,56 +609,59 @@ def working():
     degree for all data?
     2016-2020 = deg 16
 
+    all data, model (1,1,1)x(1,1,1,7)
+    25 - Test Score: 3522.10 RMSE
+    24 - Test Score: 3562.14 RMSE
+    23 - Test Score: 2914.92 RMSE !!
+    22 - Test Score: 2910.07 RMSE !!
+    21 - Test Score: 2903.45 RMSE !!!
+    20 - Test Score: 3121.02 RMSE !
+    19 - Test Score: 3353.93 RMSE
+    18 - Test Score: 3367.41 RMSE
+    17 - Test Score: 3362.28 RMSE
+    16 - Test Score: 3357.67 RMSE
+    15 - Test Score: 3360.98 RMSE
+    14 - Test Score: 3364.32 RMSE
+    13 - Test Score: 3513.73 RMSE
+    12 - Test Score: 3598.75 RMSE
+    11 - Test Score: 3595.23 RMSE
+    10 - Test Score: 3571.99 RMSE
+    9 - Test Score: 3323.40 RMSE
+    8 - Test Score: 3253.86 RMSE !
+    7 - Test Score: 3460.02 RMSE
+    6 - Test Score: 3443.22 RMSE
+    5 - Test Score: 3596.21 RMSE
+    4 - Test Score: 4294.91 RMSE
+
+    (1,0,1)x(1,1,1,7)
 
     """
     # creating the 8-degree curve polnomial curve
     # can you beat 2900
-    X = [i%365 for i in range(0, len(y_to_train))]
-    y_to_train
-    degree = 14 # 16 in results for 2016-2020
-    coef = polyfit(X, y_to_train, degree)
+    X = [i%365 for i in range(0, len(y.values))]
+    y_vals = y.values
+    degree = 16 # 16 in results for 2016-2020
+    coef = polyfit(X, y_vals, degree)
     print('Coefficients: %s' % coef)
     # create curve
     curve = list()
-
-    X_counter = [i%365 for i in range(0, len(y.values))]
-
-    skottdatgar = 0
-    for i in range(len(X_counter)):
+    for i in range(len(X)):
         value = coef[-1]
         for d in range(degree):
-            value += X_counter[i]**(degree-d) * coef[d]
+            value += X[i]**(degree-d) * coef[d]
         curve.append(value)
-        if (i!=0 and i%(365*4)==0):
-            curve.append(value)
-            skottdatgar = skottdatgar+1
-    
-    curve = curve[:-skottdatgar]
+        # TODO: every 4th year, add the previous value once
 
+    
     decompose_result = seasonal_decompose(y_to_train, model="additive", period=365)
     trend = decompose_result.trend
     seasonal = decompose_result.seasonal
     residual = decompose_result.resid
     #decompose_result.plot()
     #plt.plot( range(len(trend)), trend, color='purple')
-    """
-    better_trend = []
-    for i,val in enumerate(trend):
-        
-        if np.isfinite(val):
-            better_trend.append(val)
-        else:
-            better_trend.append(better_trend[i-1])
-            
-    """
     trend = [x for x in trend if not math.isnan(x)] # remove nan values
-
-    print("len(better_trend)")
-    #print(len(better_trend))
-    print("len(trend)")
-    print(len(trend))
     
-    #m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
+    m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
 
     def func(x, a, tau, c):
         return a * np.exp(-x/tau) + c
@@ -670,45 +670,31 @@ def working():
 
     #coefficients = np.polyfit(np.log(range(1,len(trend))), trend[:-1], 1)
 
-    #coefficients = np.polyfit(range(len(trend)), trend, 2)
-    #p = np.poly1d(coefficients)
+    coefficients = np.polyfit(range(len(trend)), trend, 2)
+    p = np.poly1d(coefficients)
     #print("values")
     #print(p(0))
     #print(p(1))
 
     
 
-    #print("HERE")
-    #print(coefficients)
+    print("HERE")
+    print(coefficients)
 
     logestimate = []
-    #linestimate = []
+    linestimate = []
     #for i in range(len(y_vals)):
         #logestimate.append(p(i))
     #    logestimate.append(func(np.array(range(len(y_vals))), *popt))
     
-    logestimate = (func(np.array(range(len(y.values))), *popt))
-
-    # for the FULL DATA, the logestimate might not even be a log!
-
-    if logestimate_eight_years:
-        logestimate = []
-        not_log_coeffs = np.polyfit(range(len(trend)),trend,3)
-
-        deg = 3
-        for i in range(len(y_vals)):
-            value = 0#not_log_coeffs[-1]
-            for d in range(deg):
-                value += i**(deg-d) * not_log_coeffs[d]
-            logestimate.append(value)
-
-    #for i in range(len(trend)):
-    #    linestimate.append(m*i+b)
+    logestimate = (func(np.array(range(len(y_vals))), *popt))
     
-    # plot linear fit
+    for i in range(len(trend)):
+        linestimate.append(m*i+b)
+    
+    
     #plt.plot(range(len(trend)),m*range(len(trend))+b, color='purple')
     #plt.plot(range(len(trend)),m*np.log(range(len(trend)))+b, color='green')
-    #plt.show()
     
     clickouts = np.array(y.values)
 
@@ -856,8 +842,8 @@ def working():
     
     """
     
-    exog_train = near25th_train
-    exog_test = near25th_test
+    exog_train = OIL_train
+    exog_test = OIL_test
     """
     exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, randlist_train, open_exchange_SEK_USD_train))
     exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, randlist_test, open_exchange_SEK_USD_test))
@@ -867,19 +853,20 @@ def working():
     #exog_train = np.column_stack((salaryday_train, dayBeforeSalaryday_train))
     #exog_test = np.column_stack((salaryday_test, dayBeforeSalaryday_test))
     
+    # best using all media:
+    #model = SARIMAX(cl_train, order=(1,1,2), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+    #model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+
     dict_settings = {}
     
     from tensorflow.keras.callbacks import EarlyStopping
     from itertools import product
 
-    def permutation():
-        """
-        permutations_012 = list(product(range(2), repeat=4))
-        permutations_12 = list(product(range(1,3), repeat=2))
-        for onetwothree in permutations_012:
+    permutations_012 = list(product(range(2), repeat=4))
+    permutations_12 = list(product(range(1,3), repeat=2))
+    for onetwothree in permutations_012:
         for onetwo in permutations_12:
-        
-        try:
+
             AR = onetwo[0]
             I = onetwothree[0]
             MA = onetwo[1]
@@ -887,133 +874,126 @@ def working():
             SI = onetwothree[2]
             SMA = onetwothree[3]
 
-            
-        listToStr = ''.join([str(x) for x in [AR, I, MA, SAR, SI, SMA]])
-        dict_settings[listToStr] = testScore
-        dict_printme = dict(sorted(dict_settings.items(), key=lambda item: item[1]))
-        print(dict_printme)
+            model = SARIMAX(cl_train, order=(AR,I,MA), seasonal_order=(SAR,SI,SMA,7), period = 7)
+            #model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7)
+            """
+            Given degree 16 on full data
+
+            on "all data"
+            1,0,1 -> 3237
+            1,1,1 -> 2903
+
+            1,2,1 - Test Score: 4818.84 RMSE 
+            1,1,2 - Test Score: 3024.14 RMSE
+            2,1,1 - Test Score: 3487.19 RMSE
+            1,1,1 - Test Score: 2903.45 RMSE
+            1,2,1 x(1,0,1,7) - Test Score: 3402.18 RMSE
+            1,1,1 x(1,0,1,7) - - svanen blir mindre och försvinner. Kan inte anpassa sig efter storleksförändring
+            1,1,1 x(0,1,1,7) - för tjock och lite för hög
+            1,1,1 x(1,1,0,7) - same as above
+            (1,0,1)x(1,2,1,7) - Test Score: 2936.31 RMSE
 
             """
-    """
-    permutations_012 = list(product(range(2), repeat=4))
-    permutations_12 = list(product(range(1,3), repeat=2))
-    for onetwothree in permutations_012:
-        for onetwo in permutations_12:
+
+
+            callback=EarlyStopping(monitor="loss",patience=30) #30
+
+
+            model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
+            #model_fit.plot_diagnostics()
+            print(model_fit.summary())
+            """
+            Non-seasonal part:
+            p = autoregressive order
+            d = differencing (used for comparing the current timestep with a previous one at offset d in order to even out the trend)
+            q = moving average order
+            Seasonal part:
+            P = seasonal AR order
+            D = seasonal differencing
+            Q = seasonal MA order
+            S = length of seasonal pattern
         
-            try:
-                AR = onetwo[0]
-                I = onetwothree[0]
-                MA = onetwo[1]
-                SAR = onetwothree[1]
-                SI = onetwothree[2]
-                SMA = onetwothree[3]
-    """
-                    
-    #model = SARIMAX(cl_train, order=(1,0,1), seasonal_order=(0,0,0,7), exog = exog_train, period = 7)
-    model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7)
-    """
-    212,1117 -> 2332.42
-    211,1117 -> 2307.93 
-    111,1117 -> 2327.42 
+            """
+            
+            y_arima_exog_forecast = model_fit.forecast(steps=365)
+            #y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
+            y_arima_exog_forecast_with_trend = []
+            y_arima_exog_forecast_with_trend_and_seasonality = []
+            #print(arima_exog_model.summary())
+            i_test_values = range(len(y_vals)-365, len(y_vals))
+            
+            curve_test = curve[-365:]
+            
+            
+            #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
+            for i in range(len(y_arima_exog_forecast)): # go through the forecast
+                #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
+                y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
+                y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
+            # curve_with_trend is the curve with offset is added just for plotting nicely
+            offset_for_plotting_only = 23000
+            curve_with_trend = []
+            #print(" b is ")
+            #print( b)
+            
+            for i in range(len(curve)):
+                #curve_with_trend.append(curve[i] + m*i - offset_for_plotting_only)
+                curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)
+            
+            # good plots
+            plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
+            plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
+            plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')
+            #plt.plot( range(len(y_vals)), trend_line, color='orange')
+            #plt.plot( range(len(curve)), curve_with_trend, color='black')
+            #plt.plot( range(len(logestimate)), logestimate, color='red')
+            #plt.plot( range(len(trend)), trend, color='red')
+            """
+            from statsmodels.tsa.stattools import adfuller
+            #result = adfuller(clickouts_wo_trend_or_seasonality, autolag='AIC')
+            result = adfuller(y.values, autolag='AIC')
+            print(f'ADF Statistic: {result[0]}')
+            print(f'n_lags: {result[1]}')
+            print(f'p-value: {result[1]}')
+            for key, value in result[4].items():
+                print('Critial Values:')
+                print(f'   {key}, {value}')    
+            """
 
-    """
-     
-    callback=EarlyStopping(monitor="loss",patience=30) #30
-    model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
-    #model_fit.plot_diagnostics()
-    print(model_fit.summary())
-    """
-    Non-seasonal part:
-    p = autoregressive order
-    d = differencing (used for comparing the current timestep with a previous one at offset d in order to even out the trend)
-    q = moving average order
-    Seasonal part:
-    P = seasonal AR order
-    D = seasonal differencing
-    Q = seasonal MA order
-    S = length of seasonal pattern
-    """
-    y_arima_exog_forecast = model_fit.forecast(steps=365)
-    #y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
-    y_arima_exog_forecast_with_trend = []
-    y_arima_exog_forecast_with_trend_and_seasonality = []
-    #print(arima_exog_model.summary())
-    i_test_values = range(len(y_vals)-365, len(y_vals))
-    
-    curve_test = curve[-365:]
-    
-    #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
-    for i in range(len(y_arima_exog_forecast)): # go through the forecast
-        #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
-        y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
-        y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
-    # curve_with_trend is the curve with offset is added just for plotting nicely
-    offset_for_plotting_only = 23000
-    curve_with_trend = []
-    #print(" b is ")
-    #print( b)
-    
-    for i in range(len(curve)):
-        #curve_with_trend.append(curve[i] + m*i - offset_for_plotting_only)
-        curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)
-    
-    # good plots
-    #plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')
-    
-    plt.plot( range(len(y_vals)), y_vals, color='green', label = 'flights')
-    plt.plot( range(len(curve)), curve, color='black', label = 'estimated yearly seasonality')
-    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue', label = 'flights without trend or yearly seasonality')
-    plt.legend()
-    plt.show()
-    #plt.plot( range(len(curve_with_trend)), curve_with_trend, color='black',  label = 'estimated yearly seasonality')
-    #plt.plot( range(len(logestimate)), logestimate, color='blue', label = "estimated trend")
-    #plt.plot( range(len(trend)), trend, color='red', label = "training data trend")
-    #plt.legend()
-    #plt.show()
-    """
-    from statsmodels.tsa.stattools import adfuller
-    #result = adfuller(clickouts_wo_trend_or_seasonality, autolag='AIC')
-    result = adfuller(clickouts_wo_trend_or_seasonality, autolag='AIC')
-    print(f'ADF Statistic: {result[0]}')
-    print(f'n_lags: {result[1]}')
-    print(f'p-value: {result[1]}')
-    for key, value in result[4].items():
-        print('Critial Values:')
-        print(f'   {key}, {value}')    
-    """
-    #PRINTING ACCURACY
-    
-    # calculate root mean squared error
-    # 22.93 RMSE means an error of about 23 passengers (in thousands) 
-    testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
-    print('Test Score: %.2f RMSE' % (testScore))
-    
-    testScore = mean_absolute_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
-    print('Test Score: %.2f MAE' % (testScore))
-    testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
-    print('Test Score: %.2f MAPE' % (testScore))
-    
-    """
-    print("number of elements in rain is: ", np.count_nonzero(np.array(rain)))
-    print("number of elements in lufttemp is: ", np.count_nonzero(np.array(lufttemp)))
-    print("number of elements in combined_lufttemp_rain is: ", np.count_nonzero(np.array(combined_lufttemp_rain)))
-    """
-    
-    # PLOTIING GRAPH
-    #plt.xlabel('days')
-    #plt.ylabel('flights')
-    #plt.title('Forecast using SARIMAX')
-    #plt.legend()
-    #plt.show()
-    #pm.plot_acf(y_arima_exog_forecast)
-    """
-    listToStr = ''.join([str(x) for x in [AR, I, MA, SAR, SI, SMA]])
-    dict_settings[listToStr] = testScore
-    dict_printme = dict(sorted(dict_settings.items(), key=lambda item: item[1]))
-    print(dict_printme)"""
+            #PRINTING ACCURACY
+            
+            # calculate root mean squared error
+            # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+            testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
+            print('Test Score: %.2f RMSE' % (testScore))
+            
+            """
+            testScore = mean_absolute_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
+            print('Test Score: %.2f MAE' % (testScore))
 
+            testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
+            print('Test Score: %.2f MAPE' % (testScore))
+            """
+            listToStr = ''.join([str(x) for x in [AR, I, MA, SAR, SI, SMA]])
+            dict_settings[listToStr] = testScore
+            dict_printme = dict(sorted(dict_settings.items(), key=lambda item: item[1]))
+            print(dict_printme)
+
+            """
+            print("number of elements in rain is: ", np.count_nonzero(np.array(rain)))
+            print("number of elements in lufttemp is: ", np.count_nonzero(np.array(lufttemp)))
+            print("number of elements in combined_lufttemp_rain is: ", np.count_nonzero(np.array(combined_lufttemp_rain)))
+            """
+            
+            # PLOTIING GRAPH
+
+            #plt.xlabel('days')
+            #plt.ylabel('flights')
+            #plt.title('Forecast using SARIMAX')
+            #plt.legend()
+            #plt.show()
+
+            #pm.plot_acf(y_arima_exog_forecast)
 if __name__ == "__main__":
     #prepare_data()
     #prepare_exchange_rates_EUR()
