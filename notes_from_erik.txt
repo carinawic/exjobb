@@ -1,0 +1,53 @@
+Köra experiment tar alltid 3h att göra
+
+autocorrelation plot
+augmented-dickey-fuller-test
+guidelines
+
+stationary, p-value: 0.04
+ARIMA should be enough
+
+differencing term -> bättre resultat
+
+one input feaute had only 4 years
+8 years
+
+more data gave worse results
+
+mean f1 score (+ std dev)
+
+ranking test neural network?
+
+
+tell which several setups were good - arima and lstm
+
+chosing feature
+
+pilot test for every design decision
+grid search 
+
+how arima calculates p values
+
+order parameter
+
+opposition
+attend 2 presentation
+hold a presentation
+
+technical meeting with Erik
+else Slack
+
+check when pawel wants the report
+
+give thesis to Erik last week may/first week june
+
+p values
+statistics
+
+how much data do we need to say a p value
+
+sarimax model gives me a p value even though we have very little data
+p value how much the feature helpts the model
+
+compare the two models
+grid search parameters

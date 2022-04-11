@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
+from keras.layers import Dense, Dropout, LSTM
 from sklearn.preprocessing import MinMaxScaler, minmax_scale 
 from sklearn.metrics import mean_squared_error,  mean_absolute_error, mean_absolute_percentage_error
 import datetime
+from sklearn import preprocessing
 
 click_outs = []
 week = []
@@ -83,6 +83,7 @@ def unpickle_data_as_clicks():
     df = pd.read_pickle('Media.p').clicks
     return df
 
+scaler = MinMaxScaler(feature_range=(0, 1))
 def prepare_data():
 
     global click_outs, week, clicks_media, impr_media, clicks_Search, clicks_Inactive, clicks_Active, clicks_Extreme
@@ -115,7 +116,8 @@ def prepare_data():
     mask_media_clicks = (media_clicks_df.iloc[:, 0] > precovid_startdate) & (media_clicks_df.iloc[:, 0] <= precovid_enddate)
     #mask_media_imprs = (media_imprs_df.iloc[:, 0] > precovid_startdate) & (media_imprs_df.iloc[:, 0] <= precovid_enddate)
  
-    click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
+    #click_outs = np.array(df_complete['clicks_out'][mask_clickouts].values)
+    click_outs = df_complete['clicks_out'][mask_clickouts].values
     week = np.array(df_complete['week'][mask_clickouts].values)
 
     clicks_Search = np.array(media_clicks_df["media_clicks_SEARCH_df"][mask_media_clicks].values)
@@ -134,6 +136,15 @@ def prepare_data():
     clicks_Active = minmax_scale(clicks_Active, feature_range=(0,500))
     clicks_Extreme = minmax_scale(clicks_Extreme, feature_range=(0,500))
 
+    # scale
+    #click_outs = click_outs.astype('float32')
+    #click_outs = click_outs.reshape(-1, 1)
+    #click_outs = scaler.fit_transform(click_outs)
+    #print("successfully transformed")
+    #click_outs = minmax_scale(click_outs, feature_range=(0,1))
+
+    #scaler = preprocessing.StandardScaler().fit(click_outs)
+    #click_outs = minmax_scale(clicks_Extreme, feature_range=(0,1))
     
 
 def split_sequences(sequences, n_steps, trainTestLimit):
@@ -171,7 +182,7 @@ def workingexample():
     # split into train and test sets
 
     look_back = 7
-    n_features = 4
+    n_features = 0
 
     # define input sequence
     #in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
@@ -183,10 +194,14 @@ def workingexample():
     in_seq1 = clicks_Search
     in_seq2 = clicks_Active
     in_seq3 = clicks_Inactive
-    
     in_seq4 = clicks_Extreme
-
     out_seq = click_outs
+    
+    #in_seq1 = np.array([1,2,3,4,5,6,7])
+    #in_seq2 = np.array([1,2,3,4,5,6,7])
+    #in_seq3 = np.array([1,2,3,4,5,6,7])
+    #in_seq4 = np.array([1,2,3,4,5,6,7])
+    #out_seq = np.array([4,5,6,7,8,9,10])
 
     # remove the first item of each data because the [0-3] first clicks match with the [1-4] first clickouts
     """in_seq1 = in_seq1[1:]
@@ -214,48 +229,65 @@ def workingexample():
 
     out_seq = out_seq.reshape((len(out_seq), 1))
 
+    """
+    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
+    splitted = split_sequences(dataset_stacked, 3, 3)
+    print("splitted")
+    print(splitted)
+    """
     # horizontally stack columns
     #dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
+    
     dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
 
-    Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, trainTestLimit)
+    Xtrain, Xtest, ytrain, ytest = split_sequences(out_seq, look_back, trainTestLimit)
     #print("shapes")
     #print(Xtrain.shape, ytrain.shape)
     #print(Xtest.shape, ytest.shape)
 
     model = Sequential()
-    model.add(LSTM(32, activation='relu', input_shape=(look_back, n_features+1))) 
-    model.add(Dense(16, activation='relu')) 
+
+    model.add(LSTM(64, activation='relu', return_sequences=True, input_shape=(look_back, n_features+1)))
+    #model.add(Dropout(0.2))
+
+    model.add(LSTM(16, activation='relu'))
+    #model.add(Dropout(0.2))
+
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
+    # activation='relu'
+    #model.add(LSTM(32, return_sequences=True, input_shape=(look_back, n_features+1))) 
+    #model.add(Dropout(0.3))
+    #model.add(Dense(32)) 
+    #model.add(LSTM(32, return_sequences=True))  # returns a sequence of vectors of dimension 32
+    #model.add(LSTM(32))  # return a single vector of dimension 32
+    #model.add(Dropout(0.3))
+    #model.add(Dense(10, activation='softmax'))
+    #model.add(Dense(1))
+    #model.compile(optimizer='adam', loss='mse')
 
-    """
-    
-    
-    64-64
-    64-32
-    32-64
-
-    128 - 64
-    64 - 128
-
-    64-16-1
-    16-64-1
-    16-16-1
-    64-64-1
-    16-16-16-1
-    
-    """
-
-
-    
     from tensorflow.keras.callbacks import EarlyStopping
-    callback=EarlyStopping(monitor="loss",patience=30)
+    callback=EarlyStopping(monitor="loss",patience=10)
 
+    """
+    400 epochs = 
+    Test Score: 1878.50 RMSE
+    """
     # fit model
     history = model.fit(Xtrain, ytrain, epochs=400, batch_size=1, verbose=2, callbacks=[callback]) # epochs=200
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
+
+    
+    #trainPredict = trainPredict.reshape(-1, 1)
+    #testPredict = testPredict.reshape(-1, 1)
+    #trainPredict = scaler.inverse_transform(trainPredict)
+    #testPredict = scaler.inverse_transform(testPredict)
+
+    print("successfully inverse_transform")
+    
+    #trainPredict = scaler.inverse_transform(trainPredict)
+    #testPredict = scaler.inverse_transform(testPredict)
 
     #print(history)
 

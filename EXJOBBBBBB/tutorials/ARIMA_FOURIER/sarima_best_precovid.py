@@ -451,7 +451,7 @@ def createNear25th():
 
     global near25th
     # create an array of 5 dates starting at '2015-02-24', one per day
-    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    rng = pd.date_range('2013-01-01', '2020-02-19', freq='D')
     df = pd.DataFrame({ 'Date': rng}) 
     df["Is25th"] = 0
     df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 25, 1)
@@ -464,7 +464,7 @@ def createNear24th():
 
     global near24th
     # create an array of 5 dates starting at '2015-02-24', one per day
-    rng = pd.date_range('2016-01-01', '2020-02-19', freq='D')
+    rng = pd.date_range('2013-01-01', '2020-02-19', freq='D')
     df = pd.DataFrame({ 'Date': rng}) 
     df["Is25th"] = 0
     df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 24, 1)
@@ -589,9 +589,10 @@ def working():
     df = pd.read_csv('Time.csv')
     #df = df.set_index('date')
 
-    logestimate_eight_years = False
-    #precovid_startdate = '2013-01-01'
-    precovid_startdate = '2016-01-01'
+    # switch this boolean when you change the precovid_startdate variable
+    logestimate_eight_years = True
+    precovid_startdate = '2013-01-01'
+    #precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
 
     mask_clickouts = (df.iloc[:, 0] >= precovid_startdate) & (df.iloc[:, 0] <= precovid_enddate)
@@ -618,7 +619,7 @@ def working():
     # can you beat 2900
     X = [i%365 for i in range(0, len(y_to_train))]
     y_to_train
-    degree = 14 # 16 in results for 2016-2020
+    degree = 50 # 16 in results for 2016-2020
     coef = polyfit(X, y_to_train, degree)
     print('Coefficients: %s' % coef)
     # create curve
@@ -851,13 +852,22 @@ def working():
     only inactive and near25th => 2279.05 RMSE and good looking graph
     the correlation graph tells us that the factors clicks_Active_train, clicks_Inactive_test, clicks_Extreme_test have high p values and are not relevant. We can not find a good linear help from them. So we could leave them out. clicks_Search_train has very high correlation, and so does near25th_test. So we should only keep near25th_test. When evaluating features, it's almost cheating to include clicks_Search_train because it correlates so much. In order to investigate near25th_test's impact, should we remove the super highly correlating clicks_Search_test?
 
-    exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train, near25th_train))
-    exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test, near25th_test))
     
     """
+
+    # all marketing
+    #exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train))
+    #exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test))
     
-    exog_train = near25th_train
-    exog_test = near25th_test
+    #exog_train = np.column_stack((clicks_Search_train, clicks_Active_train))
+    #exog_test = np.column_stack((clicks_Search_test,clicks_Active_test))
+    
+    #exog_train = np.column_stack((salaryday_train, dayBeforeSalaryday_train))
+    #exog_test = np.column_stack((salaryday_test, dayBeforeSalaryday_test))
+    
+    #exog_train = open_exchange_SEK_USD_train
+    #exog_test = open_exchange_SEK_USD_test
+    
     """
     exog_train = np.column_stack((open_exchange_SEK_EUR_train, near25th_train, randlist_train, open_exchange_SEK_USD_train))
     exog_test = np.column_stack((open_exchange_SEK_EUR_test, near25th_test, randlist_test, open_exchange_SEK_USD_test))
@@ -895,6 +905,7 @@ def working():
 
             """
     """
+
     permutations_012 = list(product(range(2), repeat=4))
     permutations_12 = list(product(range(1,3), repeat=2))
     for onetwothree in permutations_012:
@@ -907,18 +918,18 @@ def working():
                 SAR = onetwothree[1]
                 SI = onetwothree[2]
                 SMA = onetwothree[3]
+
     """
-                    
-    #model = SARIMAX(cl_train, order=(1,0,1), seasonal_order=(0,0,0,7), exog = exog_train, period = 7)
+    #model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), exog = exog_train, period = 7)
+    #model = SARIMAX(cl_train, order=(AR,I,MA), seasonal_order=(SAR,SI,SMA,7), period = 7)
+    #model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7, exog = exog_train)
     model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7)
     """
     212,1117 -> 2332.42
     211,1117 -> 2307.93 
-    111,1117 -> 2327.42 
-
+    111,1117 -> 2327.42
     """
-     
-    callback=EarlyStopping(monitor="loss",patience=30) #30
+    callback=EarlyStopping(monitor="loss",patience=60) #30
     model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
     #model_fit.plot_diagnostics()
     print(model_fit.summary())
@@ -933,41 +944,41 @@ def working():
     Q = seasonal MA order
     S = length of seasonal pattern
     """
+    
     y_arima_exog_forecast = model_fit.forecast(steps=365)
     #y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
     y_arima_exog_forecast_with_trend = []
     y_arima_exog_forecast_with_trend_and_seasonality = []
     #print(arima_exog_model.summary())
     i_test_values = range(len(y_vals)-365, len(y_vals))
-    
     curve_test = curve[-365:]
     
     #y_arima_exog_forecast = cl_test # best case scenario forecast, the test data without trend or seasonality
     for i in range(len(y_arima_exog_forecast)): # go through the forecast
+
         #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
         y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
         y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
     # curve_with_trend is the curve with offset is added just for plotting nicely
+    
     offset_for_plotting_only = 23000
     curve_with_trend = []
     #print(" b is ")
     #print( b)
-    
     for i in range(len(curve)):
         #curve_with_trend.append(curve[i] + m*i - offset_for_plotting_only)
-        curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)
-    
+        curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)           
+
     # good plots
-    #plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
-    #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')
-    
-    plt.plot( range(len(y_vals)), y_vals, color='green', label = 'flights')
-    plt.plot( range(len(curve)), curve, color='black', label = 'estimated yearly seasonality')
-    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue', label = 'flights without trend or yearly seasonality')
-    plt.legend()
-    plt.show()
-    #plt.plot( range(len(curve_with_trend)), curve_with_trend, color='black',  label = 'estimated yearly seasonality')
+    plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
+    plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')          
+    #plt.plot( range(len(y_vals)), y_vals, color='green', label = 'flights')
+    #plt.plot( range(len(curve_with_trend)), [x + 18000 for x in curve_with_trend], color='black', label = 'estimated yearly seasonality')
+    #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue', label = 'flights without trend or yearly seasonality')
+    #plt.legend()
+    #plt.show()           
+    # #plt.plot( range(len(curve_with_trend)), curve_with_trend, color='black',  label = 'estimated yearly seasonality')
     #plt.plot( range(len(logestimate)), logestimate, color='blue', label = "estimated trend")
     #plt.plot( range(len(trend)), trend, color='red', label = "training data trend")
     #plt.legend()
@@ -984,12 +995,11 @@ def working():
         print(f'   {key}, {value}')    
     """
     #PRINTING ACCURACY
-    
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
     testScore = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
     print('Test Score: %.2f RMSE' % (testScore))
-    
+   
     testScore = mean_absolute_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
     print('Test Score: %.2f MAE' % (testScore))
     testScore = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
@@ -1000,7 +1010,6 @@ def working():
     print("number of elements in lufttemp is: ", np.count_nonzero(np.array(lufttemp)))
     print("number of elements in combined_lufttemp_rain is: ", np.count_nonzero(np.array(combined_lufttemp_rain)))
     """
-    
     # PLOTIING GRAPH
     #plt.xlabel('days')
     #plt.ylabel('flights')
@@ -1008,14 +1017,15 @@ def working():
     #plt.legend()
     #plt.show()
     #pm.plot_acf(y_arima_exog_forecast)
-    """
-    listToStr = ''.join([str(x) for x in [AR, I, MA, SAR, SI, SMA]])
-    dict_settings[listToStr] = testScore
-    dict_printme = dict(sorted(dict_settings.items(), key=lambda item: item[1]))
-    print(dict_printme)"""
+    
+    #listToStr = ''.join([str(x) for x in [AR, I, MA, SAR, SI, SMA]])
+    #dict_settings[listToStr] = testScore
+    #dict_printme = dict(sorted(dict_settings.items(), key=lambda item: item[1]))
+    #print(dict_printme)
+
 
 if __name__ == "__main__":
-    #prepare_data()
+    #prepare_data() # marketing
     #prepare_exchange_rates_EUR()
     #prepare_exchange_rates_USD()
     #createNear25th()
@@ -1023,8 +1033,7 @@ if __name__ == "__main__":
     #createDayBeforeSalaryDay()
     #createNear24th()
     #createLufttemp()
-    #createNeder()
-
+    #createNeder
     # all data
     #create_OMSX30() 
     #create_OMSXPI()
