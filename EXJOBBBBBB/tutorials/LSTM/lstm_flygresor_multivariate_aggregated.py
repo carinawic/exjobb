@@ -184,6 +184,15 @@ def workingexample():
     look_back = 7
     n_features = 0
 
+
+    """
+    HIGHSCORE:
+    
+    32-32
+    Train Score: 1595.36 RMSE
+    Test Score: 1872.24 RMSE
+
+    """
     # define input sequence
     #in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
     #in_seq2 = np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
@@ -229,52 +238,47 @@ def workingexample():
 
     out_seq = out_seq.reshape((len(out_seq), 1))
 
-    """
-    dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
-    splitted = split_sequences(dataset_stacked, 3, 3)
-    print("splitted")
-    print(splitted)
-    """
-    # horizontally stack columns
-    #dataset_stacked = np.hstack((in_seq1, in_seq2, out_seq))
-    
+
     dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
 
     Xtrain, Xtest, ytrain, ytest = split_sequences(out_seq, look_back, trainTestLimit)
-    #print("shapes")
-    #print(Xtrain.shape, ytrain.shape)
-    #print(Xtest.shape, ytest.shape)
-
+    """
     model = Sequential()
-
-    model.add(LSTM(64, activation='relu', return_sequences=True, input_shape=(look_back, n_features+1)))
-    #model.add(Dropout(0.2))
-
-    model.add(LSTM(16, activation='relu'))
-    #model.add(Dropout(0.2))
-
+    model.add(LSTM(32, activation='relu', return_sequences=True, input_shape=(look_back, n_features+1)))
+    model.add(LSTM(32, activation='relu'))
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse')
-    # activation='relu'
-    #model.add(LSTM(32, return_sequences=True, input_shape=(look_back, n_features+1))) 
-    #model.add(Dropout(0.3))
-    #model.add(Dense(32)) 
-    #model.add(LSTM(32, return_sequences=True))  # returns a sequence of vectors of dimension 32
-    #model.add(LSTM(32))  # return a single vector of dimension 32
-    #model.add(Dropout(0.3))
-    #model.add(Dense(10, activation='softmax'))
-    #model.add(Dense(1))
-    #model.compile(optimizer='adam', loss='mse')
+    """
+
+    """
+    saved
+    Train Score: 2786.01 RMSE
+    Test Score: 3127.24 RMSE
+    """
+
+    from keras.models import load_model
+    model = load_model('my_model.h5')
 
     from tensorflow.keras.callbacks import EarlyStopping
     callback=EarlyStopping(monitor="loss",patience=10)
 
-    """
-    400 epochs = 
-    Test Score: 1878.50 RMSE
-    """
+
     # fit model
-    history = model.fit(Xtrain, ytrain, epochs=400, batch_size=1, verbose=2, callbacks=[callback]) # epochs=200
+    #history = model.fit(Xtrain, ytrain, epochs=400, batch_size=1, verbose=2, callbacks=[callback]) # 
+
+    # save model
+    
+    #model.save('my_model.h5')  # creates a HDF5 file 'my_model.h5'
+    #del model  # deletes the existing model
+    
+    # returns a compiled model
+    # identical to the previous one
+
+    #json_string = model.to_json()
+    #import json
+    #out_file = open("myfile.json", "w")
+    #json.dump(json_string, out_file)
+
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
 
@@ -302,18 +306,6 @@ def workingexample():
     testPredict = np.array(testPredict,dtype=float)
     ytest = np.array(ytest,dtype=float)
     
-    #print(Xtrain)
-    #print(ytrain) 
-    # [ 45.  65.  85. 105. 125.]
-    #print(testPredict)
-    """
-    [[148.57341003]
-    [170.15072632]
-    [191.95950317]
-    """
-    #print(ytest) 
-    # [145. 165. 185.]
-
     # calculate root mean squared error
     # 22.93 RMSE means an error of about 23 passengers (in thousands) 
     trainScore = math.sqrt(mean_squared_error(ytrain, trainPredict))

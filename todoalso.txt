@@ -1,0 +1,48 @@
+TODO 
+
+2022-04-12
+
+[X] format all new rain and temperature data for 8 years
+[X] fill arima table on rain data
+[X] fill arima table on temperature data
+[?] fill arima table on combined data
+
+-> 20.00
+
+[] kolla hur många som flyger average 15e vs 25e och se om det är FLER eller FÄRRE.
+[] kolla hur många som flyger average RANDOM DAG vs 25e, beräkna procentuell increase.
+
+
+MAT
+
+-> 21.00
+
+[X] Dubbelkolla alla värden med SARIMAX , noggrann som fan att ändra range inuti near25th
+	[X] 4 year
+	[X] 8 year
+[] fix lstm spec
+[] run lstm on EVERYTHING
+
+-> 23.00
+
+[] finish vix and gas prices dataset (poly like exchange rates)
+[] run sarima on vix and spec
+[] run LSTM on vix and spec
+[] erics feedback
+
+-> inf.
+ 
+2022-04-13
+
+Jobba 9-15 ish
+
+Assignment 2 deeplearning
+Lectures deeplearning in the background
+
+2022-04-14
+
+chess game 1 9-13 ish
+
+Assignment 2 deeplearning
+Lectures deeplearning in the background
+

@@ -1,0 +1,96 @@
+16-16
+Train Score: 2032.28 RMSE
+Test Score: 2277.49 RMSE
+
+Train Score: 2979.19 RMSE
+Test Score: 3256.98 RMSE
+
+Train Score: 1759.22 RMSE
+Test Score: 2091.18 RMSE
+
+16-32
+Train Score: 1864.20 RMSE
+Test Score: 2144.06 RMSE
+
+Train Score: 2178.44 RMSE
+Test Score: 2523.85 RMSE
+
+Train Score: 1909.60 RMSE
+Test Score: 2172.71 RMSE
+
+
+32-16
+Train Score: 2411.48 RMSE
+Test Score: 2758.82 RMSE
+
+Train Score: 1923.17 RMSE
+Test Score: 2203.95 RMSE
+
+Train Score: 2187.89 RMSE
+Test Score: 2408.80 RMSE
+
+
+32-32
+
+Train Score: 1724.63 RMSE
+Test Score: 2055.65 RMSE
+
+Train Score: 1619.43 RMSE
+Test Score: 1895.56 RMSE
+
+Train Score: 1646.38 RMSE
+Test Score: 1931.61 RMSE
+
+
+32-64
+
+Train Score: 1954.60 RMSE
+Test Score: 2222.39 RMSE
+
+Train Score: 2183.17 RMSE
+Test Score: 2481.13 RMSE
+
+Train Score: 1996.74 RMSE
+Test Score: 2278.50 RMSE
+
+64-32
+
+Train Score: 1759.88 RMSE
+Test Score: 2005.18 RMSE
+
+Train Score: 1582.58 RMSE
+Test Score: 1912.66 RMSE
+
+Train Score: 1998.42 RMSE
+Test Score: 2248.08 RMSE
+
+
+64-64
+Train Score: 2060.66 RMSE
+Test Score: 2336.78 RMSE
+
+Train Score: 1621.05 RMSE
+Test Score: 1902.97 RMSE
+
+Train Score: 1989.14 RMSE
+Test Score: 2253.27 RMSE
+
+64-16
+Train Score: 1763.61 RMSE
+Test Score: 2032.94 RMSE
+
+Train Score: 2195.93 RMSE
+Test Score: 2444.11 RMSE
+
+Train Score: 2037.32 RMSE
+Test Score: 2299.73 RMSE
+
+16-64
+Train Score: 2309.08 RMSE
+Test Score: 2582.55 RMSE
+
+Train Score: 1621.05 RMSE
+Test Score: 1902.97 RMSE
+
+Train Score: 2998.49 RMSE
+Test Score: 3237.84 RMSE
