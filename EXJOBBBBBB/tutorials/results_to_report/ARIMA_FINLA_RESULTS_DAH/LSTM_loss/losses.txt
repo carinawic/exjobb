@@ -1,0 +1,459 @@
+32-32
+no dropout
+validation_split=0.3
+
+Train Score: 1420.36 RMSE
+Test Score: 1924.86 RMSE
+Train Score: 1007.23 MAE
+Test Score: 1379.16 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 53/200
+
+Train Score: 1473.25 RMSE
+Test Score: 2011.41 RMSE
+Train Score: 1069.48 MAE
+Test Score: 1425.17 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 32/200
+
+Train Score: 1554.60 RMSE
+Test Score: 2007.44 RMSE
+Train Score: 1133.60 MAE
+Test Score: 1488.17 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 127/200
+
+
+Epoch 65/200
+Train Score: 1431.20 RMSE
+Test Score: 1896.34 RMSE
+Train Score: 1030.01 MAE
+Test Score: 1375.19 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Epoch 33/200
+Train Score: 1418.56 RMSE
+Test Score: 1882.74 RMSE
+Train Score: 998.15 MAE
+Test Score: 1357.65 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Epoch 68/200
+Train Score: 1554.21 RMSE
+Test Score: 2024.85 RMSE
+Train Score: 1132.50 MAE
+Test Score: 1518.74 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Epoch 21/200
+Train Score: 1758.27 RMSE
+Test Score: 2256.65 RMSE
+Train Score: 1266.52 MAE
+Test Score: 1651.64 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+Epoch 55/200
+Train Score: 1470.85 RMSE
+Test Score: 1949.18 RMSE
+Train Score: 1041.92 MAE
+Test Score: 1422.74 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Epoch 51/200
+Train Score: 1665.09 RMSE
+Test Score: 2164.70 RMSE
+Train Score: 1232.28 MAE
+Test Score: 1617.53 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+Epoch 40/200
+Train Score: 1550.75 RMSE
+Test Score: 2032.40 RMSE
+Train Score: 1101.85 MAE
+Test Score: 1490.58 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+
+---
+
+
+32
+same as above
+
+Train Score: 1445.87 RMSE
+Test Score: 1984.02 RMSE
+Train Score: 1033.61 MAE
+Test Score: 1399.75 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Epoch 56/200
+
+Train Score: 1502.29 RMSE
+Test Score: 1966.80 RMSE
+Train Score: 1086.59 MAE
+Test Score: 1448.04 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 70/200
+
+Train Score: 1595.47 RMSE
+Test Score: 2103.50 RMSE
+Train Score: 1156.51 MAE
+Test Score: 1552.76 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.06 MAPE
+Epoch 71/200
+
+
+Train Score: 1487.19 RMSE
+Test Score: 1964.85 RMSE
+Train Score: 1071.71 MAE
+Test Score: 1436.04 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 66/200
+
+Train Score: 1385.10 RMSE
+Test Score: 1890.36 RMSE
+Train Score: 975.17 MAE
+Test Score: 1329.49 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 59/200
+
+Train Score: 1567.85 RMSE
+Test Score: 2059.38 RMSE
+Train Score: 1122.26 MAE
+Test Score: 1503.19 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 43/200
+
+Train Score: 1603.68 RMSE
+Test Score: 2079.99 RMSE
+Train Score: 1170.93 MAE
+Test Score: 1549.16 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+Epoch 24/200
+
+
+Train Score: 1558.71 RMSE
+Test Score: 2026.32 RMSE
+Train Score: 1144.59 MAE
+Test Score: 1517.80 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.06 MAPE
+Epoch 39/200
+
+Train Score: 1657.55 RMSE
+Test Score: 2172.78 RMSE
+Train Score: 1217.27 MAE
+Test Score: 1605.63 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+Epoch 33/200
+
+
+Train Score: 1977.67 RMSE
+Test Score: 2512.17 RMSE
+Train Score: 1403.19 MAE
+Test Score: 1842.24 MAE
+Train Score: 0.08 MAPE
+Test Score: 0.08 MAPE
+Epoch 49/200
+
+Train Score: 1419.97 RMSE
+Test Score: 1918.21 RMSE
+Train Score: 1020.39 MAE
+Test Score: 1368.82 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 51/200
+
+
+
+
+---
+
+increase patience to 30
+
+
+Train Score: 1514.81 RMSE
+Test Score: 2033.52 RMSE
+Train Score: 1105.67 MAE
+Test Score: 1519.27 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+44
+
+Train Score: 1402.54 RMSE
+Test Score: 1915.29 RMSE
+Train Score: 985.31 MAE
+Test Score: 1386.91 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+58/200
+
+
+Train Score: 1448.34 RMSE
+Test Score: 1971.39 RMSE
+Train Score: 1063.23 MAE
+Test Score: 1456.60 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+123/200
+
+Train Score: 1656.12 RMSE
+Test Score: 2123.72 RMSE
+Train Score: 1234.80 MAE
+Test Score: 1604.00 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+Epoch 200/200
+
+
+Train Score: 1466.14 RMSE
+Test Score: 1964.58 RMSE
+Train Score: 1040.41 MAE
+Test Score: 1428.01 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 82/200
+
+Train Score: 1403.13 RMSE
+Test Score: 1922.40 RMSE
+Train Score: 970.39 MAE
+Test Score: 1371.98 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 165/200
+
+
+lastest config
+
+Epoch 200/200
+Train Score: 1455.06 RMSE
+Test Score: 1951.82 RMSE
+Train Score: 1072.12 MAE
+Test Score: 1420.46 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+
+---
+
+32-32
+no dropout
+validation_split=0.5
+
+Epoch 87/200
+Train Score: 1473.49 RMSE
+Test Score: 1991.98 RMSE
+Train Score: 1056.05 MAE
+Test Score: 1476.20 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+
+Epoch 134/200
+Train Score: 1520.49 RMSE
+Test Score: 2056.01 RMSE
+Train Score: 1077.46 MAE
+Test Score: 1502.06 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Train Score: 1421.03 RMSE
+Test Score: 1895.14 RMSE
+Train Score: 997.73 MAE
+Test Score: 1340.82 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Train Score: 1495.44 RMSE
+Test Score: 2012.14 RMSE
+Train Score: 1082.38 MAE
+Test Score: 1439.11 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+??
+
+Train Score: 1654.82 RMSE
+Test Score: 2168.31 RMSE
+Train Score: 1223.51 MAE
+Test Score: 1622.50 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+
+Train Score: 1384.18 RMSE
+Test Score: 1926.43 RMSE
+Train Score: 995.31 MAE
+Test Score: 1375.99 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 167/200
+
+Train Score: 1539.55 RMSE
+Test Score: 2039.29 RMSE
+Train Score: 1144.25 MAE
+Test Score: 1526.25 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.06 MAPE
+Epoch 105/200
+
+Train Score: 1382.44 RMSE
+Test Score: 1887.87 RMSE
+Train Score: 993.97 MAE
+Test Score: 1349.98 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 124/200
+
+
+Train Score: 1378.54 RMSE
+Test Score: 1935.32 RMSE
+Train Score: 973.76 MAE
+Test Score: 1375.74 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 118/200
+
+
+Train Score: 1494.52 RMSE
+Test Score: 2045.05 RMSE
+Train Score: 1061.04 MAE
+Test Score: 1466.47 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 147/200
+
+
+Train Score: 1883.23 RMSE
+Test Score: 2431.28 RMSE
+Train Score: 1338.00 MAE
+Test Score: 1786.26 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+Epoch 42/200
+
+Train Score: 1594.71 RMSE
+Test Score: 2079.64 RMSE
+Train Score: 1193.26 MAE
+Test Score: 1585.26 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+Epoch 109/200
+
+Train Score: 1471.88 RMSE
+Test Score: 1977.91 RMSE
+Train Score: 1065.45 MAE
+Test Score: 1466.15 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 90/200
+
+
+Train Score: 1460.15 RMSE
+Test Score: 1937.09 RMSE
+Train Score: 1060.93 MAE
+Test Score: 1410.63 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+ 87/200
+
+---
+
+validation 0.1
+
+Train Score: 1542.17 RMSE
+Test Score: 2126.06 RMSE
+Train Score: 1130.51 MAE
+Test Score: 1545.93 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 200/200
+
+Train Score: 1624.22 RMSE
+Test Score: 2221.77 RMSE
+Train Score: 1218.37 MAE
+Test Score: 1669.98 MAE
+Train Score: 0.07 MAPE
+Test Score: 0.07 MAPE
+ 200/200
+
+Train Score: 1465.46 RMSE
+Test Score: 1966.13 RMSE
+Train Score: 1055.72 MAE
+Test Score: 1461.56 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 131/200
+
+Train Score: 1393.29 RMSE
+Test Score: 1934.09 RMSE
+Train Score: 1005.18 MAE
+Test Score: 1392.51 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 162/200
+
+Train Score: 1409.76 RMSE
+Test Score: 1895.32 RMSE
+Train Score: 1039.20 MAE
+Test Score: 1382.30 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+Epoch 195/200
+
+Epoch 71/200
+Train Score: 1517.69 RMSE
+Test Score: 2019.39 RMSE
+Train Score: 1095.61 MAE
+Test Score: 1479.56 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+
+139/200
+Train Score: 1360.33 RMSE
+Test Score: 1859.84 RMSE
+Train Score: 981.70 MAE
+Test Score: 1351.14 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+97/200
+Train Score: 1387.69 RMSE
+Test Score: 1951.62 RMSE
+Train Score: 984.89 MAE
+Test Score: 1371.59 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+ 89/200
+Train Score: 1511.24 RMSE
+Test Score: 2019.27 RMSE
+Train Score: 1117.92 MAE
+Test Score: 1493.39 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.06 MAPE
+
+Train Score: 1340.20 RMSE
+Test Score: 1842.26 RMSE
+Train Score: 961.81 MAE
+Test Score: 1297.48 MAE
+Train Score: 0.06 MAPE
+Test Score: 0.05 MAPE
+Epoch 122/200

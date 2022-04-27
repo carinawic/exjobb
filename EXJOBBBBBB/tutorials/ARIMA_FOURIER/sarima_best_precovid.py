@@ -898,10 +898,6 @@ def working():
     clicks_Extreme_train = clicks_Extreme[:train_len]
 
 
-
-
-    
-
     # all data!!!
 
     
