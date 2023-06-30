@@ -12,23 +12,17 @@ def calc():
     graph_means = []
 
     
-    twentifour = df.loc[ pd.to_datetime(df['date']).dt.day == 24, 'clicks_out'].mean()
-    twentifive = df.loc[ pd.to_datetime(df['date']).dt.day == 25, 'clicks_out'].mean()
-    thirty = df.loc[ pd.to_datetime(df['date']).dt.day == 30, 'clicks_out'].mean()
-    twenty = df.loc[ pd.to_datetime(df['date']).dt.day == 20, 'clicks_out'].mean()
-    third = df.loc[ pd.to_datetime(df['date']).dt.day == 3, 'clicks_out'].mean()
-    means = df['clicks_out'].mean()
+    #twentifour = df.loc[ pd.to_datetime(df['date']).dt.day == 24, 'clicks_out'].mean()
+    #twentifive = df.loc[ pd.to_datetime(df['date']).dt.day == 25, 'clicks_out'].mean()
+    #thirty = df.loc[ pd.to_datetime(df['date']).dt.day == 30, 'clicks_out'].mean()
+    #twenty = df.loc[ pd.to_datetime(df['date']).dt.day == 20, 'clicks_out'].mean()
+    #third = df.loc[ pd.to_datetime(df['date']).dt.day == 3, 'clicks_out'].mean()
+    #means = df['clicks_out'].mean()
 
-    print(twentifour)
-    print(twentifive)
-    print(thirty)
-    print(twenty)
-    print(third)
-    print(means)
-    #for i in range(1,32):
-    #    sumofclicks = df.loc[ pd.to_datetime(df['date']).dt.day == i, 'clicks_out'].mean()
-    #    graph_means.append(sumofclicks)
-
+    for i in range(1,32):
+        sumofclicks = df.loc[ pd.to_datetime(df['date']).dt.day == i, 'clicks_out'].mean()
+        graph_means.append(sumofclicks)
+        print("month: ", i, " mean: ", sumofclicks)
     
 
     

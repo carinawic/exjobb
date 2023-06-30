@@ -1,12 +1,43 @@
+"""
+
+
+Test Score: 2279.96 RMSE - Test Score: 2243.47 RMSE
+
+We preprocess the input data to be in the same range as one another. Scaling (0,1) which is common in ml works poorly in SARIMAX. An intuitive decision was made to scale (0,500) due to the ranges of stocks and weather input data.
+
+near24th
+
+scale (0,500) gave 
+2240.48 ; 1707.78 ; 0.07
+
+scale(0,2) gave 
+2240.56 ; 1707.97 ; 0.07
+
+scale (0,1) gave 
+test score: 2679.66 ; 2006.33 ; 0.08
+
+
+"""
+
 import itertools
 from turtle import width
 import pandas as pd
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+import math
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, LSTM
+from sklearn.preprocessing import MinMaxScaler, minmax_scale 
+from sklearn.metrics import mean_squared_error,  mean_absolute_error, mean_absolute_percentage_error
+import datetime
+from sklearn import preprocessing
+from tensorflow.keras.callbacks import EarlyStopping
 
+from keras.models import load_model
 import math
 import matplotlib.pyplot as plt
-import pmdarima as pm
-from pmdarima import auto_arima
 from itertools import cycle, islice
 from statsmodels.tsa.seasonal import seasonal_decompose
 from pandas import read_csv
@@ -32,9 +63,15 @@ note to self
 - if something breaks regarding accuracy, remove the mega_offset!
 - if accuracy is low, remove the scaling
 
+for deciding on parameters, run 10 times and take the median
+use numpy to calculate the mean and standard deviation
+save rmse in a list and plot it
+
+read about loss and f1 score also
+f1 score for ARIMA?
+
 """
 
-click_outs = []
 week = []
 clicks_media = []
 impr_media = []
@@ -62,6 +99,8 @@ SP500 = []
 MSCI = []
 VIX = []
 OIL = []
+
+logestimate_eight_years = False
 
 def create_OIL():
     global OIL
@@ -158,9 +197,12 @@ def create_neder_8years(a,b):
             counter = 0
         regn_consecutive.append(0)
 
-    #print(values_in_list, " is HERE ")
+    print(values_in_list, " is HERE ")
+
+
 
     regn_8years = regn_consecutive
+    regn_8years = np.array(regn_8years)
 
 def createNeder():
 
@@ -198,7 +240,7 @@ def createNeder():
     plt.show()
     """
 
-def create_lufttemp_8years(b):
+def create_lufttemp_8years(conseq):
 
     global lufttemp_8years
 
@@ -242,28 +284,28 @@ def create_lufttemp_8years(b):
         month_list.append(i.astype('datetime64[M]').astype(int) % 12 + 1)
 
     counter = 0
-    occcuuurrrr = 0
 
     for devpoint in deviation_from_sine:
 
-        # we are below x degrees difference from expected temp
-        at_least_x_degrees_under_expected = 5
-        days_in_row_threshold = b
-        
+        #
+
+        # we are below x degrees difference from expected temp - 7.20
+        at_least_x_degrees_under_expected = -5
+        days_in_row_threshold = conseq
         
 
-        if devpoint > at_least_x_degrees_under_expected:
+        if devpoint < at_least_x_degrees_under_expected:
             counter += 1
             if counter >= days_in_row_threshold:
                 deviation_consecutive.append(10)
-                occcuuurrrr = occcuuurrrr+1
                 continue
         else: 
             counter = 0
         
         deviation_consecutive.append(0)
+        
 
-    def remove_values_during_season(list_to_be_filtered, endmonth,startmonth):
+    def remove_values_during_season(list_to_be_filtered, endmonth, startmonth):
         # remove value if not summer
         
         if endmonth > startmonth:
@@ -277,15 +319,12 @@ def create_lufttemp_8years(b):
                 if((month_list[i] >= startmonth ) or (month_list[i] <= endmonth)):
                    list_to_be_filtered[i] = 0
                     
-    #remove_values_during_season(deviation_consecutive, 4,10)
-    #remove_values_during_season(deviation_consecutive, 4,9)
-    #remove_values_during_season(deviation_consecutive,12,2)
+    remove_values_during_season(deviation_consecutive, 4,10)
     
     lufttemp_8years = deviation_consecutive
     lufttemp_8years = minmax_scale(lufttemp_8years, feature_range=(0,500))
     #print("len(lufttemp_8years)")
     #print(len(lufttemp_8years))
-    return np.count_nonzero(lufttemp_8years)
 
 def createLufttemp_4years():
 
@@ -600,26 +639,24 @@ def createNear25th():
     rng = pd.date_range('2013-01-01', '2020-02-19', freq='D')
     df = pd.DataFrame({ 'Date': rng}) 
     df["Is25th"] = 0
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 25, 1)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 31, 1)
     print(df)
     
     near25th = np.array(df['Is25th'].values)
     near25th = minmax_scale(near25th, feature_range=(0,500))
 
-def createNear24th(th):
+def createNear24th():
 
     global near24th
     # create an array of 5 dates starting at '2015-02-24', one per day
     rng = pd.date_range('2013-01-01', '2020-02-19', freq='D')
     df = pd.DataFrame({ 'Date': rng}) 
     df["Is25th"] = 0
-    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == th, 1)
+    df["Is25th"] = df['Is25th'].mask(df['Date'].dt.day == 24, 1)
     print(df)
     
     near24th = np.array(df['Is25th'].values)
     near24th = minmax_scale(near24th, feature_range=(0,500))
-
-
 
 def prepare_exchange_rates_USD():
     global open_exchange_SEK_USD
@@ -638,12 +675,12 @@ def prepare_exchange_rates_USD():
     #scaling?
     open_exchange_SEK_USD = minmax_scale(open_exchange_SEK_USD, feature_range=(0,500))
 
+    open_exchange_SEK_USD = np.array(open_exchange_SEK_USD)
 
-    
 
 def prepare_exchange_rates_EUR():
-    global open_exchange_SEK_EUR
 
+    global open_exchange_SEK_EUR
     df = read_csv('SEK_EUR_FILLED_seven.csv')
     exchange_SEK_EUR = np.array(df['Open'].values)
 
@@ -655,8 +692,16 @@ def prepare_exchange_rates_EUR():
 
     open_exchange_SEK_EUR = exchange_SEK_EUR_rounded
 
-    #scaling?
     open_exchange_SEK_EUR = minmax_scale(open_exchange_SEK_EUR, feature_range=(0,500))
+
+
+    open_exchange_SEK_EUR = np.array(open_exchange_SEK_EUR)
+
+    #open_exchange_SEK_EUR = minmax_scale(open_exchange_SEK_EUR, feature_range=(0,500))
+
+    
+    
+
 
 
 def prepare_data():
@@ -721,24 +766,31 @@ def prepare_data():
 
     plt.show()
     """
-    
-logestimate_eight_years = False
+
+def split_sequences(sequences, n_steps, trainTestLimit):
+        X, y = list(), list()
+        for i in range(len(sequences)):
+            # find the end of this pattern
+            end_ix = i + n_steps
+            # check if we are beyond the dataset
+            if end_ix > len(sequences):
+                break
+            # gather input and output parts of the pattern
+            seq_x, seq_y = sequences[i:end_ix, :], sequences[end_ix-1, -1]
+            X.append(seq_x)
+            y.append(seq_y)
+
+        y.pop(0)
+        X.pop(-1)
+
+        return np.array(X[:trainTestLimit]), np.array(X[trainTestLimit:]), np.array(y[:trainTestLimit]), np.array(y[trainTestLimit:])
+
 
 def working():
 
-
-    global logestimate_eight_years 
-    #df = pd.read_csv('kaggle_sales.csv')
-    #df = df[(df['store'] == 1) & (df['item'] == 1)] # item 1 in store 1
-    #df = df.set_index('date')
-    #y = df['sales']
-
     df = pd.read_csv('Time.csv')
-    #df = df.set_index('date')
 
-    # switch this boolean when you change the precovid_startdate variable
-    logestimate_eight_years = True # CHANGE HERE!!!!
-    precovid_startdate = '2013-01-01'
+    precovid_startdate = '2013-01-01' # CHANGE HERE FOR LESS DATA!!
     #precovid_startdate = '2016-01-01'
     precovid_enddate = '2020-02-19'
 
@@ -756,7 +808,318 @@ def working():
     print("len(y_to_test)")
     print(len(y_to_test))
 
+    # fix random seed for reproducibility
+    np.random.seed(7)
+    # load the dataset
+    #dataframe = pd.read_csv('date_and_clicks.csv', usecols=[1], engine='python')
+    #dataset = dataframe.values
+    #dataset = dataset.astype('float32')
+
+    # normalize the dataset
+    #scaler = MinMaxScaler(feature_range=(0, 1))
+    #dataset = scaler.fit_transform(dataset)
+    # split into train and test sets
+
+
+
+    """
+    HIGHSCORE:
     
+    32-32
+    Train Score: 1595.36 RMSE ??
+    Test Score: 1872.24 RMSE ??
+
+    """
+    # define input sequence
+    #in_seq1 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90])
+    #in_seq2 = np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
+    #in_seq3 = np.array([15, 25, 35, 45, 55, 65, 75, 85, 95])
+    #out_seq = np.array([in_seq1[i]+in_seq2[i] for i in range(len(in_seq1))])
+
+    
+    train_len = len(clicks_Search)-365
+
+    clicks_Search_test = clicks_Search[-365:]
+    clicks_Search_train = clicks_Search[:train_len]
+
+    clicks_Active_test = clicks_Active[-365:]
+    clicks_Active_train = clicks_Active[:train_len]
+
+    clicks_Inactive_test = clicks_Inactive[-365:]
+    clicks_Inactive_train = clicks_Inactive[:train_len]
+
+    clicks_Extreme_test = clicks_Extreme[-365:]
+    clicks_Extreme_train = clicks_Extreme[:train_len]
+
+
+    # all data!!!
+
+    
+    near25th_test = near25th[-365:]
+    near25th_train = near25th[:len(near25th)-365]
+
+    near24th_test = near24th[-365:]
+    near24th_train = near24th[:len(near24th)-365]
+    
+    open_exchange_SEK_EUR_test = open_exchange_SEK_EUR[-365:]
+    open_exchange_SEK_EUR_train = open_exchange_SEK_EUR[:len(open_exchange_SEK_EUR)-365]
+
+    open_exchange_SEK_USD_test = open_exchange_SEK_USD[-365:]
+    open_exchange_SEK_USD_train = open_exchange_SEK_USD[:len(open_exchange_SEK_USD)-365]
+    
+    #lufttemp = np.array(lufttemp, int)
+    lufttemp_test = lufttemp[-365:]
+    lufttemp_train = lufttemp[:len(lufttemp)-365]
+    
+    rain_test = rain[-365:]
+    rain_train = rain[:len(rain)-365]
+
+    #print("salaryday")
+    #print(salaryday)
+    
+    salaryday_test = salaryday[-365:]
+    salaryday_train = salaryday[:len(salaryday)-365]
+
+    dayBeforeSalaryday = np.append(salaryday[1:],0)
+
+    dayBeforeSalaryday_test = dayBeforeSalaryday[-365:]
+    dayBeforeSalaryday_train = dayBeforeSalaryday[:len(dayBeforeSalaryday)-365]
+    
+    lufttemp_8years_test = lufttemp_8years[-365:]
+    lufttemp_8years_train = lufttemp_8years[:len(lufttemp_8years)-365]
+
+    regn_8years_test = regn_8years[-365:]
+    regn_8years_train = regn_8years[:len(regn_8years)-365]
+
+    OMSX30_test = OMSX30[-365:]
+    OMSX30_train = OMSX30[:len(OMSX30)-365]
+    
+    OMSXPI_test = OMSXPI[-365:]
+    OMSXPI_train = OMSXPI[:len(OMSXPI)-365]
+
+    SP500_test = SP500[-365:]
+    SP500_train = SP500[:len(SP500)-365]
+
+    MSCI_test = MSCI[-365:]
+    MSCI_train = MSCI[:len(MSCI)-365]
+
+    VIX_test = VIX[-365:]
+    VIX_train = VIX[:len(VIX)-365]
+
+    OIL_test = OIL[-365:]
+    OIL_train = OIL[:len(OIL)-365]
+
+    near25thcurve_test = near25thcurve[-365:]
+    near25thcurve_train = near25thcurve[:len(near25thcurve)-365]
+
+    
+    #in_seq1 = np.array([1,2,3,4,5,6,7])
+    #in_seq2 = np.array([1,2,3,4,5,6,7])
+    #in_seq3 = np.array([1,2,3,4,5,6,7])
+    #in_seq4 = np.array([1,2,3,4,5,6,7])
+    #out_seq = np.array([4,5,6,7,8,9,10])
+
+    # remove the first item of each data because the [0-3] first clicks match with the [1-4] first clickouts
+    """in_seq1 = in_seq1[1:]
+    in_seq2 = in_seq2[1:]
+    in_seq3 = in_seq3[1:]
+    in_seq4 = in_seq4[1:]
+
+    out_seq = out_seq[:-1]"""
+
+
+    #OMSX30_n = np.array(OMSX30)
+    #dayBeforeSalaryday = np.array(dayBeforeSalaryday)
+    
+    out_seq_n = np.array(y_vals)
+
+    
+    look_back = 7
+    n_features = 0 # TODO: ALWAYS CHANGE THIS
+
+    
+    
+    first_dropout_list = [0]
+    #second_dropout_list = [0.1, 0.2, 0.3, 0.4, 0.5]
+    second_dropout_list = [0]
+    number_of_iterations_for_consistency = 5
+
+
+    dropoutdict = {}
+
+    
+    
+    #plt.xlabel('days')
+    #plt.ylabel('scaled features')
+    #plt.title('USD and EUR')
+
+    #plt.plot(range(len(y_vals)), y_vals, 'green', label='flights')
+    #plt.plot(range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR*50, 'red', label='open_exchange_SEK_EUR')
+    #plt.plot(range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD*50, 'black', label='clicks search')
+    
+    #plt.show()
+    
+
+    for a in [0]:
+        for b in [0]:
+            
+            # OBS: don't forget to change n_features when adding or removing a feature!!!
+            
+            #create_lufttemp_8years(1)
+            
+            #change here
+
+            # convert to [rows, columns] structure
+            #in_seq1 = np.array(lufttemp_8years).reshape((len(lufttemp_8years), 1))
+            
+            #WORKING: in_seq1 = np.array(lufttemp_8years)
+            #WORKING: in_seq1 = in_seq1.reshape((len(lufttemp_8years), 1))
+            #in_seq2 = in_seq2.reshape((len(dayBeforeSalaryday), 1))
+            #in_seq3 = in_seq3.reshape((len(in_seq3), 1))
+            #in_seq4 = in_seq3.reshape((len(in_seq4), 1))
+
+            ## only base data, reshape out sequence so that it fits lstm!
+            # reshaping out_seq is always required, no matter number of features
+            out_seq = out_seq_n.reshape((len(out_seq_n), 1))
+            
+            #out_seq = np.hstack([out_seq_n])
+
+
+            # with many datasets:
+            # dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
+            #dataset_stacked = np.hstack((in_seq1, out_seq))
+            
+            # split with multiple datasets of data!
+            #Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, len(y_vals)-365)
+            #Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, len(y_vals)-365)
+
+            # split with only original data!
+            #Xtrain, Xtest, ytrain, ytest = split_sequences(out_seq, look_back, len(y_vals)-365)
+            Xtrain, Xtest, ytrain, ytest = split_sequences(out_seq, look_back, len(y_vals)-365)
+            
+            for iterrr in range(number_of_iterations_for_consistency):
+
+                model = Sequential()
+                
+                
+                model.add(LSTM(32,activation='relu', return_sequences=True, input_shape=(look_back, n_features+1)))
+                model.add(LSTM(32,activation='relu', input_shape=(look_back, n_features+1)))
+
+                #model.add(LSTM(32,activation='relu',recurrent_dropout=0.2,return_sequences=True, input_shape=(look_back, n_features+1)))
+                #model.add(LSTM(32,activation='relu',recurrent_dropout=0.5))  
+                #model.add(LSTM(32,activation='relu',recurrent_dropout=0.4))  
+                model.add(Dropout(0.1))
+
+                model.add(Dense(1))
+                model.compile(optimizer='adam', loss='mse')
+                        
+                callback=EarlyStopping(monitor="val_loss", mode='min', patience=30, restore_best_weights=True)
+
+                # fit model CHENGE EPOCH BACK
+                history = model.fit(Xtrain, ytrain, validation_split=0.5, epochs=200 , batch_size=1, verbose=2,  callbacks=[callback]) # 
+
+                #print(history.history)
+                """
+                # summarize history for loss
+                plt.plot(history.history['loss'])
+                plt.plot(history.history['val_loss'])
+                plt.title('model loss')
+                plt.ylabel('loss')
+                plt.xlabel('epoch')
+                plt.legend(['train', 'validation'], loc='upper left')
+                plt.show()
+                # save model
+                """
+                        
+                trainPredict = model.predict(Xtrain)
+                testPredict = model.predict(Xtest)
+                
+                trainPredict = np.array(trainPredict,dtype=float)
+                ytrain = np.array(ytrain,dtype=float) 
+
+                testPredict = np.array(testPredict,dtype=float)
+                ytest = np.array(ytest,dtype=float)
+
+                # calculate root mean squared error
+                # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+                trainScore1 = math.sqrt(mean_squared_error(ytrain, trainPredict))
+                #print('Train Score: %.2f RMSE' % (trainScore1))
+                testScore1 = math.sqrt(mean_squared_error(ytest, testPredict))
+                #print('Test Score: %.2f RMSE' % (testScore1))
+
+                # calculate root mean squared error
+                # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+                trainScore2 = mean_absolute_error(ytrain, trainPredict)
+                #print('Train Score: %.2f MAE' % (trainScore2))
+                testScore2 = mean_absolute_error(ytest, testPredict)
+                #print('Test Score: %.2f MAE' % (testScore2)
+                
+                trainScore3 = mean_absolute_percentage_error(ytrain, trainPredict)
+                #print('Train Score: %.2f MAPE' % (trainScore3))
+                testScore3 = mean_absolute_percentage_error(ytest, testPredict)
+                #print('Test Score: %.2f MAPE' % (testScore3))
+
+                dropoutdict["iteration " + str(iterrr) + " cell: "+ str(b)] = "RMSE train: " + str(trainScore1) + " RMSE test: " + str(testScore1) + " MAE train: " + str(trainScore2) + " MAE test: " + str(testScore2) + " MAPE train: " + str(trainScore3) + "  MAPE test " + str(testScore3)
+                print(dropoutdict)
+
+            """
+
+            # plotting training data ytrain
+            plt.plot(range(len(ytrain)),ytrain,'-', label="training data ytrain", color="red")
+            
+            # plotting training prediction trainPredict
+            trainPredictFlatten = trainPredict.flatten()
+            plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-', label="train prediction", color="green")
+            
+            #plotting testing data ytest
+            plt.plot(
+                range(len(ytrain), len(ytest) + len(ytrain)),
+                ytest,'-', label="testing data ytest", color='purple')
+                
+            #plotting testing prediction testPredict
+            testPredictFlatten = testPredict.flatten()
+            plt.plot(range(len(ytrain),len(testPredictFlatten)+len(ytrain)),testPredictFlatten,'-', label="test prediction", color="blue")
+
+            
+            plt.xlabel('days')
+            plt.ylabel('flights')
+            plt.title('Forecast using LSTM')
+
+            plt.legend()
+            plt.show()
+
+    """
+def working_preprocessed():
+
+    global logestimate_eight_years 
+
+    df = pd.read_csv('Time.csv')
+    
+    logestimate_eight_years = False
+    #precovid_startdate = '2013-01-01'
+    precovid_startdate = '2016-01-01'
+    precovid_enddate = '2020-02-19'
+
+    mask_clickouts = (df.iloc[:, 0] >= precovid_startdate) & (df.iloc[:, 0] <= precovid_enddate)
+
+    y = df['clicks_out'][mask_clickouts]
+
+    #renamed = df.rename(columns={'clicks_out': 'decomposition of data'})
+    #y = renamed['decomposition of data'][mask_clickouts]
+    
+    y_to_train = y.iloc[:(len(y)-365)]
+    y_to_test = y.iloc[(len(y)-365):] # last year for testing
+    y_vals = y.values
+    
+    print("len(y_to_test)")
+    print(len(y_to_test))
+
+    # fix random seed for reproducibility
+    np.random.seed(7)
+
+    
+    # creating the 8-degree curve polnomial curve
+    # can you beat 2900
     X = [i%365 for i in range(0, len(y_to_train))]
     y_to_train
     degree = 50 # 16 in results for 2016-2020
@@ -783,11 +1146,14 @@ def working():
     trend = decompose_result.trend
     seasonal = decompose_result.seasonal
     residual = decompose_result.resid
-    #decompose_result.plot()
-    #plt.plot( range(len(trend)), trend, color='purple')
 
+    
     trend = [x for x in trend if not math.isnan(x)] # remove nan values
 
+    print("len(better_trend)")
+    #print(len(better_trend))
+    print("len(trend)")
+    print(len(trend))
     
     #m,b = np.polyfit(range(len(trend)),trend,1) # f(x) = m*i + b
 
@@ -796,15 +1162,6 @@ def working():
 
     popt, pcov = curve_fit(func, np.array(range(len(trend))), trend)
 
-    #coefficients = np.polyfit(np.log(range(1,len(trend))), trend[:-1], 1)
-
-    #coefficients = np.polyfit(range(len(trend)), trend, 2)
-    #p = np.poly1d(coefficients)
-    #print("values")
-    #print(p(0))
-    #print(p(1))
-
-
     logestimate = []
     #linestimate = []
     #for i in range(len(y_vals)):
@@ -812,8 +1169,6 @@ def working():
     #    logestimate.append(func(np.array(range(len(y_vals))), *popt))
     
     logestimate = (func(np.array(range(len(y.values))), *popt))
-
-    # for the FULL DATA, the logestimate might not even be a log!
 
     if logestimate_eight_years:
         logestimate = []
@@ -826,18 +1181,12 @@ def working():
                 value += i**(deg-d) * not_log_coeffs[d]
             logestimate.append(value)
 
-    #for i in range(len(trend)):
-    #    linestimate.append(m*i+b)
-    
-    # plot linear fit
-    #plt.plot(range(len(trend)),m*range(len(trend))+b, color='purple')
-    #plt.plot(range(len(trend)),m*np.log(range(len(trend)))+b, color='green')
-    #plt.show()
-    
+
     clickouts = np.array(y.values)
 
-    # print("len(clickouts)")
-    # print(len(clickouts))
+    
+    print("len(clickouts)")
+    print(len(clickouts))
 
     clickouts_wo_trend = []
     clickouts_wo_trend_or_seasonality = []
@@ -856,13 +1205,9 @@ def working():
     print("len(clickouts_wo_trend_or_seasonality)")
     print(len(clickouts_wo_trend_or_seasonality))
 
-    ### SARIMAX model making forecast without seasonality or trend ###
-
     cl_train = clickouts_wo_trend_or_seasonality[:len(clickouts_wo_trend_or_seasonality)-365]
     cl_test = clickouts_wo_trend_or_seasonality[len(clickouts_wo_trend_or_seasonality)-365:]
 
-    #arima_exog_model = auto_arima(y=cl_train, seasonal=False, m=7) ##TODO set true
-    #y_arima_exog_forecast = arima_exog_model.predict(n_periods=365)
 
     train_len = len(clicks_Search)-365
 
@@ -900,6 +1245,9 @@ def working():
     
     rain_test = rain[-365:]
     rain_train = rain[:len(rain)-365]
+
+    print("salaryday")
+    print(salaryday)
     
     salaryday_test = salaryday[-365:]
     salaryday_train = salaryday[:len(salaryday)-365]
@@ -936,254 +1284,222 @@ def working():
     near25thcurve_test = near25thcurve[-365:]
     near25thcurve_train = near25thcurve[:len(near25thcurve)-365]
 
+    
+    #in_seq1 = np.array([1,2,3,4,5,6,7])
+    #in_seq2 = np.array([1,2,3,4,5,6,7])
+    #in_seq3 = np.array([1,2,3,4,5,6,7])
+    #in_seq4 = np.array([1,2,3,4,5,6,7])
+    #out_seq = np.array([4,5,6,7,8,9,10])
 
-    #combined_lufttemp_rain = np.logical_and(np.array(lufttemp) , np.array(rain))
-    #combined_lufttemp_rain = 500*combined_lufttemp_rain # converts bool to int (0 or 500)
-    #combined_lufttemp_rain_test = combined_lufttemp_rain[-365:]
-    #combined_lufttemp_rain_train = combined_lufttemp_rain[:train_len]
+    # remove the first item of each data because the [0-3] first clicks match with the [1-4] first clickouts
+    """in_seq1 = in_seq1[1:]
+    in_seq2 = in_seq2[1:]
+    in_seq3 = in_seq3[1:]
+    in_seq4 = in_seq4[1:]
+
+    out_seq = out_seq[:-1]"""
 
     
-    randlist = np.random.randint(500, size=len(clicks_Search))
-    randlist_test = randlist[-365:]
-    randlist_train = randlist[:train_len]
 
+    #OMSX30_n = np.array(OMSX30)
+    #dayBeforeSalaryday = np.array(dayBeforeSalaryday)
+    
+    #out_seq_n = np.array(y_vals) # normal data!
+    out_seq_n = np.array(clickouts_wo_trend_or_seasonality)
 
+    # convert to [rows, columns] structure
+    #in_seq1 = OMSX30_n.reshape((len(OMSX30_n), 1))
+    #in_seq1 = OMSX30_n.reshape((len(OMSX30_n), 1))
+    #in_seq2 = in_seq2.reshape((len(dayBeforeSalaryday), 1))
+    #in_seq3 = in_seq3.reshape((len(in_seq3), 1))
+    #in_seq4 = in_seq3.reshape((len(in_seq4), 1))
 
-    """
-    # Plot only graphs for euro and usd
-    open_exchange_SEK_EUR_plotonly = [x*100 - 35000 for x in open_exchange_SEK_EUR]
-    open_exchange_SEK_USD_plotonly = [x*100 - 35000 for x in open_exchange_SEK_USD]
-    near25th_plotonly = [x*10 - 35000 for x in near25th]
+    #out_seq = out_seq_n.reshape((len(out_seq_n), 1))
+    #out_seq = np.hstack((out_seq))
 
-    plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='green', label='flights')
-    plt.plot( range(len(open_exchange_SEK_EUR)), open_exchange_SEK_EUR_plotonly, color='red', label='SEK_EUR')
-    plt.plot( range(len(open_exchange_SEK_USD)), open_exchange_SEK_USD_plotonly, color='black', label='SEK_USD')
-    #plt.plot( range(len(near25th)), near25th_plotonly, color='blue', label='salary')
+    out_seq = out_seq_n.reshape((len(out_seq_n), 1))
+    #out_seq = np.hstack((clickouts_wo_trend_or_seasonality))
 
     
-    plt.xlabel('days')
-    plt.ylabel('flights minus expected seasonality')
-    plt.legend()
-    plt.title('scaled features for display')
 
-    plt.show()
-    """
- 
 
-    # Create figure
-    #fig, (ax1, ax2) = plt.subplots(2,1, figsize=(12,8))
+    #dataset_stacked = np.hstack((in_seq1, in_seq2, in_seq3, in_seq4, out_seq))
+    #dataset_stacked = np.hstack((in_seq1, out_seq))
     
-    # Plot the ACF of df_store_2_item_28_timeon ax1
-    #plot_acf(cl_train,lags=7, zero=False, ax=ax1)
+    look_back = 7
+    n_features = 0
 
-    # Plot the PACF of df_store_2_item_28_timeon ax2
-    #plot_pacf(cl_train,lags=7, zero=False, ax=ax2)
+    #Xtrain, Xtest, ytrain, ytest = split_sequences(dataset_stacked, look_back, len(y_vals)-365)
+    Xtrain, Xtest, ytrain, ytest = split_sequences(out_seq, look_back, len(y_vals)-365)
 
+    number_of_iterations_for_consistency = 5
+
+    dropoutdict = {}
+
+    for iterrr in range(number_of_iterations_for_consistency):
+
+        model = Sequential()
+                
+        model.add(LSTM(32,activation='relu', return_sequences=True, input_shape=(look_back, n_features+1)))
+        model.add(LSTM(32,activation='relu', input_shape=(look_back, n_features+1)))  
+        #model.add(Dropout(0.1))
+
+        model.add(Dense(1))
+        model.compile(optimizer='adam', loss='mse')
+                
+        callback=EarlyStopping(monitor="val_loss", mode='min', patience=30, restore_best_weights=True)
+
+                # fit model CHANGE EPOCHS BACK TO 200
+        history = model.fit(Xtrain, ytrain, validation_split=0.3, epochs=200, batch_size=1, verbose=2,  callbacks=[callback]) # 
+
+        
+        # summarize history for loss
+        #plt.plot(history.history['loss'])
+        #plt.plot(history.history['val_loss'])
+        #plt.title('model loss')
+        #plt.ylabel('loss')
+        #plt.xlabel('epoch')
+        #plt.legend(['train', 'validation'], loc='upper left')
+        #plt.show()
+        # save model
+
+        
+        
+        #model.save('my_model.h5')  # creates a HDF5 file 'my_model.h5'
+        #del model  # deletes the existing model
+        
+        # returns a compiled model
+        # identical to the previous one
+
+        #json_string = model.to_json()
+        #import json
+        #out_file = open("myfile.json", "w")
+        #json.dump(json_string, out_file)
+
+        trainPredict = model.predict(Xtrain)
+        testPredict = model.predict(Xtest)
+
+        #y_arima_exog_forecast = model_fit.forecast(steps=365)
+        y_arima_exog_forecast = testPredict
+        y_arima_exog_forecast_train = trainPredict
+
+        y_arima_exog_forecast_with_trend = []
+        y_arima_exog_forecast_with_trend_and_seasonality = []
+        
+        y_arima_exog_forecast_with_trend_train = []
+        y_arima_exog_forecast_with_trend_and_seasonality_train = []
+        #print(arima_exog_model.summary())
+        i_test_values = range(len(y_vals)-365, len(y_vals))
+        curve_test = curve[-365:]
+
+        for i in range(len(y_arima_exog_forecast)): # go through the forecast # unnecessary
+
+            #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
+            y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
+            y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
+        
+        for i in range(len(y_arima_exog_forecast_train)): # go through the forecast
+
+            #y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + m*i_test_values[i]) # linear
+            y_arima_exog_forecast_with_trend_train.append(y_arima_exog_forecast_train[i] + logestimate[i] - mega_offset)
+            y_arima_exog_forecast_with_trend_and_seasonality_train.append(y_arima_exog_forecast_with_trend_train[i] + curve[i])
+        
+        
+        
+        #trainPredict = trainPredict.reshape(-1, 1)
+        #testPredict = testPredict.reshape(-1, 1)
+        #trainPredict = scaler.inverse_transform(trainPredict)
+        #testPredict = scaler.inverse_transform(testPredict)
+
+        print("successfully inverse_transform")
+        
+        #trainPredict = scaler.inverse_transform(trainPredict)
+        #testPredict = scaler.inverse_transform(testPredict)
+
+        #print(history)
+
+        # invert predictions in case we used minmaxscaler earlier
+        #trainPredict = scaler.inverse_transform(trainPredict)
+        #ytrain = scaler.inverse_transform([ytrain])
+        #testPredict = scaler.inverse_transform(testPredict)
+        #ytest = scaler.inverse_transform([ytest])
+
+        trainPredict = np.array(trainPredict,dtype=float)
+        ytrain = np.array(ytrain,dtype=float)
+        testPredict = np.array(testPredict,dtype=float)
+        ytest = np.array(ytest,dtype=float)
+        
+        # calculate root mean squared error
+        # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+        trainScore1 = math.sqrt(mean_squared_error(ytrain, trainPredict))
+        #print('Train Score: %.2f RMSE' % (trainScore1))
+        testScore1 = math.sqrt(mean_squared_error(ytest, testPredict))
+        #print('Test Score: %.2f RMSE' % (testScore1))
+
+        # calculate root mean squared error
+        # 22.93 RMSE means an error of about 23 passengers (in thousands) 
+        trainScore2 = mean_absolute_error(ytrain, trainPredict)
+        #print('Train Score: %.2f MAE' % (trainScore2))
+        testScore2 = mean_absolute_error(ytest, testPredict)
+        #print('Test Score: %.2f MAE' % (testScore2)
+        
+        trainScore3 = mean_absolute_percentage_error(ytrain, trainPredict)
+        #print('Train Score: %.2f MAPE' % (trainScore3))
+        testScore3 = mean_absolute_percentage_error(ytest, testPredict)
+        #print('Test Score: %.2f MAPE' % (testScore3))
+
+        dropoutdict["["+str(iterrr)+"]"] = "RMSE train: " + str(trainScore1) + " RMSE test: " + str(testScore1) + " MAE train: " + str(trainScore2) + " MAE test: " + str(testScore2) + " MAPE train: " + str(trainScore3) + "  MAPE test " + str(testScore3)
+        print(dropoutdict)
+
+    # plotting training data ytrain
+    #plt.plot(range(len(ytrain)),ytrain,'-', label="training data ytrain", color="red")
+    
+    # plotting training prediction trainPredict
+    #trainPredictFlatten = trainPredict.flatten()
+    #plt.plot(range(len(trainPredictFlatten)),trainPredictFlatten,'-', label="train prediction", color="green")
+    
+    #plotting testing data ytest
+    #plt.plot(
+    #    range(len(ytrain), len(ytest) + len(ytrain)),
+    #    ytest,'-', label="testing data ytest", color='purple')
+        
+    #plotting testing prediction testPredict
+    #testPredictFlatten = testPredict.flatten()
+    #plt.plot(range(len(ytrain),len(testPredictFlatten)+len(ytrain)),testPredictFlatten,'-', label="test prediction", color="blue")
+
+    
+    #plt.xlabel('days')
+    #plt.ylabel('flights')
+    #plt.title('Forecast using LSTM')
+
+    #plt.legend()
     #plt.show()
 
-    #model = SARIMAX(cl_train, order=(2,0,0), seasonal_order=(2,0,0,7), exog = np.zeros(len(cl_train)))
-
-    # removed clicks_Inactive_train, clicks_Extreme_train
-
-
-    # all marketing
-    #exog_train = np.column_stack((clicks_Search_train, clicks_Active_train, clicks_Inactive_train, clicks_Extreme_train))
-    #exog_test = np.column_stack((clicks_Search_test,clicks_Active_test, clicks_Inactive_test, clicks_Extreme_test))
+def handle_model():
+    import json
+    model = load_model('my_model.h5')
+    json_string = model.to_json()
+    out_file = open("model_1833.json", "w")
+    json.dump(json_string, out_file)
     
-    #exog_train = np.column_stack((clicks_Search_train, clicks_Active_train))
-    #exog_test = np.column_stack((clicks_Search_test,clicks_Active_test))
-    
-    #exog_train = np.column_stack((salaryday_train,dayBeforeSalaryday_train))
-    #exog_test = np.column_stack((salaryday_test,dayBeforeSalaryday_test))
-    
-    #here!!!
-    
-    dict_settings = {}
-
-    for a in [1]:
-        for b in [31]:
-            
-
-            #create_neder_8years(a,b)
-
-            #create_lufttemp_8years(2)
-            #create_neder_8years(2,2)
-            #createNear24th(30)
-            createNear24th(b)
-            
-            # combination of lufttemp_8years and regn_8years
-            # python exjobb/EXJOBBBBBB/tutorials//lstm_flygresor_multivariate_aggregated.py
-            # combined = []
-
-            # for i in range(len(regn_8years)):
-            #     if(regn_8years[i] == 0 or lufttemp_8years[i] == 0):
-            #         combined.append(0) # make 0 where either is 0
-            #     else:
-            #         combined.append(500)
-            
-            #in_seq1 = np.array(combined).reshape((len(combined), 1))
-
-            nonzeroes = 0
-            # for i in range(len(regn_8years)):
-            #     if regn_8years[i] != 0:
-            #         nonzeroes = nonzeroes +1
-            #     if i == len(regn_8years)-365: 
-            #         break
-            # print("nonzero elements: ", nonzeroes)
-
-
-            
-            near24th_test = near24th[-365:]
-            near24th_train = near24th[:len(near24th)-365] 
-
-            exog_test =  near24th_test
-            exog_train = near24th_train
-
-
-            #exog_train = np.column_stack((salaryday_train, dayBeforeSalaryday_train))
-            #exog_test = np.column_stack((salaryday_test, dayBeforeSalaryday_test))
-            
-        
-
-            """
-            plt.plot(y.values, color='green', label="flights")
-            plt.plot(VIX*100, color='blue', label="VIX")
-            plt.ylabel('VIX scaled')
-            plt.xlabel('days')
-            plt.legend()
-            plt.show()
-
-            
-            """
-
-            from tensorflow.keras.callbacks import EarlyStopping
-            from itertools import product
-
-            
-            
-            model = SARIMAX(cl_train, order=(1,1,1), seasonal_order=(1,1,1,7), period = 7, exog = exog_train)
-            
-            callback=EarlyStopping(monitor="loss",patience=60) #30
-            model_fit = model.fit(maxiter=200, callbacks=[callback]) # increase maxiter otherwise encounter convergence error
-            #model_fit.plot_diagnostics()
-            print(model_fit.summary())
-        
-            #y_arima_exog_forecast = model_fit.forecast(steps=365)
-            y_arima_exog_forecast = model_fit.forecast(steps=365, exog=[[exog_test]])
-            y_arima_exog_forecast_with_trend = []
-            y_arima_exog_forecast_with_trend_and_seasonality = []
-            
-            i_test_values = range(len(y_vals)-365, len(y_vals))
-            curve_test = curve[-365:]
-            
-            for i in range(len(y_arima_exog_forecast)): # go through the forecast
-
-                y_arima_exog_forecast_with_trend.append(y_arima_exog_forecast[i] + logestimate[i_test_values[i]] - mega_offset)
-                y_arima_exog_forecast_with_trend_and_seasonality.append(y_arima_exog_forecast_with_trend[i] + curve_test[i])
-            
-            #offset_for_plotting_only = 23000
-            #curve_with_trend = []
-            #print(" b is ")
-            #print( b)
-            #for i in range(len(curve)):
-                #curve_with_trend.append(curve[i] + m*i - offset_for_plotting_only)
-            #    curve_with_trend.append(curve[i] + logestimate[i] -offset_for_plotting_only)           
-
-            # good plots
-            #plt.plot( range(len(y_vals)), y_vals, color='green', label = 'training data')
-            #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_to_test, color='purple', label = 'testing data')
-            #plt.plot( range(len(y_to_train), len(y_to_train)+len(y_to_test)), y_arima_exog_forecast_with_trend_and_seasonality, color='blue', label = 'forecast')          
-            #plt.plot( range(len(y_vals)), y_vals, color='green', label = 'flights')
-            #plt.plot( range(len(curve_with_trend)), [x + 18000 for x in curve_with_trend], color='black', label = 'estimated yearly seasonality')
-            #plt.plot( range(len(clickouts_wo_trend_or_seasonality)), clickouts_wo_trend_or_seasonality, color='blue', label = 'flights without trend or yearly seasonality')
-            #plt.legend()
-            #plt.show()           
-            # #plt.plot( range(len(curve_with_trend)), curve_with_trend, color='black',  label = 'estimated yearly seasonality')
-            #plt.plot( range(len(logestimate)), logestimate, color='blue', label = "estimated trend")
-            #plt.plot( range(len(trend)), trend, color='red', label = "training data trend")
-            #plt.legend()
-            #plt.show()
-            #def adf():
-                """
-                from statsmodels.tsa.stattools import adfuller
-                #result = adfuller(clickouts_wo_trend_or_seasonality, autolag='AIC')
-                result = adfuller(clickouts_wo_trend_or_seasonality, autolag='AIC')
-                print(f'ADF Statistic: {result[0]}')
-                print(f'n_lags: {result[1]}')
-                print(f'p-value: {result[1]}')
-                for key, value in result[4].items():
-                    print('Critial Values:')
-                    print(f'   {key}, {value}')    
-                """
-            #PRINTING ACCURACY
-            # calculate root mean squared error
-            # 22.93 RMSE means an error of about 23 passengers (in thousands) 
-            
-            testScore_a = math.sqrt(mean_squared_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality))
-            print('Test Score: %.2f RMSE' % (testScore_a))
-        
-            testScore_b = mean_absolute_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
-            print('Test Score: %.2f MAE' % (testScore_b))
-            testScore_c = mean_absolute_percentage_error(y_to_test, y_arima_exog_forecast_with_trend_and_seasonality)
-            print('Test Score: %.2f MAPE' % (testScore_c))
-            #print("test score:", np.round(testScore_a, 2), ";", np.round(testScore_b, 2), ";", np.round(testScore_c, 2))
-            
-            
-            dict_settings["cell:" + str(b) ] = str(testScore_a) + ", " + str(testScore_b) + ", " + str(testScore_c)
-            print(dict_settings)
-            
-            # print(y_to_test.values)
-            # print(y_arima_exog_forecast_with_trend_and_seasonality)
-            
-            testvalues =  y_to_test.values
-            
-            prediction_errors = []
-            
-            for i in range(len(y_arima_exog_forecast_with_trend_and_seasonality)):
-                prediction_err = y_arima_exog_forecast_with_trend_and_seasonality[i] - testvalues[i]
-                prediction_errors.append(prediction_err)
-            
-            
-            # for b in [23, 24, 25, 26, 30]:
-            
-            
-            file = open("prediction_errors/day_of_month_" + str(b), "w+")
-            
-            content = str(prediction_errors)
-            file.write(content)
-            file.close()
-            
-            file = open("prediction_errors/day_of_month_" + str(b), "r")
-            content = file.read()
-            
-            file.close()
-            
-            res = content.strip('][').split(', ')
-            
-            # print(res)
-
-            # break # break after first iteration of dict!
-
-
-
 if __name__ == "__main__":
-    #prepare_data() # marketing
-    #prepare_exchange_rates_EUR()
-    #prepare_exchange_rates_USD()
-    #createNear25th()
-    #createNear25thcurve()
-    #createSalaryDay()
-    #createNear24th()
-    #createLufttemp_4years()
-    #createNeder
-
-    # all data
-    #create_OMSX30() 
+    #prepare_data()
+    #create_OMSX30()
     #create_OMSXPI()
     #create_SP500()
     #create_MSCI()
     #create_VIX()
-    #create_OIL() TODO
+    #handle_model()
+    #createNear25th()
+    #createNear24th()
+    #createNear25thcurve()
+    #createSalaryDay()
     #create_neder_8years()
-    #create_lufttemp_8years()
-    working()
+    #create_lufttemp_8years(1)
+    #prepare_exchange_rates_USD()
+    #prepare_exchange_rates_EUR()
+
+    # main function:
+
+    #working()
+    working_preprocessed()

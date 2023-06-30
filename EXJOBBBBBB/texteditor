@@ -1,0 +1,441 @@
+{'iteration 0 
+cell: a: 0 b: 1': '
+occurrences in train: 965
+occurences total 1121 
+RMSE train: 1456.9380055896183 
+RMSE test: 1963.0167080709027 
+MAE train: 1024.945417302892 
+MAE test: 1366.811086984986 
+MAPE train: 0.05781775675823334  
+MAPE test 0.05689946078121127', '
+
+iteration 1 
+cell: a: 0 b: 1': '
+occurrences in train: 965
+occurences total 1121 
+RMSE train: 1770.000663822118 
+RMSE test: 2286.114645886611 
+MAE train: 1284.8676951730533 
+MAE test: 1692.808735597067 
+MAPE train: 0.07272036820739675  
+MAPE test 0.07065874447421719', '
+
+iteration 2 
+cell: a: 0 b: 1': '
+occurrences in train: 965
+occurences total 1121 
+RMSE train: 1371.0573108392466 
+RMSE test: 1858.111508359085 
+MAE train: 968.6369006843346 
+MAE test: 1327.127749650838 
+MAPE train: 0.05542696476471063  
+MAPE test 0.05574041894500842', '
+
+iteration 3 
+cell: a: 0 b: 1': '
+occurrences in train: 965
+occurences total 1121 
+RMSE train: 1467.3557660776582 
+RMSE test: 1982.476423144568 
+MAE train: 1059.7317335749246 
+MAE test: 1464.4844295565642 
+MAPE train: 0.0611227158176139  
+MAPE test 0.062295435522874615', '
+
+iteration 4 
+cell: a: 0 b: 1': '
+occurrences in train: 965
+occurences total 1121 
+RMSE train: 1458.1742033478142 
+RMSE test: 1937.5347043482377 
+MAE train: 1012.5449321156152 
+MAE test: 1426.4319079521647 
+MAPE train: 0.057848541773472914  
+MAPE test 0.06023150278885054', '
+
+iteration 0 
+cell: a: 0 b: 2': '
+occurrences in train: 585
+occurences total 682 
+RMSE train: 1399.6648137439415 
+RMSE test: 1906.0468423236732 
+MAE train: 1000.314302348282 
+MAE test: 1350.423571709148 
+MAPE train: 0.05730118269130969  
+MAPE test 0.05652111889367624', '
+
+iteration 1 
+cell: a: 0 b: 2': '
+occurrences in train: 585
+occurences total 682 
+RMSE train: 1467.56543385539 
+RMSE test: 1981.4086456080086 
+MAE train: 1040.7162410492665 
+MAE test: 1398.0295642021647 
+MAPE train: 0.05957867375726508  
+MAPE test 0.05838471917517098', '
+
+iteration 2 
+cell: a: 0 b: 2': '
+occurrences in train: 585
+occurences total 682 
+RMSE train: 1384.8195853526447 
+RMSE test: 1882.124167514843 
+MAE train: 966.116590929691 
+MAE test: 1319.2029122293995 
+MAPE train: 0.05567299085883069  
+MAPE test 0.05568193439485262', '
+
+iteration 3 
+cell: a: 0 b: 2': '
+occurrences in train: 585
+occurences total 682 
+RMSE train: 1436.7775466422488 
+RMSE test: 1934.1898761467373 
+MAE train: 1026.4692966745454 
+MAE test: 1420.0348289106146 
+MAPE train: 0.05900807768372942  
+MAPE test 0.05977941538904562', '
+
+iteration 4 
+cell: a: 0 b: 2': '
+occurrences in train: 585
+occurences total 682 
+RMSE train: 1360.2697968877217 
+RMSE test: 1842.5135567336251 
+MAE train: 973.2274628025992 
+MAE test: 1302.175846717877 
+MAPE train: 0.05532602605215178  
+MAPE test 0.054308215092020225', '
+
+iteration 0 
+cell: a: 1 b: 1': '
+occurrences in train: 561
+occurences total 655 
+RMSE train: 1337.9293090151957 
+RMSE test: 1863.8882265867296 
+MAE train: 951.303142692297 
+MAE test: 1317.67698695007 
+MAPE train: 0.05510848067921258  
+MAPE test 0.05546141831600128', '
+
+iteration 1 
+cell: a: 1 b: 1': '
+occurrences in train: 561
+occurences total 655 
+RMSE train: 1398.6285207912535 
+RMSE test: 1942.9056132518585 
+MAE train: 1003.0780727074966 
+MAE test: 1377.1771751702165 
+MAPE train: 0.057360745564343896  
+MAPE test 0.0577502412437647', '
+
+iteration 2 
+cell: a: 1 b: 1': '
+occurrences in train: 561
+occurences total 655 
+RMSE train: 1410.4460251813337 
+RMSE test: 1892.860151583421 
+MAE train: 998.4277533310325 
+MAE test: 1352.2254168121508 
+MAPE train: 0.05742962084221807  
+MAPE test 0.056900706740905235', '
+
+iteration 3 
+cell: a: 1 b: 1': '
+occurrences in train: 561
+occurences total 655 
+RMSE train: 1694.777973809262 
+RMSE test: 2212.4782859431693 
+MAE train: 1253.9830522175507 
+MAE test: 1655.6249290764665 
+MAPE train: 0.07055108955019826  
+MAPE test 0.06864775620430727', '
+
+iteration 4 
+cell: a: 1 b: 1': '
+occurrences in train: 561
+occurences total 655 
+RMSE train: 1427.6547845255382 
+RMSE test: 1922.743676702272 
+MAE train: 1027.7032942969795 
+MAE test: 1388.141410614525 
+MAPE train: 0.059748211736571355  
+MAPE test 0.058291410631331794', '
+
+iteration 0 
+cell: a: 1 b: 2': '
+occurrences in train: 231
+occurences total 277 
+RMSE train: 1358.737111295622 
+RMSE test: 1914.4169238452166 
+MAE train: 958.5275250306782 
+MAE test: 1364.4913746071927 
+MAPE train: 0.054779174884610295  
+MAPE test 0.057240662657384145', '
+
+iteration 1 
+cell: a: 1 b: 2': '
+occurrences in train: 231
+occurences total 277 
+RMSE train: 1421.4665302368776 
+RMSE test: 1890.8349141709828 
+MAE train: 1001.1571343969629 
+MAE test: 1364.3583547922485 
+MAPE train: 0.05700261613978501  
+MAPE test 0.05693351131074433', '
+
+iteration 2 
+cell: a: 1 b: 2': '
+occurrences in train: 231
+occurences total 277 
+RMSE train: 1351.36644808061 
+RMSE test: 1807.8107351446251 
+MAE train: 963.0805269689871 
+MAE test: 1294.866802876222 
+MAPE train: 0.054792521564524244  
+MAPE test 0.05396379500833896', '
+
+iteration 3 
+cell: a: 1 b: 2': '
+occurrences in train: 231
+occurences total 277 
+RMSE train: 1490.9826315299613 
+RMSE test: 1968.719135940298 
+MAE train: 1049.587949889837 
+MAE test: 1448.5344524703212 
+MAPE train: 0.0587154626897182  
+MAPE test 0.05998240886173479', '
+
+iteration 4 
+cell: a: 1 b: 2': '
+occurrences in train: 231
+occurences total 277 
+RMSE train: 1392.8646597730071 
+RMSE test: 1892.2422298222107 
+MAE train: 980.8099221974704 
+MAE test: 1370.2228690206005 
+MAPE train: 0.05581120931083783  
+MAPE test 0.057197961334772236', '
+
+iteration 0 
+cell: a: 2 b: 1': '
+occurrences in train: 431
+occurences total 508 
+RMSE train: 1373.228109461608 
+RMSE test: 1839.5009906781122 
+MAE train: 991.964650485623 
+MAE test: 1308.4845441253492 
+MAPE train: 0.05731097013548674  
+MAPE test 0.05480317394871586', '
+
+iteration 1 
+cell: a: 2 b: 1': '
+occurrences in train: 431
+occurences total 508 
+RMSE train: 1379.0020742524366 
+RMSE test: 1872.941866307195 
+MAE train: 980.2347020460313 
+MAE test: 1315.2583198760474 
+MAPE train: 0.05624525494151947  
+MAPE test 0.05495953674606063', '
+
+iteration 2 
+cell: a: 2 b: 1': '
+occurrences in train: 431
+occurences total 508 
+RMSE train: 1420.2684565596153 
+RMSE test: 1932.5632017728171 
+MAE train: 1007.6830536120175 
+MAE test: 1385.6208018723812 
+MAPE train: 0.056402582124150336  
+MAPE test 0.05734224373209157', '
+
+iteration 3 
+cell: a: 2 b: 1': '
+occurrences in train: 431
+occurences total 508 
+RMSE train: 1407.1826596914761 
+RMSE test: 1912.1878884348325 
+MAE train: 1011.8820032735107 
+MAE test: 1381.7587781511872 
+MAPE train: 0.05801363193599513  
+MAPE test 0.057695353425097816', '
+
+iteration 4 
+cell: a: 2 b: 1': '
+occurrences in train: 431
+occurences total 508 
+RMSE train: 1392.2966493154195 
+RMSE test: 1884.787654116003 
+MAE train: 983.4521604211986 
+MAE test: 1334.4836603090084 
+MAPE train: 0.05588895431033291  
+MAPE test 0.05554480841326438', '
+
+iteration 0 
+cell: a: 2 b: 2': '
+occurrences in train: 147
+occurences total 180 
+RMSE train: 1436.757908199208 
+RMSE test: 1968.749558222161 
+MAE train: 1017.6780995509818 
+MAE test: 1437.2350896909916 
+MAPE train: 0.05872668220858771  
+MAPE test 0.06072470823473489', '
+
+iteration 1 
+cell: a: 2 b: 2': '
+occurrences in train: 147
+occurences total 180 
+RMSE train: 1364.2299262266538 
+RMSE test: 1866.1625229828294 
+MAE train: 969.6625152955572 
+MAE test: 1354.457467702514 
+MAPE train: 0.055480466220339475  
+MAPE test 0.057068831903146065', '
+
+iteration 2 
+cell: a: 2 b: 2': '
+occurrences in train: 147
+occurences total 180 
+RMSE train: 1403.782889368058 
+RMSE test: 1875.8458116594618 
+MAE train: 1002.8882596357653 
+MAE test: 1331.2685819657822 
+MAPE train: 0.05804678203834333  
+MAPE test 0.05609385670870716', '
+
+iteration 3 
+cell: a: 2 b: 2': '
+occurrences in train: 147
+occurences total 180 
+RMSE train: 1458.752487620394 
+RMSE test: 1952.2615854437938 
+MAE train: 1057.0243181929106 
+MAE test: 1430.7659141497904 
+MAPE train: 0.06039119265998733  
+MAPE test 0.05968974285781511', '
+
+iteration 4 
+cell: a: 2 b: 2': '
+occurrences in train: 147
+occurences total 180 
+RMSE train: 1412.6402708502067 
+RMSE test: 1861.6997666541095 
+MAE train: 1006.4624600833891 
+MAE test: 1324.707636827863 
+MAPE train: 0.05786240790251862  
+MAPE test 0.055553875532275254', '
+
+iteration 0 
+cell: a: 3 b: 1': '
+occurrences in train: 317
+occurences total 376 
+RMSE train: 1394.9533372829412 
+RMSE test: 1879.7379711066806 
+MAE train: 1002.6127077755466 
+MAE test: 1314.4123876134777 
+MAPE train: 0.05667306250517347  
+MAPE test 0.05441147291395627', '
+
+iteration 1 
+cell: a: 3 b: 1': '
+occurrences in train: 317
+occurences total 376 
+RMSE train: 1517.301693957254 
+RMSE test: 1987.4595817762156 
+MAE train: 1115.17594815024 
+MAE test: 1458.8435044954608 
+MAPE train: 0.06193337368601321  
+MAPE test 0.060034017210763485', '
+
+iteration 2 
+cell: a: 3 b: 1': '
+occurrences in train: 317
+occurences total 376 
+RMSE train: 1369.5084433398824 
+RMSE test: 1887.685974683482 
+MAE train: 965.9700666816572 
+MAE test: 1339.7799624650838 
+MAPE train: 0.055037355960511215  
+MAPE test 0.05585017030017606', '
+
+iteration 3 
+cell: a: 3 b: 1': '
+occurrences in train: 317
+occurences total 376 
+RMSE train: 1543.2828132366776 
+RMSE test: 2040.6548202444164 
+MAE train: 1103.2968721674895 
+MAE test: 1508.3881099423882 
+MAPE train: 0.062014209182152495  
+MAPE test 0.06266536084070869', '
+
+iteration 4 
+cell: a: 3 b: 1': '
+occurrences in train: 317
+occurences total 376 
+RMSE train: 1404.3381897409413 
+RMSE test: 1901.724084172194 
+MAE train: 1003.8733065944333 
+MAE test: 1345.644839494588 
+MAPE train: 0.05705519398383548  
+MAPE test 0.055852659084052195', '
+
+iteration 0 
+cell: a: 3 b: 2': '
+occurrences in train: 79
+occurences total 96 
+RMSE train: 1407.659225687973 
+RMSE test: 1880.2676686238299 
+MAE train: 998.2722596113621 
+MAE test: 1346.4973703736034 
+MAPE train: 0.05692508820770478  
+MAPE test 0.05603736745211234', '
+
+iteration 1 
+cell: a: 3 b: 2': '
+occurrences in train: 79
+occurences total 96 
+RMSE train: 1454.2523225591883 
+RMSE test: 1968.207415309379 
+MAE train: 1044.4097285408998 
+MAE test: 1421.3194286836592 
+MAPE train: 0.060133929674572026  
+MAPE test 0.05995600130209936', '
+
+iteration 2 
+cell: a: 3 b: 2': '
+occurrences in train: 79
+occurences total 96 
+RMSE train: 1374.4691226184934 
+RMSE test: 1894.8735552364756 
+MAE train: 975.7612749173778 
+MAE test: 1341.8776841829608 
+MAPE train: 0.05559976500110689  
+MAPE test 0.05603587726271504', '
+
+iteration 3 
+cell: a: 3 b: 2': '
+occurrences in train: 79
+occurences total 96 
+RMSE train: 1506.7708101868277 
+RMSE test: 1968.7785755207897 
+MAE train: 1108.5538166119338 
+MAE test: 1438.6887111557262 
+MAPE train: 0.06356316258063845  
+MAPE test 0.060069422389530454', '
+
+iteration 4 
+cell: a: 3 b: 2': '
+occurrences in train: 79
+occurences total 96 
+RMSE train: 1393.794601517515 
+RMSE test: 1959.8841800865384 
+MAE train: 992.1871217508924 
+MAE test: 1375.961504888268 
+MAPE train: 0.056670458952480254  
+MAPE test 0.057272509916916584
+
+'}

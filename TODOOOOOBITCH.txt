@@ -1,0 +1,19 @@
+5
+standardavv
+medel
+
+ks-test
+effect-size k - Cohens's d
+friedmanntest i slutet?
+
+related work
+
+maila pawel!!!
+snygga upp, bildtext, tabelltext, appendix, källor, decimaler, resultat i texten
+
+3 nov -> draft to Erik
+11 nov -> related work, ks-test
+24 november finish draft to pawel
+1 december -> pawel
+
+

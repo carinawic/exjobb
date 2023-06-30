@@ -158,7 +158,7 @@ def workingexample():
     model.compile(optimizer='adam', loss='mse')
 
     # fit model
-    model.fit(Xtrain, ytrain, epochs=100, batch_size=1, verbose=2)
+    model.fit(Xtrain, ytrain, epochs=1, batch_size=1, verbose=2)
     trainPredict = model.predict(Xtrain)
     testPredict = model.predict(Xtest)
 
